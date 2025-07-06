@@ -244,40 +244,70 @@
         /* Action Buttons */
         .action-buttons {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             justify-content: center;
+            margin-top: 40px;
+            padding: 40px 20px;
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .action-button {
-            background: #FF4500;
+            background: #1A5B5B;
             color: white;
-            border: none;
-            padding: 12px 24px;
+            border: 3px solid #1A5B5B;
+            padding: 16px 32px;
             border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: 'Courier New', monospace;
             text-decoration: none;
             display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 12px rgba(26, 91, 91, 0.3);
         }
 
         .action-button:hover {
-            background: #E63E00;
+            background: #234E52;
+            border-color: #234E52;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+            box-shadow: 0 8px 24px rgba(26, 91, 91, 0.4);
         }
 
         .secondary-button {
-            background: none;
-            border: 2px solid #1A5B5B;
-            color: #1A5B5B;
+            background: #FFF8DC;
+            border: 3px solid #FF4500;
+            color: #FF4500;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.2);
         }
 
         .secondary-button:hover {
-            background: #1A5B5B;
+            background: #FF4500;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 69, 0, 0.4);
+        }
+
+        /* Mobile responsiveness for action buttons */
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .action-button {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
         }
 
         /* Save Prompt */

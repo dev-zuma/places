@@ -334,15 +334,13 @@ app.post('/api/generate', async (req, res) => {
 // OpenAI-powered game generation
 async function generateGameAsync(gameId, context) {
   try {
-    console.log('Starting generation for game:', gameId);
+    console.log(`🎮 GENERATION START | Game: ${gameId}`);
 
     // Generate game content first
-    console.log('Generating game content...');
     const gameContent = await generateGameContent(context);
-    console.log('Game content generated:', gameContent);
+    console.log(`📋 Game content: ${gameContent.caseTitle} | Theme: ${gameContent.theme}`);
     
     // Update game record with generated content
-    console.log('Updating game record...');
     const game = await prisma.game.update({
       where: { id: gameId },
       data: {
@@ -360,10 +358,8 @@ async function generateGameAsync(gameId, context) {
         interestingFact: gameContent.interestingFact,
       },
     });
-    console.log('Game record updated:', game.id);
     
     // Update generation record
-    console.log('Updating generation record...');
     await prisma.generation.updateMany({
       where: { gameId },
       data: {
@@ -375,7 +371,7 @@ async function generateGameAsync(gameId, context) {
     });
 
     // Generate villain portrait
-    console.log('Generating villain portrait...');
+    console.log(`👤 Generating villain: ${gameContent.villainName}`);
     await prisma.generation.updateMany({
       where: { gameId },
       data: { currentStep: 'villain_portrait' },
@@ -412,53 +408,28 @@ async function generateGameAsync(gameId, context) {
       data: { completedSteps: 2 },
     });
 
-    // Create locations
-    for (const location of gameContent.locations) {
-      const loc = await prisma.location.create({
-        data: {
-          gameId: game.id,
-          position: location.position,
-          name: location.name,
-          country: location.country,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          timezoneOffset: location.timezoneOffset,
-          timezoneName: location.timezoneName,
-          landmarks: JSON.stringify(location.landmarks),
-        },
-      });
+    // Create location records first
+    const locationRecords = await Promise.all(
+      gameContent.locations.map(location => 
+        prisma.location.create({
+          data: {
+            gameId: game.id,
+            position: location.position,
+            name: location.name,
+            country: location.country,
+            latitude: location.latitude,
+            longitude: location.longitude,
+            timezoneOffset: location.timezoneOffset,
+            timezoneName: location.timezoneName,
+            landmarks: JSON.stringify(location.landmarks),
+          },
+        })
+      )
+    );
 
-      // Generate images for each turn
-      for (const turn of [1, 3, 5]) {
-        const stepName = `image_${location.position}_${turn}`;
-        await prisma.generation.updateMany({
-          where: { gameId },
-          data: { currentStep: stepName },
-        });
-
-        const imageData = await generateLocationImage(location, gameContent.theme, turn, gameContent.difficulty);
-        const s3Url = await uploadImageToS3(
-          imageData.url,
-          game.id,
-          location.position,
-          turn
-        );
-
-        // Update location with image URL
-        const imageField = turn === 1 ? 'image1Url' : turn === 3 ? 'image2Url' : 'image3Url';
-        await prisma.location.update({
-          where: { id: loc.id },
-          data: { [imageField]: s3Url },
-        });
-
-        // Update generation progress
-        const completed = 2 + ((location.position - 1) * 3) + ((turn === 1 ? 1 : turn === 3 ? 2 : 3));
-        await prisma.generation.updateMany({
-          where: { gameId },
-          data: { completedSteps: completed },
-        });
-      }
-    }
+    // Generate all images in parallel using 3 concurrent threads (one per location)
+    console.log('🚀 Starting parallel image generation for all locations...');
+    await generateAllLocationImagesParallel(gameId, gameContent, locationRecords, game.id);
 
     // Complete generation
     await prisma.generation.updateMany({
@@ -470,7 +441,7 @@ async function generateGameAsync(gameId, context) {
       },
     });
 
-    console.log(`Game ${gameId} generated successfully`);
+    console.log(`✅ GENERATION COMPLETE | ${gameId} | ${gameContent.caseTitle}`);
   } catch (error) {
     console.error('Error generating game:', error);
     await prisma.generation.updateMany({
@@ -483,14 +454,83 @@ async function generateGameAsync(gameId, context) {
   }
 }
 
+// Parallel image generation function
+async function generateAllLocationImagesParallel(gameId, gameContent, locationRecords, dbGameId) {
+  try {
+    // Create parallel tasks for each location (3 concurrent threads)
+    const locationTasks = gameContent.locations.map(async (location, index) => {
+      const locationRecord = locationRecords[index];
+      const results = [];
+      
+      console.log(`🎨 Thread ${location.position}: Starting ${location.name}`);
+      
+      // Generate all 3 images for this location in sequence (within this thread)
+      for (const turn of [1, 3, 5]) {
+        try {
+          // Update generation step
+          await prisma.generation.updateMany({
+            where: { gameId },
+            data: { currentStep: `image_${location.position}_${turn}` },
+          });
+
+          // Generate image
+          const imageData = await generateLocationImage(location, gameContent.theme, turn, gameContent.difficulty);
+          
+          // Upload to S3
+          const s3Url = await uploadImageToS3(
+            imageData.url,
+            dbGameId,
+            location.position,
+            turn
+          );
+
+          // Store result for batch update
+          const imageField = turn === 1 ? 'image1Url' : turn === 3 ? 'image2Url' : 'image3Url';
+          results.push({ turn, imageField, s3Url });
+
+          // Update progress
+          const completed = 2 + ((location.position - 1) * 3) + (turn === 1 ? 1 : turn === 3 ? 2 : 3);
+          await prisma.generation.updateMany({
+            where: { gameId },
+            data: { completedSteps: completed },
+          });
+
+        } catch (error) {
+          console.error(`❌ Error generating image for ${location.name} turn ${turn}:`, error);
+          throw error;
+        }
+      }
+
+      // Batch update all images for this location
+      const updateData = {};
+      results.forEach(result => {
+        updateData[result.imageField] = result.s3Url;
+      });
+
+      await prisma.location.update({
+        where: { id: locationRecord.id },
+        data: updateData,
+      });
+
+      console.log(`✅ Thread ${location.position}: Completed ${location.name}`);
+      return results;
+    });
+
+    // Execute all location tasks in parallel
+    await Promise.all(locationTasks);
+    console.log('🏁 All location images generated successfully');
+    
+  } catch (error) {
+    console.error('❌ Parallel image generation failed:', error);
+    throw error;
+  }
+}
+
 async function generateGameContent(context) {
   // Use OpenAI to generate game content if API key is available
-  console.log('DEBUG: openai exists:', !!openai);
-  console.log('DEBUG: OPENAI_API_KEY exists:', !!process.env.OPENAI_API_KEY);
-  
   if (openai && process.env.OPENAI_API_KEY) {
     try {
-      console.log('✅ Using OpenAI to generate game content...');
+      console.log('🎯 Generating game content with OpenAI...');
       
       // Build the prompt based on user input
       let prompt = `Generate a geography-based detective game where players track a villain across 3 connected locations.
@@ -543,15 +583,15 @@ Requirements:
 
 Return ONLY valid JSON in this exact format:
 {
-  "theme": "ONE_WORD_THEME",
+  "theme": "THEME (1-3 words maximum)",
   "phrase": "Short descriptive phrase",
   "category": "Geography",
   "difficulty": "easy/medium/hard",
   "villainName": "Fun villain name",
   "villainTitle": "The [Title]",
   "caseTitle": "Catchy case title (max 6 words)",
-  "crimeSummary": "Crime story that hints at location characteristics without naming them",
-  "turn4Clue": "ONE_WORD_CLUE",
+  "crimeSummary": "Detailed crime story (3-4 sentences) that describes the villain's activities and modus operandi while hinting at cultural, geographical, or historical characteristics of the locations WITHOUT revealing their names. Include atmospheric details, the villain's motivations, and subtle clues about the types of places involved",
+  "turn4Clue": "CLUE (1-2 words that help identify the connection)",
   "interestingFact": "Educational fact connecting all 3 locations",
   "villainClothingDescription": "Detailed description of villain's outfit with subtle hints related to 1 or more locations",
   "villainAge": "Age range (e.g., mid-40s, early 30s, late 50s)",
@@ -641,7 +681,7 @@ async function generateLocationImage(location, theme, turn, difficulty) {
   // Try to use OpenAI GPT-Image-1 if available
   if (openai && process.env.OPENAI_API_KEY) {
     try {
-      console.log(`Generating location image with GPT-Image-1 for ${location.name}, turn ${turn}...`);
+      console.log(`🖼️ ${location.name} image ${turn}/3`);
       
       const response = await openai.images.generate({
         model: "gpt-image-1",
@@ -713,7 +753,7 @@ Theme: ${theme}`;
   // Try to use OpenAI GPT-Image-1 if available
   if (openai && process.env.OPENAI_API_KEY) {
     try {
-      console.log(`Generating villain portrait with GPT-Image-1 for ${villainName}...`);
+      // Portrait generation logged in main flow
       
       const imageParams = {
         model: "gpt-image-1",
