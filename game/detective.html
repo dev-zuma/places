@@ -171,6 +171,400 @@
             width: 100%;
             gap: 12px;
         }
+
+        /* User Menu Styles */
+        .user-menu-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-menu-button {
+            background: var(--primary-teal);
+            color: white;
+            border: 2px solid var(--primary-orange);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .user-menu-button:hover {
+            background: var(--primary-orange);
+            border-color: var(--primary-teal);
+            transform: translateY(-1px);
+        }
+
+        .menu-chevron {
+            transition: transform 0.3s ease;
+        }
+
+        .user-menu-button.open .menu-chevron {
+            transform: rotate(180deg);
+        }
+
+        .user-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-teal);
+            border-radius: 8px;
+            min-width: 140px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-menu-dropdown.show {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-black);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(26, 91, 91, 0.1);
+        }
+
+        .menu-item:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .menu-item:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        .menu-header {
+            padding: 12px 16px 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary-teal);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-light);
+            background-color: rgba(26, 91, 91, 0.05);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background-color: var(--border-light);
+            margin: 4px 0;
+        }
+
+        .menu-icon {
+            font-size: 14px;
+        }
+
+        /* Help Modal Styles */
+        .help-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .help-modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90vw;
+            max-height: 85vh;
+            width: 350px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid var(--primary-orange);
+            overflow-y: auto;
+            margin: 0;
+        }
+
+        @media (max-width: 420px) {
+            .help-modal-content {
+                padding: 15px;
+                max-height: 80vh;
+                width: 90vw;
+                max-width: 90vw;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .help-modal-content {
+                width: 95vw;
+                max-width: 95vw;
+                padding: 12px;
+            }
+        }
+
+        .help-modal-content::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #FF4500;
+        }
+
+        .help-modal-header {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            margin-left: 20px;
+        }
+
+        .help-content {
+            margin-left: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .help-section {
+            margin-bottom: 14px;
+        }
+
+        .help-section h3 {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-orange);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .help-section p, .help-section li {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: var(--primary-black);
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+
+        .help-section ul {
+            margin: 6px 0;
+            padding-left: 14px;
+        }
+
+        .help-section li {
+            margin-bottom: 3px;
+        }
+
+        @media (max-width: 420px) {
+            .help-modal-header {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+            
+            .help-section {
+                margin-bottom: 12px;
+            }
+            
+            .help-section h3 {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+            
+            .help-section p, .help-section li {
+                font-size: 10px;
+                line-height: 1.2;
+                margin-bottom: 3px;
+            }
+            
+            .help-section ul {
+                margin: 4px 0;
+                padding-left: 12px;
+            }
+            
+            .help-section li {
+                margin-bottom: 2px;
+            }
+        }
+
+        .help-turn-indicator {
+            display: inline-block;
+            background: var(--primary-teal);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .help-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-orange);
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 3;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .help-close:hover {
+            background-color: rgba(255, 69, 0, 0.1);
+        }
+
+        /* Profile Modal Styles */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .profile-modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 90vw;
+            max-height: 85vh;
+            width: 320px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid var(--primary-orange);
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 420px) {
+            .profile-modal-content {
+                padding: 15px;
+                max-height: 80vh;
+                width: 90vw;
+                max-width: 90vw;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .profile-modal-content {
+                width: 95vw;
+                max-width: 95vw;
+                padding: 12px;
+            }
+        }
+
+        .profile-modal-content::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #FF4500;
+        }
+
+        .profile-modal-header {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            margin-left: 20px;
+        }
+
+        .profile-content {
+            margin-left: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-orange);
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 3;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-close:hover {
+            background-color: rgba(255, 69, 0, 0.1);
+        }
         
         .header-left {
             display: flex;
@@ -1280,6 +1674,268 @@
             .action-button { width: 160px; font-size: 12px; }
             .timer-value { font-size: 16px; }
         }
+
+        /* User Menu Styles */
+        .user-menu-container {
+            position: relative;
+        }
+
+        .user-menu-button {
+            background: var(--primary-teal);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .user-menu-button:hover {
+            background: var(--primary-navy);
+        }
+
+        .menu-chevron {
+            transition: transform 0.2s ease;
+        }
+
+        .user-menu-button.open .menu-chevron {
+            transform: rotate(180deg);
+        }
+
+        .user-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 160px;
+            z-index: 1000;
+            margin-top: 4px;
+        }
+
+        .menu-section {
+            padding: 8px 0;
+        }
+
+        .menu-header {
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-teal);
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 4px;
+        }
+
+        .menu-item {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-cream);
+        }
+
+        .menu-icon {
+            font-size: 14px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 4px 0;
+        }
+
+        /* Help Modal Styles */
+        .help-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .help-modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .help-modal-header {
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        }
+
+        .help-modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-teal);
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .help-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-teal);
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .help-close-btn:hover {
+            background: rgba(26, 91, 91, 0.1);
+        }
+
+        .help-modal-body {
+            padding: 24px;
+        }
+
+        .help-section {
+            margin-bottom: 24px;
+        }
+
+        .help-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-teal);
+            margin: 0 0 12px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .help-section p, .help-section li {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .help-section ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .help-step {
+            background: var(--bg-cream);
+            border-left: 4px solid var(--primary-orange);
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .help-step strong {
+            color: var(--primary-teal);
+        }
+
+        .help-tip {
+            background: rgba(26, 91, 91, 0.05);
+            border: 1px solid rgba(26, 91, 91, 0.2);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        .help-tip strong {
+            color: var(--primary-teal);
+        }
+
+        /* Profile Modal Styles */
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .profile-modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        .profile-modal-header {
+            background: var(--primary-teal);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+
+        .profile-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .profile-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-modal-body {
+            padding: 24px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -1316,13 +1972,46 @@
                         </div>
                     </div>
                     <div class="header-right">
-                        <div id="userInfo" style="display: none; font-size: 12px; text-align: right;">
-                            <div id="userName" style="font-weight: 600; color: var(--primary-teal);"></div>
-                            <button onclick="signOut()" style="font-size: 10px; background: none; border: 1px solid var(--primary-orange); color: var(--primary-orange); padding: 2px 8px; border-radius: 4px; cursor: pointer; margin-top: 4px;">Sign Out</button>
+                        <div id="userMenuContainer" class="user-menu-container">
+                            <!-- User Menu Button -->
+                            <button id="userMenuButton" class="user-menu-button" onclick="toggleUserMenu()">
+                                <span id="userMenuText">Sign In</span>
+                                <svg class="menu-chevron" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                                    <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                            </button>
+                            
+                            <!-- User Menu Dropdown -->
+                            <div id="userMenuDropdown" class="user-menu-dropdown" style="display: none;">
+                                <div id="signedOutMenu" class="menu-section">
+                                    <button class="menu-item" onclick="signIn()">
+                                        <span class="menu-icon">👤</span>
+                                        Sign In
+                                    </button>
+                                    <button class="menu-item" onclick="showHelpModal()">
+                                        <span class="menu-icon">❓</span>
+                                        How to Play
+                                    </button>
+                                </div>
+                                
+                                <div id="signedInMenu" class="menu-section" style="display: none;">
+                                    <div class="menu-header" id="menuUserName">Detective</div>
+                                    <button class="menu-item" onclick="showProfileModal()">
+                                        <span class="menu-icon">👤</span>
+                                        Profile
+                                    </button>
+                                    <button class="menu-item" onclick="showHelpModal()">
+                                        <span class="menu-icon">❓</span>
+                                        How to Play
+                                    </button>
+                                    <div class="menu-divider"></div>
+                                    <button class="menu-item" onclick="signOut()">
+                                        <span class="menu-icon">🚪</span>
+                                        Sign Out
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <button id="signInButton" onclick="signIn()" style="background: var(--primary-teal); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Courier New', monospace;">
-                            Sign In
-                        </button>
                     </div>
                 </div>
             </div>
@@ -2556,21 +3245,29 @@
         }
         
         function updateUserUI() {
+            const userMenuText = document.getElementById('userMenuText');
+            const signedOutMenu = document.getElementById('signedOutMenu');
+            const signedInMenu = document.getElementById('signedInMenu');
+            const menuUserName = document.getElementById('menuUserName');
+            
             if (currentUser) {
-                document.getElementById('signInButton').style.display = 'none';
-                document.getElementById('userInfo').style.display = 'block';
-                document.getElementById('userName').textContent = currentUser.username || currentUser.name || currentUser.fullName;
+                // Update button text to show username
+                userMenuText.textContent = currentUser.username || currentUser.name || currentUser.fullName;
+                
+                // Show signed-in menu, hide signed-out menu
+                signedOutMenu.style.display = 'none';
+                signedInMenu.style.display = 'block';
+                
+                // Update user name in menu
+                menuUserName.textContent = `Detective ${currentUser.username || currentUser.name || currentUser.fullName}`;
             } else {
-                document.getElementById('signInButton').style.display = 'block';
-                document.getElementById('userInfo').style.display = 'none';
+                // Show "Sign In" text
+                userMenuText.textContent = 'Sign In';
+                
+                // Show signed-out menu, hide signed-in menu
+                signedOutMenu.style.display = 'block';
+                signedInMenu.style.display = 'none';
             }
-        }
-        
-        function signOut() {
-            google.accounts.id.disableAutoSelect();
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            updateUserUI();
         }
         
         async function savePendingGameResult() {
@@ -2632,6 +3329,241 @@
             savedResults.push(result);
             localStorage.setItem('gameResults', JSON.stringify(savedResults));
         };
+
+        // User Menu Functions
+        function toggleUserMenu() {
+            const button = document.getElementById('userMenuButton');
+            const dropdown = document.getElementById('userMenuDropdown');
+            const isOpen = dropdown.style.display === 'block';
+            
+            if (isOpen) {
+                dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
+                button.classList.remove('open');
+            } else {
+                dropdown.style.display = 'block';
+                dropdown.classList.add('show');
+                button.classList.add('open');
+            }
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenuContainer = document.getElementById('userMenuContainer');
+            if (userMenuContainer && !userMenuContainer.contains(event.target)) {
+                const dropdown = document.getElementById('userMenuDropdown');
+                const button = document.getElementById('userMenuButton');
+                if (dropdown && dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                    dropdown.classList.remove('show');
+                    button.classList.remove('open');
+                }
+            }
+        });
+
+        // Help Modal Functions
+        function showHelpModal() {
+            document.getElementById('helpModal').style.display = 'flex';
+            // Close user menu if open
+            const dropdown = document.getElementById('userMenuDropdown');
+            const button = document.getElementById('userMenuButton');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
+                button.classList.remove('open');
+            }
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // Close help modal when clicking outside
+        document.getElementById('helpModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeHelpModal();
+            }
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const helpModal = document.getElementById('helpModal');
+                const profileModal = document.getElementById('profileModal');
+                if (helpModal.style.display === 'block') {
+                    closeHelpModal();
+                }
+                if (profileModal.style.display === 'block') {
+                    closeProfileModal();
+                }
+            }
+        });
+
+        // Profile Modal Functions
+        function showProfileModal() {
+            updateProfileDisplay();
+            document.getElementById('profileModal').style.display = 'flex';
+            // Close user menu if open
+            const dropdown = document.getElementById('userMenuDropdown');
+            const button = document.getElementById('userMenuButton');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
+                button.classList.remove('open');
+            }
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        // Close profile modal when clicking outside
+        document.getElementById('profileModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeProfileModal();
+            }
+        });
+
+        function updateProfileDisplay() {
+            if (currentUser) {
+                document.getElementById('profileUserName').textContent = `${currentUser.name}`;
+                document.getElementById('profileUserEmail').textContent = currentUser.email || '';
+                
+                // Get user stats
+                const userResults = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
+                const casesPlayed = userResults.length;
+                
+                document.getElementById('profileCasesPlayed').textContent = `Cases Solved: ${casesPlayed}`;
+                
+                if (casesPlayed > 0) {
+                    const averageScore = Math.round(userResults.reduce((sum, result) => sum + result.score, 0) / casesPlayed);
+                    const bestTime = Math.min(...userResults.map(result => result.timeTaken));
+                    const bestTimeMinutes = Math.floor(bestTime / 60);
+                    const bestTimeSeconds = bestTime % 60;
+                    
+                    document.getElementById('profileAverageScore').textContent = `Average Score: ${averageScore}`;
+                    document.getElementById('profileBestTime').textContent = `Best Time: ${bestTimeMinutes}m ${bestTimeSeconds}s`;
+                } else {
+                    document.getElementById('profileAverageScore').textContent = 'Average Score: N/A';
+                    document.getElementById('profileBestTime').textContent = 'Best Time: N/A';
+                }
+            } else {
+                document.getElementById('profileUserName').textContent = 'Sign in to track your progress';
+                document.getElementById('profileUserEmail').textContent = '';
+                document.getElementById('profileCasesPlayed').textContent = 'Cases Solved: 0';
+                document.getElementById('profileAverageScore').textContent = 'Average Score: N/A';
+                document.getElementById('profileBestTime').textContent = 'Best Time: N/A';
+            }
+        }
+
+        // Sign out function
+        function signOut() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUserUI();
+            // Close user menu
+            const dropdown = document.getElementById('userMenuDropdown');
+            const button = document.getElementById('userMenuButton');
+            if (dropdown) {
+                dropdown.style.display = 'none';
+                dropdown.classList.remove('show');
+                button.classList.remove('open');
+            }
+        }
+
+        // First-time visit detection and auto-show help
+        function checkFirstTimeVisit() {
+            // Temporarily disabled auto-show to fix loading issues
+            // Will re-enable after confirming manual help access works properly
+            /*
+            const hasVisited = localStorage.getItem('hasVisitedWorldwideChase');
+            if (!hasVisited) {
+                localStorage.setItem('hasVisitedWorldwideChase', 'true');
+                // Show help modal after a short delay, only if no other modals are open
+                setTimeout(() => {
+                    const helpModal = document.getElementById('helpModal');
+                    const profileModal = document.getElementById('profileModal');
+                    // Only show help if neither modal is already open
+                    if (helpModal.style.display !== 'flex' && profileModal.style.display !== 'flex') {
+                        showHelpModal();
+                    }
+                }, 2000);
+            }
+            */
+        }
     </script>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="help-modal">
+        <div class="help-modal-content">
+            <button class="help-close" onclick="closeHelpModal()">&times;</button>
+            <div class="help-modal-header">How to Play</div>
+            <div class="help-content">
+                <div class="help-section">
+                    <h3>🔍 Your Mission</h3>
+                    <p>Track criminals by identifying 3 connected locations using thematic clues and evidence.</p>
+                </div>
+
+                <div class="help-section">
+                    <h3>⏱️ Time Limit</h3>
+                    <p>5 minutes per case. Timer changes color as time runs out.</p>
+                </div>
+
+                <div class="help-section">
+                    <h3>🎲 Investigation Turns</h3>
+                    <ul>
+                        <li><span class="help-turn-indicator">T1</span>Theme + first evidence</li>
+                        <li><span class="help-turn-indicator">T2</span>Timezone differences</li>
+                        <li><span class="help-turn-indicator">T3</span>Clearer evidence</li>
+                        <li><span class="help-turn-indicator">T4</span>Additional clue</li>
+                        <li><span class="help-turn-indicator">T5</span>Final evidence</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h3>🕵️ Tips</h3>
+                    <ul>
+                        <li>Click photos to examine closely</li>
+                        <li>Use theme and Turn 4 clue</li>
+                        <li>Look for landmarks</li>
+                        <li>Check timezone hints</li>
+                    </ul>
+                </div>
+
+                <div class="help-section">
+                    <h3>🏆 Scoring</h3>
+                    <p>Faster solving = higher detective ranking!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <button class="profile-close" onclick="closeProfileModal()">&times;</button>
+            <div class="profile-modal-header">Detective Profile</div>
+            <div class="profile-content">
+                <div class="help-section">
+                    <h3>👤 Account Details</h3>
+                    <p id="profileUserName">Sign in to track your progress</p>
+                    <p id="profileUserEmail"></p>
+                </div>
+
+                <div class="help-section">
+                    <h3>📊 Detective Stats</h3>
+                    <p id="profileCasesPlayed">Cases Solved: 0</p>
+                    <p id="profileAverageScore">Average Score: N/A</p>
+                    <p id="profileBestTime">Best Time: N/A</p>
+                </div>
+
+                <div class="help-section">
+                    <h3>🎖️ Achievements</h3>
+                    <p>Coming soon - Track your detective accomplishments!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
