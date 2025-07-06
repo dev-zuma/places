@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Game - Places Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <a href="/admin/" class="back-link">← Back to Dashboard</a>
+            <h1>Generate New Game</h1>
+        </header>
+
+        <main class="admin-main">
+            <div class="generate-form-container">
+                <form id="generateForm" class="generate-form">
+                    <div class="form-instructions">
+                        <p>🤖 Let AI generate a complete crime case! Just provide a theme or let AI surprise you.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userInput">Theme or Description (Optional)</label>
+                        <textarea id="userInput" name="userInput" rows="3" 
+                                  placeholder="Examples:&#10;• coastal cities&#10;• ancient civilizations&#10;• mountain towns with skiing&#10;• Leave blank for AI to choose!">
+                        </textarea>
+                        <small>Describe what kind of locations you want, or leave blank for a random theme</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specificLocations">Specific Locations (Optional)</label>
+                        <input type="text" id="specificLocations" name="specificLocations" 
+                               placeholder="e.g., Paris, Tokyo, New York">
+                        <small>Specify 3 exact cities/countries, or leave blank for AI to choose</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="auto">Auto (AI decides)</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+
+                    <!-- NEW: Crime Story Options -->
+                    <fieldset class="crime-settings">
+                        <legend>🕵️ Crime Story Settings</legend>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="autoGenerateVillain" checked>
+                                Auto-generate villain and story
+                            </label>
+                            <small>Let AI create a unique villain character and crime story</small>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="kidFriendly" checked>
+                                Ensure kid-friendly content
+                            </label>
+                            <small>Keep all content appropriate for ages 8-16</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="crimeType">Crime Type</label>
+                            <select id="crimeType" name="crimeType">
+                                <option value="auto">Auto-select based on theme</option>
+                                <option value="theft">Theft/Heist</option>
+                                <option value="smuggling">Smuggling</option>
+                                <option value="vandalism">Vandalism</option>
+                                <option value="mystery">Mystery</option>
+                            </select>
+                            <small>Type of crime for the detective story</small>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="generate-btn" id="generateBtn">
+                        🕵️ Generate Crime Case
+                    </button>
+                </form>
+            </div>
+
+            <div id="generationStatus" class="generation-status hidden">
+                <div class="status-header">
+                    <h2>Generation in Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressText">Starting...</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+
+                <div class="status-steps">
+                    <div class="step" data-step="game_content">
+                        <div class="step-icon">📝</div>
+                        <span>Generate game content</span>
+                    </div>
+                    <div class="step" data-step="crime_wrapper">
+                        <div class="step-icon">🕵️</div>
+                        <span>Generate villain and story</span>
+                    </div>
+                    <div class="step" data-step="villain_portrait">
+                        <div class="step-icon">👤</div>
+                        <span>Generate villain portrait</span>
+                    </div>
+                    <div class="step" data-step="turn4_clue">
+                        <div class="step-icon">🔍</div>
+                        <span>Generate breakthrough clue</span>
+                    </div>
+                    <div class="step" data-step="interesting_fact">
+                        <div class="step-icon">💡</div>
+                        <span>Generate educational fact</span>
+                    </div>
+                    <div class="step" data-step="image_1_1">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 1 - Image 1</span>
+                    </div>
+                    <div class="step" data-step="image_1_2">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 1 - Image 2</span>
+                    </div>
+                    <div class="step" data-step="image_1_3">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 1 - Image 3</span>
+                    </div>
+                    <div class="step" data-step="image_2_1">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 2 - Image 1</span>
+                    </div>
+                    <div class="step" data-step="image_2_2">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 2 - Image 2</span>
+                    </div>
+                    <div class="step" data-step="image_2_3">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 2 - Image 3</span>
+                    </div>
+                    <div class="step" data-step="image_3_1">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 3 - Image 1</span>
+                    </div>
+                    <div class="step" data-step="image_3_2">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 3 - Image 2</span>
+                    </div>
+                    <div class="step" data-step="image_3_3">
+                        <div class="step-icon">🖼️</div>
+                        <span>Generate Location 3 - Image 3</span>
+                    </div>
+                </div>
+
+                <div class="status-actions">
+                    <button class="cancel-btn" id="cancelBtn">Cancel Generation</button>
+                </div>
+            </div>
+
+            <div id="generationResult" class="generation-result hidden">
+                <div class="result-header">
+                    <h2 id="resultTitle">Generation Complete!</h2>
+                </div>
+                <div id="resultContent"></div>
+                <div class="result-actions">
+                    <button class="view-game-btn" id="viewGameBtn">View Game Details</button>
+                    <button class="generate-another-btn" id="generateAnotherBtn">Generate Another</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentGenerationId = null;
+        let pollInterval = null;
+
+        document.getElementById('generateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                document.getElementById('generateBtn').disabled = true;
+                document.getElementById('generateBtn').textContent = 'Starting...';
+                
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    alert('Error: ' + result.error);
+                    document.getElementById('generateBtn').disabled = false;
+                    document.getElementById('generateBtn').textContent = '🎲 Generate Game';
+                    return;
+                }
+                
+                currentGenerationId = result.gameId;
+                
+                // Show generation status
+                document.querySelector('.generate-form-container').classList.add('hidden');
+                document.getElementById('generationStatus').classList.remove('hidden');
+                
+                // Start polling for status
+                startStatusPolling();
+                
+            } catch (error) {
+                console.error('Error starting generation:', error);
+                alert('Error starting generation: ' + error.message);
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = '🎲 Generate Game';
+            }
+        });
+
+        function startStatusPolling() {
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/generate/${currentGenerationId}/status`);
+                    const status = await response.json();
+                    
+                    updateGenerationStatus(status);
+                    
+                    if (status.status === 'completed' || status.status === 'failed') {
+                        clearInterval(pollInterval);
+                        showGenerationResult(status);
+                    }
+                } catch (error) {
+                    console.error('Error polling status:', error);
+                }
+            }, 1000);
+        }
+
+        function updateGenerationStatus(status) {
+            const progress = (status.completedSteps / status.totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            document.getElementById('progressText').textContent = 
+                status.currentStep ? `Step: ${status.currentStep.replace('_', ' ')}` : 'Processing...';
+            
+            // Update step indicators
+            document.querySelectorAll('.step').forEach(step => {
+                const stepName = step.dataset.step;
+                if (status.currentStep === stepName) {
+                    step.classList.add('active');
+                } else if (status.completedSteps > 0) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+
+        function showGenerationResult(status) {
+            document.getElementById('generationStatus').classList.add('hidden');
+            document.getElementById('generationResult').classList.remove('hidden');
+            
+            if (status.status === 'completed') {
+                document.getElementById('resultTitle').textContent = 'Generation Complete!';
+                document.getElementById('resultContent').innerHTML = `
+                    <div class="success-message">
+                        <p>Your game has been generated successfully!</p>
+                        <p><strong>Game ID:</strong> ${currentGenerationId}</p>
+                    </div>
+                `;
+                document.getElementById('viewGameBtn').onclick = () => {
+                    window.location.href = `/admin/game-details.html?id=${currentGenerationId}`;
+                };
+            } else {
+                document.getElementById('resultTitle').textContent = 'Generation Failed';
+                document.getElementById('resultContent').innerHTML = `
+                    <div class="error-message">
+                        <p>Generation failed: ${status.error || 'Unknown error'}</p>
+                    </div>
+                `;
+                document.getElementById('viewGameBtn').style.display = 'none';
+            }
+        }
+
+        document.getElementById('generateAnotherBtn').addEventListener('click', () => {
+            window.location.reload();
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to cancel the generation?')) {
+                if (pollInterval) clearInterval(pollInterval);
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>

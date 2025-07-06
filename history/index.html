@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case History - Worldwide Chase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(26, 91, 91, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 69, 0, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #2C3E50 0%, #1A252F 100%);
+            min-height: 100vh;
+            color: #1A1A1A;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: 
+                linear-gradient(180deg, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 41px, transparent 41px),
+                #FFF8DC;
+            background-size: 100% 42px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A5B5B;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        .sign-in-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sign-in-button {
+            background: #1A5B5B;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .sign-in-button:hover {
+            background: #FF4500;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1A5B5B;
+            margin-bottom: 4px;
+        }
+
+        .sign-out-button {
+            font-size: 12px;
+            background: none;
+            border: 1px solid #FF4500;
+            color: #FF4500;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sign-out-button:hover {
+            background: #FF4500;
+            color: white;
+        }
+
+        /* Sign In Prompt */
+        .sign-in-prompt {
+            background: #FFF8DC;
+            padding: 60px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .sign-in-prompt h2 {
+            color: #1A5B5B;
+            margin-bottom: 16px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sign-in-prompt p {
+            color: #4A5568;
+            margin-bottom: 24px;
+        }
+
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #FFF8DC;
+            border: 2px solid #1A5B5B;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border-color: #FF4500;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FF4500;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #4A5568;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* History Table */
+        .history-container {
+            background: #FFF8DC;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .history-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1A5B5B;
+            font-family: 'Courier New', monospace;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-button {
+            background: none;
+            border: 2px solid #1A5B5B;
+            color: #1A5B5B;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .filter-button.active {
+            background: #1A5B5B;
+            color: white;
+        }
+
+        .filter-button:hover:not(.active) {
+            background: rgba(26, 91, 91, 0.1);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: white;
+            border: 1px solid #E8D5B7;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: rgba(26, 91, 91, 0.05);
+            border-color: #FF4500;
+            transform: translateX(4px);
+        }
+
+        .history-item.captured {
+            border-left: 4px solid #1A5B5B;
+        }
+
+        .history-item.escaped {
+            border-left: 4px solid #DC2626;
+        }
+
+        .case-info {
+            flex: 1;
+        }
+
+        .case-title {
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+        }
+
+        .case-details {
+            font-size: 12px;
+            color: #4A5568;
+        }
+
+        .case-stats {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .case-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FF4500;
+        }
+
+        .case-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .status-captured {
+            background: #1A5B5B;
+            color: white;
+        }
+
+        .status-escaped {
+            background: #DC2626;
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #4A5568;
+        }
+
+        .empty-state h3 {
+            color: #1A5B5B;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .play-button {
+            background: #FF4500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .play-button:hover {
+            background: #E63E00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <img src="../game/wwc-logo.png" alt="Worldwide Chase" class="logo">
+                <h1 class="page-title">Case History</h1>
+            </div>
+            <div class="sign-in-area">
+                <div id="userInfo" class="user-info" style="display: none;">
+                    <div id="userName" class="user-name"></div>
+                    <button onclick="signOut()" class="sign-out-button">Sign Out</button>
+                </div>
+                <button id="signInButton" onclick="signIn()" class="sign-in-button">
+                    Sign In with Google
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <!-- Sign In Prompt (shown when not signed in) -->
+            <div id="signInPrompt" class="sign-in-prompt">
+                <h2>Sign in to view your case history</h2>
+                <p>Track your progress, view your captures, and compete with other detectives worldwide.</p>
+                <button onclick="signIn()" class="sign-in-button">
+                    Sign In with Google
+                </button>
+            </div>
+
+            <!-- History Content (shown when signed in) -->
+            <div id="historyContent" style="display: none;">
+                <!-- Stats Summary -->
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalCases">0</div>
+                        <div class="stat-label">Total Cases</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="captureRate">0%</div>
+                        <div class="stat-label">Capture Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bestScore">0</div>
+                        <div class="stat-label">Best Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgTime">0:00</div>
+                        <div class="stat-label">Average Time</div>
+                    </div>
+                </div>
+
+                <!-- History List -->
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2 class="history-title">Recent Cases</h2>
+                        <div class="filter-controls">
+                            <button class="filter-button active" onclick="filterHistory('all')">All</button>
+                            <button class="filter-button" onclick="filterHistory('captured')">Captured</button>
+                            <button class="filter-button" onclick="filterHistory('escaped')">Escaped</button>
+                        </div>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <!-- History items will be populated here -->
+                    </div>
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <h3>No cases found</h3>
+                        <p>Start playing to build your case history!</p>
+                        <a href="../game/" class="play-button">Play Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentFilter = 'all';
+        let userHistory = [];
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already signed in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUI();
+                loadUserHistory();
+            }
+        });
+        
+        // Initialize Google Sign-In when script loads
+        async function initializeGoogleSignIn() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                try {
+                    // Fetch Google Client ID from server
+                    const configResponse = await fetch('/api/config');
+                    const config = await configResponse.json();
+                    
+                    if (config.googleClientId) {
+                        google.accounts.id.initialize({
+                            client_id: config.googleClientId,
+                            callback: handleCredentialResponse,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                    } else {
+                        console.error('Google Client ID not configured on server');
+                    }
+                } catch (error) {
+                    console.error('Failed to load Google Client ID:', error);
+                }
+            } else {
+                // Retry after a short delay if Google script hasn't loaded yet
+                setTimeout(initializeGoogleSignIn, 100);
+            }
+        }
+        
+        // Start initialization
+        initializeGoogleSignIn();
+
+        function signIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                console.error('Google Sign-In not loaded');
+                alert('Google Sign-In is not available. Please try refreshing the page.');
+                return;
+            }
+            
+            // Skip One Tap and go directly to popup to avoid FedCM issues
+            renderSignInButton();
+        }
+        
+        function renderSignInButton() {
+            // Create a temporary container for the sign-in button
+            const tempContainer = document.createElement('div');
+            tempContainer.id = 'tempSignInContainer';
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.top = '50%';
+            tempContainer.style.left = '50%';
+            tempContainer.style.transform = 'translate(-50%, -50%)';
+            tempContainer.style.zIndex = '10000';
+            tempContainer.style.background = 'white';
+            tempContainer.style.padding = '20px';
+            tempContainer.style.borderRadius = '12px';
+            tempContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+            tempContainer.style.textAlign = 'center';
+            
+            tempContainer.innerHTML = `
+                <h3 style="margin: 0 0 16px 0; color: #1A5B5B;">Sign In to Worldwide Chase</h3>
+                <div id="googleSignInButton"></div>
+                <button onclick="closeSignInModal()" style="margin-top: 12px; background: none; border: 1px solid #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
+            `;
+            
+            document.body.appendChild(tempContainer);
+            
+            // Render Google Sign-In button
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInButton'),
+                {
+                    theme: 'outline',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'rectangular'
+                }
+            );
+        }
+        
+        function closeSignInModal() {
+            const modal = document.getElementById('tempSignInContainer');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function handleCredentialResponse(response) {
+            // Close sign-in modal if open
+            closeSignInModal();
+            
+            // Decode JWT token
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            currentUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Update UI and load history
+            updateUI();
+            loadUserHistory();
+        }
+
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('signInButton').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userName').textContent = currentUser.username || currentUser.name || currentUser.fullName;
+                document.getElementById('signInPrompt').style.display = 'none';
+                document.getElementById('historyContent').style.display = 'block';
+            } else {
+                document.getElementById('signInButton').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('signInPrompt').style.display = 'block';
+                document.getElementById('historyContent').style.display = 'none';
+            }
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUI();
+        }
+
+        async function loadUserHistory() {
+            if (!currentUser) return;
+
+            // Load from localStorage (would be API call in production)
+            userHistory = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
+            
+            // Sort by timestamp (newest first)
+            userHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Update stats
+            updateStats();
+            
+            // Display history
+            displayHistory();
+        }
+
+        function updateStats() {
+            const totalCases = userHistory.length;
+            const capturedCases = userHistory.filter(h => h.captured).length;
+            const captureRate = totalCases > 0 ? Math.round((capturedCases / totalCases) * 100) : 0;
+            const bestScore = userHistory.reduce((max, h) => Math.max(max, h.score || 0), 0);
+            
+            // Calculate average time
+            const totalTime = userHistory.reduce((sum, h) => sum + (h.timeTaken || 0), 0);
+            const avgTimeSeconds = totalCases > 0 ? Math.round(totalTime / totalCases) : 0;
+            const avgMinutes = Math.floor(avgTimeSeconds / 60);
+            const avgSeconds = avgTimeSeconds % 60;
+            
+            document.getElementById('totalCases').textContent = totalCases;
+            document.getElementById('captureRate').textContent = captureRate + '%';
+            document.getElementById('bestScore').textContent = bestScore;
+            document.getElementById('avgTime').textContent = `${avgMinutes}:${avgSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function displayHistory() {
+            const historyList = document.getElementById('historyList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Filter history based on current filter
+            let filteredHistory = userHistory;
+            if (currentFilter === 'captured') {
+                filteredHistory = userHistory.filter(h => h.captured);
+            } else if (currentFilter === 'escaped') {
+                filteredHistory = userHistory.filter(h => !h.captured);
+            }
+            
+            if (filteredHistory.length === 0) {
+                historyList.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            historyList.style.display = 'flex';
+            emptyState.style.display = 'none';
+            
+            // Build history HTML
+            historyList.innerHTML = filteredHistory.map(item => {
+                const date = new Date(item.timestamp);
+                const dateStr = date.toLocaleDateString();
+                const timeStr = date.toLocaleTimeString();
+                const minutes = Math.floor(item.timeTaken / 60);
+                const seconds = item.timeTaken % 60;
+                
+                return `
+                    <div class="history-item ${item.captured ? 'captured' : 'escaped'}" onclick="viewResult('${item.caseId}')">
+                        <div class="case-info">
+                            <div class="case-title">Case #${item.caseId}</div>
+                            <div class="case-details">
+                                ${dateStr} at ${timeStr} • ${item.locationsFound}/3 locations • ${minutes}:${seconds.toString().padStart(2, '0')}
+                            </div>
+                        </div>
+                        <div class="case-stats">
+                            <div class="case-score">${item.score} pts</div>
+                            <div class="case-status ${item.captured ? 'status-captured' : 'status-escaped'}">
+                                ${item.captured ? 'CAPTURED' : 'ESCAPED'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterHistory(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Re-display history
+            displayHistory();
+        }
+
+        function viewResult(caseId) {
+            window.location.href = `../result/?caseId=${caseId}`;
+        }
+    </script>
+</body>
+</html>

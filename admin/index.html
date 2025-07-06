@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Places Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <!-- Authentication Gate -->
+    <div id="authGate" class="auth-gate" style="display: none;">
+        <div class="auth-content">
+            <h1>Places Admin Portal</h1>
+            <p>Administrator access required</p>
+            <button id="adminSignInButton" class="admin-auth-button">Sign In with Google</button>
+        </div>
+    </div>
+
+    <!-- Main Admin Content -->
+    <div id="adminContent" class="admin-container" style="display: none;">
+        <header class="admin-header">
+            <h1>Places Admin Portal</h1>
+            <div class="header-actions">
+                <div class="admin-user-info">
+                    <span id="adminUserName"></span>
+                    <button id="adminSignOutButton" class="admin-sign-out">Sign Out</button>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <span class="stat-value" id="totalGames">0</span>
+                    <span class="stat-label">Total Games</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="publishedGames">0</span>
+                    <span class="stat-label">Published</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="draftGames">0</span>
+                    <span class="stat-label">Drafts</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="action-cards">
+                <a href="/admin/generate.html" class="action-card generate-card">
+                    <div class="card-icon">🎲</div>
+                    <h2>Generate New Game</h2>
+                    <p>Create a new Places game with AI-generated content and images</p>
+                </a>
+
+                <a href="/admin/games.html" class="action-card games-card">
+                    <div class="card-icon">📚</div>
+                    <h2>Manage Games</h2>
+                    <p>View, edit, and publish existing games</p>
+                </a>
+
+                <div class="action-card data-card">
+                    <div class="card-icon">🗑️</div>
+                    <h2>Data Management</h2>
+                    <p>Clear user data and database for testing</p>
+                    <button id="clearUserDataBtn" class="clear-data-btn">Clear User Data</button>
+                    <button id="clearDatabaseBtn" class="clear-data-btn" style="margin-top: 8px; background: rgba(220, 53, 69, 0.8);">Clear Database</button>
+                </div>
+            </div>
+
+            <section class="recent-games">
+                <h2>Recent Games</h2>
+                <div id="recentGamesList" class="games-list">
+                    <div class="loading">Loading recent games...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Admin authentication
+        const ADMIN_EMAIL = 'adnanzuma@gmail.com';
+        let currentAdmin = null;
+
+        // Initialize Google Sign-In for admin
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAdminAuth();
+            checkAdminAuth();
+        });
+
+        async function initializeAdminAuth() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                try {
+                    const configResponse = await fetch('/api/config');
+                    const config = await configResponse.json();
+                    
+                    if (config.googleClientId) {
+                        google.accounts.id.initialize({
+                            client_id: config.googleClientId,
+                            callback: handleAdminCredentialResponse,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to load Google Client ID:', error);
+                }
+            } else {
+                setTimeout(initializeAdminAuth, 100);
+            }
+        }
+
+        function checkAdminAuth() {
+            const savedAdmin = localStorage.getItem('adminUser');
+            if (savedAdmin) {
+                const admin = JSON.parse(savedAdmin);
+                if (admin.email === ADMIN_EMAIL) {
+                    currentAdmin = admin;
+                    showAdminContent();
+                    return;
+                }
+            }
+            showAuthGate();
+        }
+
+        function showAuthGate() {
+            document.getElementById('authGate').style.display = 'flex';
+            document.getElementById('adminContent').style.display = 'none';
+        }
+
+        function showAdminContent() {
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            if (currentAdmin) {
+                document.getElementById('adminUserName').textContent = currentAdmin.name;
+            }
+            loadDashboardStats();
+        }
+
+        function signInAdmin() {
+            google.accounts.id.renderButton(
+                document.getElementById('adminSignInButton'),
+                {
+                    theme: 'outline',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'rectangular'
+                }
+            );
+        }
+
+        function handleAdminCredentialResponse(response) {
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            if (responsePayload.email !== ADMIN_EMAIL) {
+                alert('Access denied. Only authorized administrators can access this portal.');
+                return;
+            }
+
+            currentAdmin = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+
+            localStorage.setItem('adminUser', JSON.stringify(currentAdmin));
+            showAdminContent();
+        }
+
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function signOutAdmin() {
+            google.accounts.id.disableAutoSelect();
+            currentAdmin = null;
+            localStorage.removeItem('adminUser');
+            showAuthGate();
+        }
+
+        // Clear user data functionality
+        function clearAllUserData() {
+            if (!confirm('Are you sure you want to clear ALL user data and game history? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                // Clear all user-related data from localStorage
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('user_') || 
+                        key.startsWith('userResults_') || 
+                        key === 'currentUser' || 
+                        key === 'gameResults') {
+                        keysToRemove.push(key);
+                    }
+                }
+
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+
+                // Also clear session storage
+                const sessionKeysToRemove = [];
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    if (key === 'lastGameResult' || 
+                        key === 'lastGameCase' || 
+                        key === 'resultSaved' ||
+                        key === 'pendingGameResult') {
+                        sessionKeysToRemove.push(key);
+                    }
+                }
+
+                sessionKeysToRemove.forEach(key => sessionStorage.removeItem(key));
+
+                alert(`Successfully cleared user data!\n\nRemoved:\n- ${keysToRemove.length} localStorage items\n- ${sessionKeysToRemove.length} sessionStorage items\n\nUsers will now see the signup flow again.`);
+                
+            } catch (error) {
+                console.error('Error clearing user data:', error);
+                alert('Error clearing user data. Check console for details.');
+            }
+        }
+
+        // Clear database functionality
+        function clearDatabase() {
+            if (!confirm('Are you sure you want to clear the ENTIRE DATABASE? This will remove ALL games, cases, and data. This action cannot be undone.')) {
+                return;
+            }
+            
+            if (!confirm('FINAL WARNING: This will permanently delete all games, cases, and admin data. Type "DELETE" in the next prompt to confirm.')) {
+                return;
+            }
+            
+            const confirmation = prompt('Type "DELETE" to confirm database cleanup:');
+            if (confirmation !== 'DELETE') {
+                alert('Database cleanup cancelled.');
+                return;
+            }
+            
+            fetch('/api/admin/clear-database', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    adminEmail: currentAdmin.email,
+                    confirmation: 'DELETE'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Database cleared successfully!');
+                    loadDashboardStats(); // Refresh stats
+                } else {
+                    alert('Error clearing database: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error clearing database:', error);
+                alert('Error clearing database. Check console for details.');
+            });
+        }
+        
+        // Event listeners
+        document.getElementById('adminSignInButton').addEventListener('click', signInAdmin);
+        document.getElementById('adminSignOutButton').addEventListener('click', signOutAdmin);
+        document.getElementById('clearUserDataBtn').addEventListener('click', clearAllUserData);
+        document.getElementById('clearDatabaseBtn').addEventListener('click', clearDatabase);
+
+    </script>
+    <script>
+        // Fetch dashboard stats
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('/api/games');
+                const games = await response.json();
+                
+                document.getElementById('totalGames').textContent = games.length;
+                document.getElementById('publishedGames').textContent = 
+                    games.filter(g => g.isPublished).length;
+                document.getElementById('draftGames').textContent = 
+                    games.filter(g => !g.isPublished).length;
+                
+                // Load recent games
+                const recentGames = games.slice(0, 5);
+                const recentGamesHtml = recentGames.length > 0 ? recentGames.map(game => `
+                    <div class="game-item">
+                        <div class="game-info">
+                            <h3>${game.theme}</h3>
+                            <p>${game.phrase}</p>
+                            <span class="game-meta">
+                                ${new Date(game.createdAt).toLocaleDateString()} • 
+                                ${game.difficulty} • 
+                                ${game.isPublished ? 'Published' : 'Draft'}
+                            </span>
+                        </div>
+                        <a href="/admin/game-details.html?id=${game.id}" class="view-btn">View</a>
+                    </div>
+                `).join('') : '<p class="no-games">No games created yet</p>';
+                
+                document.getElementById('recentGamesList').innerHTML = recentGamesHtml;
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+                document.getElementById('recentGamesList').innerHTML = 
+                    '<p class="error">Error loading games</p>';
+            }
+        }
+
+        // Load stats on page load
+        loadDashboardStats();
+    </script>
+</body>
+</html>

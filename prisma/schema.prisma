@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Game {
+  id          String   @id @default(cuid())
+  theme       String
+  phrase      String
+  category    String
+  difficulty  String
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // NEW CRIME WRAPPER FIELDS
+  villainName      String   // e.g., "Dr. Cocoa"
+  villainTitle     String   // e.g., "The Cacao Queen"
+  caseTitle        String   // e.g., "The Great Chocolate Heist"
+  crimeSummary     String   // Story connecting the crime to locations
+  villainImageUrl  String?  // 512x512 cartoon portrait
+  turn4Clue        String   // Single word/phrase for Turn 4
+  interestingFact  String   // Educational fact revealed after solving
+  
+  locations   Location[]
+  generations Generation[]
+  playerCases PlayerCase[] // Track which players solved this case
+}
+
+model Location {
+  id           String  @id @default(cuid())
+  gameId       String
+  position     Int     // 1, 2, or 3
+  name         String
+  country      String  // NEW: Country name for better context
+  latitude     Float
+  longitude    Float
+  timezoneOffset Int   // Offset from UTC in hours
+  timezoneName String
+  landmarks    String  // JSON string array
+  image1Url    String? // Turn 1 - Most obscure
+  image2Url    String? // Turn 3 - Medium difficulty  
+  image3Url    String? // Turn 5 - Most revealing
+  
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  
+  @@unique([gameId, position])
+}
+
+model Generation {
+  id              String   @id @default(cuid())
+  gameId          String
+  status          String   // pending, generating, completed, failed
+  currentStep     String?  // game_content, image_1_1, image_1_2, etc.
+  totalSteps      Int      @default(10)
+  completedSteps  Int      @default(0)
+  error           String?
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// NEW: Player case tracking
+model PlayerCase {
+  id          String   @id @default(cuid())
+  playerId    String
+  gameId      String
+  solvedAt    DateTime @default(now())
+  turnsUsed   Int      // How many turns it took to solve
+  pointsEarned Int     // Points awarded for this case
+  
+  player Player @relation(fields: [playerId], references: [id])
+  game   Game   @relation(fields: [gameId], references: [id])
+  
+  @@unique([playerId, gameId])
+}
+
+// NEW: Player profiles
+model Player {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  totalCases  Int      @default(0)
+  totalPoints Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  solvedCases PlayerCase[]
+}

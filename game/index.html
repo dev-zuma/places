@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worldwide Chase - Case Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            /* Logo-inspired color palette */
+            --primary-teal: #1A5B5B;
+            --primary-orange: #FF4500;
+            --primary-gold: #FFD700;
+            --primary-navy: #1F2937;
+            --primary-cream: #F5F5DC;
+            
+            /* Turn colors matching the adventure theme */
+            --turn-1-color: #1A5B5B;
+            --turn-2-color: #FF4500;
+            --turn-3-color: #FFD700;
+            --turn-4-color: #FF6B35;
+            --turn-5-color: #1F2937;
+            
+            /* Background and UI colors */
+            --bg-light: #FDF6E3;
+            --bg-card: #FFFFFF;
+            --bg-cream: #F5F5DC;
+            --border-light: #E8D5B7;
+            --text-primary: #1F2937;
+            --text-secondary: #4A5568;
+            --text-light: #9CA3AF;
+            
+            /* Status colors */
+            --success: #1A5B5B;
+            --error: #DC2626;
+            --case-badge: #FF4500;
+            --evidence-color: #1A5B5B;
+            --chase-color: #FFD700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 69, 0, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 70% 80%, rgba(255, 215, 0, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 20% 70%, rgba(26, 91, 91, 0.2) 0%, transparent 40%),
+                linear-gradient(135deg, #1A5B5B 0%, #2D4A4A 50%, #1F3A3A 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            animation: backgroundShift 15s ease-in-out infinite alternate;
+        }
+        
+        @keyframes backgroundShift {
+            0% { 
+                filter: hue-rotate(0deg) brightness(1) contrast(1.1); 
+                background-position: 0% 0%, 100% 100%, 50% 50%;
+            }
+            100% { 
+                filter: hue-rotate(10deg) brightness(1.1) contrast(1.15); 
+                background-position: 5% 5%, 95% 95%, 45% 55%;
+            }
+        }
+        
+        /* Retro starburst background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 15%, transparent 20%, rgba(255, 69, 0, 0.08) 20.5%, rgba(255, 69, 0, 0.08) 25%, transparent 25.5%),
+                radial-gradient(circle at 85% 85%, transparent 20%, rgba(255, 215, 0, 0.08) 20.5%, rgba(255, 215, 0, 0.08) 25%, transparent 25.5%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(255, 69, 0, 0.25) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 220, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 
+                0 12px 40px rgba(26, 91, 91, 0.2),
+                0 4px 16px rgba(255, 69, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            text-align: center;
+            border: 3px solid rgba(255, 215, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                rgba(255, 215, 0, 0.06) 5deg,
+                transparent 10deg,
+                rgba(255, 69, 0, 0.04) 15deg,
+                transparent 20deg
+            );
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-logo {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 16px;
+        }
+        
+        .main-logo {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 6px 12px rgba(26, 91, 91, 0.4));
+            transition: all 0.3s ease;
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logoGlow {
+            0% { 
+                filter: drop-shadow(0 6px 12px rgba(26, 91, 91, 0.4));
+                transform: scale(1);
+            }
+            100% { 
+                filter: drop-shadow(0 8px 16px rgba(255, 215, 0, 0.6));
+                transform: scale(1.02);
+            }
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.05);
+            animation-play-state: paused;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 16px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-teal);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Filters */
+        .filters {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* Case Grid */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .case-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(26, 91, 91, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+        }
+        
+        .case-card.captured {
+            opacity: 0.8;
+            filter: saturate(0.7);
+        }
+        
+        .case-card.captured::after {
+            content: 'CAPTURED';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 48px;
+            font-weight: 900;
+            color: #DC2626;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border: 5px dashed #DC2626;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            letter-spacing: 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .case-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(26, 91, 91, 0.2);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .case-header {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-navy) 100%);
+            color: white;
+            padding: 16px;
+            position: relative;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .case-badge {
+            background: var(--case-badge);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .case-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .theme-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .difficulty-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .difficulty-badge.easy { background: var(--success); }
+        .difficulty-badge.medium { background: var(--primary-accent); }
+        .difficulty-badge.hard { background: var(--error); }
+
+        .case-content {
+            padding: 20px;
+        }
+
+        .villain-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .villain-portrait {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--suspect-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .villain-info h3 {
+            margin: 0 0 2px 0;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .villain-title {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--suspect-color);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .crime-summary {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .locations-preview {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .location-chip {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid var(--border-light);
+        }
+
+        .user-stats {
+            background: rgba(26, 91, 91, 0.1);
+            border: 1px solid rgba(26, 91, 91, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .case-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-navy) 100%);
+            color: white;
+            border: 3px solid var(--primary-gold);
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-teal) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+            border-color: var(--primary-gold);
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--text-primary);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Case Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .modal-close:hover {
+            color: #000;
+        }
+        
+        .modal-villain-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .modal-villain-portrait {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-teal);
+        }
+        
+        .modal-section {
+            margin-bottom: 20px;
+        }
+        
+        .modal-section h3 {
+            color: var(--primary-teal);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .location-preview {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+        
+        .location-preview h4 {
+            margin: 0 0 4px 0;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .location-preview p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+        
+        .solve-button {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-navy) 100%);
+            color: white;
+            border: 3px solid var(--primary-gold);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .solve-button:hover {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-teal) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+        }
+        
+        .solve-button:disabled {
+            background: #ccc;
+            border-color: #999;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .solve-button:disabled:hover {
+            background: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Sign In Area */
+        .sign-in-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        
+        .sign-in-button {
+            background: var(--primary-teal);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sign-in-button:hover {
+            background: var(--primary-orange);
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(26, 91, 91, 0.2);
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--primary-teal);
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        
+        .sign-out-button {
+            font-size: 10px;
+            background: none;
+            border: 1px solid var(--primary-orange);
+            color: var(--primary-orange);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                gap: 20px;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cases-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sign In Area -->
+    <div class="sign-in-area">
+        <div id="userInfo" class="user-info" style="display: none;">
+            <div id="userName" class="user-name"></div>
+            <button onclick="signOut()" class="sign-out-button">Sign Out</button>
+        </div>
+        <button id="signInButton" onclick="signIn()" class="sign-in-button">
+            Sign In
+        </button>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-logo">
+                <img src="wwc-logo.png" alt="Worldwide Chase" class="main-logo">
+            </div>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin: 0; font-weight: 500; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Chase suspects across the globe through geography clues</p>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value" id="totalCases">0</span>
+                    <span class="stat-label">Active Cases</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="totalThemes">0</span>
+                    <span class="stat-label">Themes</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="totalCountries">0</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="themeFilter">Theme</label>
+                <select id="themeFilter">
+                    <option value="">All Themes</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="difficultyFilter">Difficulty</label>
+                <select id="difficultyFilter">
+                    <option value="">All Difficulties</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loadingState">
+            <div class="loading-spinner"></div>
+            <h3>Loading Cases...</h3>
+            <p>Gathering intelligence from around the world</p>
+        </div>
+
+        <!-- Cases Grid -->
+        <div class="cases-grid" id="casesGrid" style="display: none;">
+            <!-- Cases will be populated here -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <h3>🔍 No Cases Found</h3>
+            <p>No cases match your current filters. Try adjusting your search criteria.</p>
+        </div>
+    </div>
+    
+    <!-- Case Details Modal -->
+    <div id="caseModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCaseModal()">&times;</button>
+            <div id="modalContent">
+                <!-- Modal content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allCases = [];
+        let filteredCases = [];
+        let currentUser = null;
+        let userHistory = [];
+
+        // Load cases on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeGoogleSignIn();
+            checkUserAuth();
+            await loadCases();
+        });
+        
+        // Initialize Google Sign-In
+        async function initializeGoogleSignIn() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                try {
+                    const configResponse = await fetch('/api/config');
+                    const config = await configResponse.json();
+                    
+                    if (config.googleClientId) {
+                        google.accounts.id.initialize({
+                            client_id: config.googleClientId,
+                            callback: handleCredentialResponse,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to load Google Client ID:', error);
+                }
+            } else {
+                setTimeout(initializeGoogleSignIn, 100);
+            }
+        }
+        
+        function checkUserAuth() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserUI();
+                loadUserHistory();
+            }
+        }
+        
+        function loadUserHistory() {
+            if (currentUser) {
+                userHistory = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
+            }
+        }
+        
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('signInButton').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userName').textContent = currentUser.username || currentUser.name;
+            } else {
+                document.getElementById('signInButton').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        }
+
+        async function loadCases() {
+            try {
+                showLoading();
+                const response = await fetch('/api/cases');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch cases');
+                }
+                
+                allCases = await response.json();
+                filteredCases = [...allCases];
+                
+                updateStats();
+                populateFilters();
+                renderCases();
+                hideLoading();
+                
+            } catch (error) {
+                console.error('Error loading cases:', error);
+                showError('Failed to load cases. Please try again later.');
+            }
+        }
+
+        function updateStats() {
+            const themes = new Set(allCases.map(c => c.theme));
+            const countries = new Set(allCases.flatMap(c => c.locations.map(l => l.country)));
+            
+            document.getElementById('totalCases').textContent = allCases.length;
+            document.getElementById('totalThemes').textContent = themes.size;
+            document.getElementById('totalCountries').textContent = countries.size;
+        }
+
+        function populateFilters() {
+            const themeFilter = document.getElementById('themeFilter');
+            const themes = [...new Set(allCases.map(c => c.theme))].sort();
+            
+            themes.forEach(theme => {
+                const option = document.createElement('option');
+                option.value = theme;
+                option.textContent = theme;
+                themeFilter.appendChild(option);
+            });
+            
+            // Add event listeners
+            themeFilter.addEventListener('change', applyFilters);
+            document.getElementById('difficultyFilter').addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const themeFilter = document.getElementById('themeFilter').value;
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            
+            filteredCases = allCases.filter(game => {
+                const matchesTheme = !themeFilter || game.theme === themeFilter;
+                const matchesDifficulty = !difficultyFilter || game.difficulty === difficultyFilter;
+                return matchesTheme && matchesDifficulty;
+            });
+            
+            renderCases();
+        }
+
+        function renderCases() {
+            const casesGrid = document.getElementById('casesGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (filteredCases.length === 0) {
+                casesGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            casesGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            casesGrid.innerHTML = filteredCases.map(game => createCaseCard(game)).join('');
+            
+            // Re-render cases to update user stats after user signs in/out
+            if (typeof renderCases.lastRender === 'undefined') {
+                renderCases.lastRender = Date.now();
+            } else if (Date.now() - renderCases.lastRender > 100) {
+                renderCases.lastRender = Date.now();
+            }
+        }
+
+        function createCaseCard(game) {
+            const villainImageUrl = game.villainImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(game.villainName.charAt(0))}&size=50&background=7c2d12&color=fff&bold=true&rounded=true`;
+            
+            // Check if user has solved this case
+            const userCaseHistory = userHistory.filter(h => h.caseId === game.id);
+            const isSolved = userCaseHistory.some(h => h.captured);
+            const attempts = userCaseHistory.length;
+            const bestScore = userCaseHistory.reduce((max, h) => Math.max(max, h.score || 0), 0);
+            
+            // User stats section (only show if user is logged in)
+            const userStatsHTML = currentUser ? `
+                <div class="user-stats">
+                    ${isSolved ? '✅ SOLVED' : attempts > 0 ? `🔄 ${attempts} attempt${attempts > 1 ? 's' : ''}` : '🆕 NEW CASE'}
+                    ${bestScore > 0 ? ` • Best: ${bestScore} pts` : ''}
+                </div>
+            ` : '';
+            
+            return `
+                <div class="case-card ${isSolved ? 'captured' : ''}" onclick="${isSolved ? 'return false' : `showCaseDetails('${game.id}')`}">
+                    <div class="case-header">
+                        <div class="case-badge">CASE FILE</div>
+                        <h2 class="case-title">${game.caseTitle}</h2>
+                        <div class="case-meta">
+                            <span class="theme-badge">${game.theme}</span>
+                            <span class="difficulty-badge ${game.difficulty}">${game.difficulty.toUpperCase()}</span>
+                        </div>
+                    </div>
+                    <div class="case-content">
+                        <div class="villain-profile">
+                            <img src="${villainImageUrl}" alt="${game.villainName}" class="villain-portrait">
+                            <div class="villain-info">
+                                <h3>${game.villainName}</h3>
+                                <p class="villain-title">${game.villainTitle}</p>
+                            </div>
+                        </div>
+                        <p class="crime-summary">${game.crimeSummary}</p>
+                        ${userStatsHTML}
+                        <div class="locations-preview">
+                            ${game.locations.map(loc => `<span class="location-chip">${loc.country}</span>`).join('')}
+                        </div>
+                        ${!isSolved ? `
+                        <div class="case-actions">
+                            <button class="btn btn-primary" onclick="event.stopPropagation(); openCase('${game.id}')">
+                                🔍 Solve Case
+                            </button>
+                            <button class="btn btn-secondary" onclick="event.stopPropagation(); showCaseDetails('${game.id}')">
+                                📋 Details
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function openCase(caseId) {
+            window.location.href = `detective.html?case=${caseId}`;
+        }
+        
+        function showCaseDetails(caseId) {
+            const game = allCases.find(g => g.id === caseId);
+            if (!game) return;
+            
+            const villainImageUrl = game.villainImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(game.villainName.charAt(0))}&size=80&background=7c2d12&color=fff&bold=true&rounded=true`;
+            
+            // Check if case is solved
+            const userCaseHistory = userHistory.filter(h => h.caseId === game.id);
+            const isSolved = userCaseHistory.some(h => h.captured);
+            
+            document.getElementById('modalContent').innerHTML = `
+                <h2 style="color: var(--primary-teal); margin-bottom: 16px;">${game.caseTitle}</h2>
+                
+                <div class="modal-villain-profile">
+                    <img src="${villainImageUrl}" alt="${game.villainName}" class="modal-villain-portrait">
+                    <div>
+                        <h3 style="margin: 0; color: var(--text-primary);">${game.villainName}</h3>
+                        <p style="margin: 4px 0 0 0; color: var(--primary-orange); font-style: italic;">${game.villainTitle}</p>
+                        <div style="margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+                            <span class="theme-badge">${game.theme}</span>
+                            <span class="difficulty-badge ${game.difficulty}" style="margin-left: 8px;">${game.difficulty.toUpperCase()}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Crime Summary</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.5;">${game.crimeSummary}</p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Target Locations</h3>
+                    <div class="locations-grid">
+                        ${game.locations.map(loc => `
+                            <div class="location-preview">
+                                <h4>${loc.name}</h4>
+                                <p>${loc.country}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>Key Intelligence</h3>
+                    <p style="color: var(--text-secondary); font-style: italic;">"${game.turn4Clue}"</p>
+                </div>
+                
+                <button 
+                    class="solve-button" 
+                    onclick="${isSolved ? 'alert("Case already solved!")' : `openCase('${game.id}')`}"
+                    ${isSolved ? 'disabled' : ''}
+                >
+                    ${isSolved ? '✅ Case Solved' : '🔍 Solve This Case'}
+                </button>
+            `;
+            
+            document.getElementById('caseModal').style.display = 'block';
+        }
+        
+        function closeCaseModal() {
+            document.getElementById('caseModal').style.display = 'none';
+        }
+        
+        // Authentication functions
+        function signIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                alert('Google Sign-In not available. Please try refreshing the page.');
+                return;
+            }
+            
+            renderSignInButton();
+        }
+        
+        function renderSignInButton() {
+            const tempContainer = document.createElement('div');
+            tempContainer.id = 'tempSignInContainer';
+            tempContainer.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                z-index: 10000; background: white; padding: 20px; border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-align: center;
+            `;
+            
+            tempContainer.innerHTML = `
+                <h3 style="margin: 0 0 16px 0; color: var(--primary-teal);">Sign In to Worldwide Chase</h3>
+                <div id="googleSignInButton"></div>
+                <button onclick="closeSignInModal()" style="margin-top: 12px; background: none; border: 1px solid #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
+            `;
+            
+            document.body.appendChild(tempContainer);
+            
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInButton'),
+                { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular' }
+            );
+        }
+        
+        function closeSignInModal() {
+            const modal = document.getElementById('tempSignInContainer');
+            if (modal) modal.remove();
+        }
+        
+        function handleCredentialResponse(response) {
+            closeSignInModal();
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            currentUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserUI();
+            loadUserHistory();
+            renderCases(); // Re-render to show user stats
+        }
+        
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+        
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            currentUser = null;
+            userHistory = [];
+            localStorage.removeItem('currentUser');
+            updateUserUI();
+            renderCases(); // Re-render to hide user stats
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('caseModal');
+            if (event.target === modal) {
+                closeCaseModal();
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('casesGrid').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            const emptyState = document.getElementById('emptyState');
+            emptyState.innerHTML = `
+                <h3>❌ Error</h3>
+                <p>${message}</p>
+            `;
+            emptyState.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

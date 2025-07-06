@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Places Game - UI Mockup Gallery</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background: linear-gradient(135deg, var(--warm-sand) 0%, #F0D9B5 100%);
+            min-height: 100vh;
+        }
+
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .gallery-title {
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--midnight-green);
+            margin-bottom: 20px;
+        }
+
+        .gallery-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .mockup-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mockup-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+        }
+
+        .mockup-preview {
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mockup-iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            transform: scale(0.75);
+            transform-origin: top left;
+        }
+
+        .mockup-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.1) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .preview-badge {
+            background: var(--midnight-green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .mockup-info {
+            padding: 30px;
+        }
+
+        .mockup-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--midnight-green);
+            margin-bottom: 12px;
+        }
+
+        .mockup-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .mockup-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            background: var(--misty-sky-blue);
+            color: var(--midnight-green);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .mockup-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--terracotta);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #C67239;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--misty-sky-blue);
+            color: var(--midnight-green);
+        }
+
+        .btn-secondary:hover {
+            background: #A8C5BE;
+        }
+
+        .specs-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .specs-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--midnight-green);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .spec-item {
+            padding: 20px;
+            background: var(--warm-sand);
+            border-radius: 12px;
+        }
+
+        .spec-item h3 {
+            color: var(--midnight-green);
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .spec-item ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .spec-item li {
+            padding: 4px 0;
+            color: #666;
+        }
+
+        .spec-item li::before {
+            content: "→ ";
+            color: var(--olive-accent);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-title {
+                font-size: 36px;
+            }
+            
+            .mockup-iframe {
+                transform: scale(0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <div class="gallery-header">
+            <h1 class="gallery-title">Places Game UI Mockups</h1>
+            <p class="gallery-subtitle">
+                Explore different design approaches for the Places geography game interface
+            </p>
+            <div class="theme-badge">7 Design Variations</div>
+        </div>
+
+        <div class="gallery-grid">
+            <!-- Mockup 1: Classic Vertical -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-1-classic.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Desktop Optimized</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Classic Vertical Layout</h3>
+                    <p class="mockup-description">
+                        Traditional vertical card layout with clear visual hierarchy. Shows all locations simultaneously with progress indicators.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Traditional</span>
+                        <span class="feature-tag">Clear Hierarchy</span>
+                        <span class="feature-tag">Desktop First</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-1-classic.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-1-classic.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 2: Card-Based -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-2-cards.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Grid Layout</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Card-Based Design</h3>
+                    <p class="mockup-description">
+                        Modern card-based interface with prominent header stats and horizontal grid layout for location cards.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Modern</span>
+                        <span class="feature-tag">Card UI</span>
+                        <span class="feature-tag">Stats Focused</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-2-cards.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-2-cards.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 3: Minimalist -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-3-minimal.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Clean & Simple</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Minimalist Approach</h3>
+                    <p class="mockup-description">
+                        Clean, centered design with focus on content. Reduced visual clutter and elegant typography.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Minimal</span>
+                        <span class="feature-tag">Elegant</span>
+                        <span class="feature-tag">Content Focused</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-3-minimal.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-3-minimal.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 4: Split Screen -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-4-split.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Dual Panel</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Split Screen Layout</h3>
+                    <p class="mockup-description">
+                        Dual-panel interface with game controls on left and large image viewer on right. Desktop-focused design.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Split Screen</span>
+                        <span class="feature-tag">Image Focused</span>
+                        <span class="feature-tag">Desktop</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-4-split.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-4-split.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 5: Mobile-First -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-5-mobile.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Mobile Optimized</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Mobile-First Design</h3>
+                    <p class="mockup-description">
+                        Native mobile experience with swipe gestures, optimized touch targets, and progressive web app features.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Mobile First</span>
+                        <span class="feature-tag">Touch Optimized</span>
+                        <span class="feature-tag">PWA Ready</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-5-mobile.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-5-mobile.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 6: Gamified -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-6-gamified.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Fun & Interactive</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Gamified/Playful Design</h3>
+                    <p class="mockup-description">
+                        Engaging game-like interface with animations, progress tracking, power-ups, and celebration effects.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Animated</span>
+                        <span class="feature-tag">Gamified</span>
+                        <span class="feature-tag">Interactive</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-6-gamified.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-6-gamified.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 7: Combined -->
+            <div class="mockup-card">
+                <div class="mockup-preview">
+                    <iframe src="mockup-7-combined.html" class="mockup-iframe"></iframe>
+                    <div class="mockup-overlay">
+                        <div class="preview-badge">Letter Box Input</div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3 class="mockup-title">Combined Design</h3>
+                    <p class="mockup-description">
+                        Minimalist + Mobile-first hybrid with letter box inputs, proportional spacing, and progressive image reveals.
+                    </p>
+                    <div class="mockup-features">
+                        <span class="feature-tag">Letter Boxes</span>
+                        <span class="feature-tag">Distance Spacing</span>
+                        <span class="feature-tag">Turn Reveals</span>
+                    </div>
+                    <div class="mockup-actions">
+                        <a href="mockup-7-combined.html" target="_blank" class="action-btn btn-primary">View Full</a>
+                        <a href="mockup-7-combined.html" download class="action-btn btn-secondary">Download</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="specs-section">
+            <h2 class="specs-title">Design Specifications</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <h3>Color Theme</h3>
+                    <ul>
+                        <li>Warm Sand (#F5E6C5) - Background</li>
+                        <li>Terracotta (#D9824B) - Action buttons</li>
+                        <li>Midnight Green (#234E52) - Text/headers</li>
+                        <li>Misty Sky Blue (#BFD8D2) - Input fields</li>
+                        <li>Olive Accent (#7A8450) - Icons/indicators</li>
+                    </ul>
+                </div>
+                <div class="spec-item">
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li>Progressive image reveal system</li>
+                        <li>Turn-based scoring display</li>
+                        <li>North-to-south location ordering</li>
+                        <li>Real-time guess validation</li>
+                        <li>Theme-based visual design</li>
+                    </ul>
+                </div>
+                <div class="spec-item">
+                    <h3>Responsive Design</h3>
+                    <ul>
+                        <li>Mobile-first approach</li>
+                        <li>Touch-friendly interactions</li>
+                        <li>Adaptive layouts</li>
+                        <li>Progressive enhancement</li>
+                        <li>Cross-device compatibility</li>
+                    </ul>
+                </div>
+                <div class="spec-item">
+                    <h3>Accessibility</h3>
+                    <ul>
+                        <li>High contrast ratios</li>
+                        <li>Keyboard navigation</li>
+                        <li>Screen reader support</li>
+                        <li>Focus indicators</li>
+                        <li>Alternative text for images</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

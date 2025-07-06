@@ -1,0 +1,106 @@
+/* Theme Colors from Spec */
+:root {
+  --warm-sand: #F5E6C5;      /* Background */
+  --terracotta: #D9824B;     /* Buttons, progress highlights */
+  --midnight-green: #234E52; /* Header, active text, borders */
+  --misty-sky-blue: #BFD8D2; /* Input boxes, accent blocks */
+  --olive-accent: #7A8450;   /* Icons, indicators, secondary UI */
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: var(--warm-sand);
+  color: var(--midnight-green);
+  line-height: 1.6;
+}
+
+/* Common Components */
+.theme-badge {
+  background-color: var(--midnight-green);
+  color: var(--warm-sand);
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.guess-input {
+  background-color: var(--misty-sky-blue);
+  border: 2px solid transparent;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.guess-input:focus {
+  outline: none;
+  border-color: var(--midnight-green);
+}
+
+.submit-btn {
+  background-color: var(--terracotta);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #C67239;
+  transform: translateY(-1px);
+}
+
+.location-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.blur-effect {
+  filter: blur(15px);
+}
+
+.medium-blur {
+  filter: blur(8px);
+}
+
+.score-display {
+  background-color: var(--misty-sky-blue);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.turn-indicator {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+.turn-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #E0E0E0;
+}
+
+.turn-dot.active {
+  background-color: var(--terracotta);
+}
+
+.turn-dot.completed {
+  background-color: var(--olive-accent);
+}

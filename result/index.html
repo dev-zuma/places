@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Result - Worldwide Chase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(26, 91, 91, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 69, 0, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #2C3E50 0%, #1A252F 100%);
+            min-height: 100vh;
+            color: #1A1A1A;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: 
+                linear-gradient(180deg, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 41px, transparent 41px),
+                #FFF8DC;
+            background-size: 100% 42px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A5B5B;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, #FF4500 30px, #FF4500 31px, transparent 31px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            border-radius: 12px;
+            padding: 30px 30px 30px 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        /* Villain Section */
+        .villain-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .villain-capture {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+        }
+
+        .villain-portrait {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 8px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .captured-stamp {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-15deg);
+            font-size: 48px;
+            font-weight: 900;
+            color: #DC2626;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border: 5px dashed #DC2626;
+            padding: 10px 20px;
+            background: transparent;
+            letter-spacing: 4px;
+            backdrop-filter: blur(2px);
+        }
+
+        .villain-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A5B5B;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .villain-title {
+            font-size: 16px;
+            font-style: italic;
+            color: #FF4500;
+            margin-top: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: rgba(26, 91, 91, 0.05);
+            border: 1px solid #1A5B5B;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF4500;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #4A5568;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Locations Section */
+        .locations-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1A5B5B;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        .location-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #FFF8DC;
+            border-radius: 8px;
+            border: 1px solid #E8D5B7;
+        }
+
+        .location-number {
+            width: 40px;
+            height: 40px;
+            background: #1A5B5B;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+        }
+
+        .location-country {
+            font-size: 14px;
+            color: #4A5568;
+        }
+
+        .location-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .status-found {
+            background: #1A5B5B;
+            color: white;
+        }
+
+        .status-missed {
+            background: #DC2626;
+            color: white;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .action-button {
+            background: #FF4500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-button:hover {
+            background: #E63E00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 69, 0, 0.4);
+        }
+
+        .secondary-button {
+            background: none;
+            border: 2px solid #1A5B5B;
+            color: #1A5B5B;
+        }
+
+        .secondary-button:hover {
+            background: #1A5B5B;
+            color: white;
+        }
+
+        /* Save Prompt */
+        .save-prompt {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .save-prompt h3 {
+            color: #1A5B5B;
+            margin-bottom: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .save-prompt p {
+            color: #4A5568;
+            margin-bottom: 16px;
+        }
+
+        /* Sign In */
+        .sign-in-area {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .sign-in-button {
+            background: #1A5B5B;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .sign-in-button:hover {
+            background: #FF4500;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1A5B5B;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .sign-out-button {
+            font-size: 11px;
+            background: none;
+            border: 1px solid #FF4500;
+            color: #FF4500;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sign-out-button:hover {
+            background: #FF4500;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <img src="../game/wwc-logo.png" alt="Worldwide Chase" class="logo">
+                <h1 class="page-title">Case Result</h1>
+            </div>
+            <div class="sign-in-area">
+                <div id="userInfo" class="user-info" style="display: none;">
+                    <div id="userName" class="user-name"></div>
+                    <button onclick="signOut()" class="sign-out-button">Sign Out</button>
+                </div>
+                <button id="signInButton" onclick="signIn()" class="sign-in-button">
+                    Sign In
+                </button>
+            </div>
+        </div>
+
+        <!-- Save Prompt (shown when not signed in) -->
+        <div id="savePrompt" class="save-prompt" style="display: none;">
+            <h3>Save Your Result</h3>
+            <p>Sign in to save this result to your case history and track your progress!</p>
+            <button onclick="signIn()" class="action-button">Sign In to Save</button>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card">
+            <!-- Villain Section -->
+            <div class="villain-section">
+                <div class="villain-capture">
+                    <img id="villainImage" src="" alt="" class="villain-portrait">
+                    <div id="capturedStamp" class="captured-stamp" style="display: none;">CAPTURED</div>
+                </div>
+                <h2 id="villainName" class="villain-name"></h2>
+                <p id="villainTitle" class="villain-title"></p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="statScore">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statLocations">0/3</div>
+                    <div class="stat-label">Locations Found</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statTime">0:00</div>
+                    <div class="stat-label">Time</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statTurns">0/5</div>
+                    <div class="stat-label">Turns Used</div>
+                </div>
+            </div>
+
+            <!-- Case Summary -->
+            <div id="caseSummary" style="margin: 20px 0; text-align: center; color: #4A5568; font-style: italic;">
+                <!-- Case summary will be populated here -->
+            </div>
+        </div>
+
+        <!-- Locations Section -->
+        <div class="locations-section">
+            <h3 class="section-title">Case Locations</h3>
+            <div id="locationsList" class="location-list">
+                <!-- Locations will be populated here -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="../game/" class="action-button">Play Another Case</a>
+            <a href="../history/" class="action-button secondary-button">View History</a>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let gameResult = null;
+        let caseData = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load result data
+            loadResultData();
+
+            // Check if user is already signed in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUI();
+            }
+        });
+        
+        // Initialize Google Sign-In when script loads
+        async function initializeGoogleSignIn() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                try {
+                    // Fetch Google Client ID from server
+                    const configResponse = await fetch('/api/config');
+                    const config = await configResponse.json();
+                    
+                    if (config.googleClientId) {
+                        google.accounts.id.initialize({
+                            client_id: config.googleClientId,
+                            callback: handleCredentialResponse,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                    } else {
+                        console.error('Google Client ID not configured on server');
+                    }
+                } catch (error) {
+                    console.error('Failed to load Google Client ID:', error);
+                }
+            } else {
+                // Retry after a short delay if Google script hasn't loaded yet
+                setTimeout(initializeGoogleSignIn, 100);
+            }
+        }
+        
+        // Start initialization
+        initializeGoogleSignIn();
+
+        function loadResultData() {
+            // Get result from sessionStorage (from game page)
+            const resultData = sessionStorage.getItem('lastGameResult');
+            const caseInfo = sessionStorage.getItem('lastGameCase');
+            
+            if (resultData && caseInfo) {
+                gameResult = JSON.parse(resultData);
+                caseData = JSON.parse(caseInfo);
+                displayResult();
+                return;
+            }
+            
+            // Otherwise, try to load from URL parameter and history
+            const urlParams = new URLSearchParams(window.location.search);
+            const caseId = urlParams.get('caseId');
+            
+            if (caseId && currentUser) {
+                // Try to find in user history
+                const userHistory = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
+                const historyItem = userHistory.find(h => h.caseId === caseId);
+                
+                if (historyItem) {
+                    gameResult = historyItem;
+                    // Load case data (would be API call in production)
+                    loadCaseData(caseId);
+                }
+            }
+        }
+
+        async function loadCaseData(caseId) {
+            try {
+                const response = await fetch('/api/cases');
+                if (response.ok) {
+                    const cases = await response.json();
+                    caseData = cases.find(c => c.id === caseId);
+                    if (caseData) {
+                        displayResult();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading case data:', error);
+            }
+        }
+
+        function displayResult() {
+            if (!gameResult || !caseData) return;
+
+            // Villain info
+            document.getElementById('villainImage').src = caseData.villainImageUrl || 
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(caseData.villainName.charAt(0))}&size=200&background=7c2d12&color=fff&bold=true&rounded=false`;
+            document.getElementById('villainImage').alt = caseData.villainName;
+            document.getElementById('villainName').textContent = caseData.villainName;
+            document.getElementById('villainTitle').textContent = caseData.villainTitle;
+            
+            // Show captured stamp if all locations found
+            if (gameResult.captured) {
+                document.getElementById('capturedStamp').style.display = 'block';
+                document.getElementById('villainImage').style.filter = 'none';
+            } else {
+                document.getElementById('villainImage').style.filter = 'grayscale(50%) blur(2px)';
+            }
+            
+            // Stats
+            document.getElementById('statScore').textContent = gameResult.score || 0;
+            document.getElementById('statLocations').textContent = `${gameResult.locationsFound}/3`;
+            const minutes = Math.floor(gameResult.timeTaken / 60);
+            const seconds = gameResult.timeTaken % 60;
+            document.getElementById('statTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('statTurns').textContent = `${gameResult.turnsUsed}/5`;
+            
+            // Case summary
+            const summaryEl = document.getElementById('caseSummary');
+            if (gameResult.captured) {
+                summaryEl.innerHTML = `
+                    <p style="color: #1A5B5B; font-weight: 600; margin-bottom: 8px;">Case Solved!</p>
+                    <p>${caseData.interestingFact}</p>
+                `;
+            } else {
+                summaryEl.innerHTML = `<p style="color: #DC2626; font-weight: 600;">The suspect remains at large. Try again to capture them!</p>`;
+            }
+            
+            // Locations
+            displayLocations();
+            
+            // Show save prompt if not signed in
+            if (!currentUser && !sessionStorage.getItem('resultSaved')) {
+                document.getElementById('savePrompt').style.display = 'block';
+            }
+        }
+
+        function displayLocations() {
+            const locationsList = document.getElementById('locationsList');
+            
+            locationsList.innerHTML = caseData.locations.map((location, index) => {
+                const found = gameResult.captured || false; // Only show if captured
+                
+                return `
+                    <div class="location-item">
+                        <div class="location-number">${index + 1}</div>
+                        <div class="location-info">
+                            <div class="location-name">${found ? location.name : '???'}</div>
+                            <div class="location-country">${found ? location.country : 'Unknown Location'}</div>
+                        </div>
+                        <div class="location-status ${found ? 'status-found' : 'status-missed'}">
+                            ${found ? 'FOUND' : 'MISSED'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function signIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                console.error('Google Sign-In not loaded');
+                alert('Google Sign-In is not available. Please try refreshing the page.');
+                return;
+            }
+            
+            // Skip One Tap and go directly to popup to avoid FedCM issues
+            renderSignInButton();
+        }
+        
+        function renderSignInButton() {
+            // Create a temporary container for the sign-in button
+            const tempContainer = document.createElement('div');
+            tempContainer.id = 'tempSignInContainer';
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.top = '50%';
+            tempContainer.style.left = '50%';
+            tempContainer.style.transform = 'translate(-50%, -50%)';
+            tempContainer.style.zIndex = '10000';
+            tempContainer.style.background = 'white';
+            tempContainer.style.padding = '20px';
+            tempContainer.style.borderRadius = '12px';
+            tempContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+            tempContainer.style.textAlign = 'center';
+            
+            tempContainer.innerHTML = `
+                <h3 style="margin: 0 0 16px 0; color: #1A5B5B;">Sign In to Worldwide Chase</h3>
+                <div id="googleSignInButton"></div>
+                <button onclick="closeSignInModal()" style="margin-top: 12px; background: none; border: 1px solid #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
+            `;
+            
+            document.body.appendChild(tempContainer);
+            
+            // Render Google Sign-In button
+            google.accounts.id.renderButton(
+                document.getElementById('googleSignInButton'),
+                {
+                    theme: 'outline',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'rectangular'
+                }
+            );
+        }
+        
+        function closeSignInModal() {
+            const modal = document.getElementById('tempSignInContainer');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function handleCredentialResponse(response) {
+            // Close sign-in modal if open
+            closeSignInModal();
+            
+            // Decode JWT token
+            const responsePayload = decodeJwtResponse(response.credential);
+            
+            currentUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Update UI
+            updateUI();
+            
+            // Save the current result if available
+            if (gameResult && !sessionStorage.getItem('resultSaved')) {
+                saveResultToHistory();
+            }
+        }
+
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('signInButton').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'block';
+                document.getElementById('userName').textContent = currentUser.username || currentUser.name || currentUser.fullName;
+                document.getElementById('savePrompt').style.display = 'none';
+            } else {
+                document.getElementById('signInButton').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        }
+
+        function signOut() {
+            google.accounts.id.disableAutoSelect();
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUI();
+        }
+
+        function saveResultToHistory() {
+            if (!currentUser || !gameResult) return;
+            
+            // Add user info to result
+            gameResult.userId = currentUser.id;
+            gameResult.userName = currentUser.name;
+            
+            // Save to user history
+            const userHistory = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
+            
+            // Check if this result is already saved
+            const exists = userHistory.some(h => 
+                h.caseId === gameResult.caseId && 
+                h.timestamp === gameResult.timestamp
+            );
+            
+            if (!exists) {
+                userHistory.push(gameResult);
+                localStorage.setItem(`userResults_${currentUser.id}`, JSON.stringify(userHistory));
+                sessionStorage.setItem('resultSaved', 'true');
+                
+                // Show success message
+                const savePrompt = document.getElementById('savePrompt');
+                savePrompt.innerHTML = `
+                    <h3 style="color: #1A5B5B;">Result Saved!</h3>
+                    <p>This case has been added to your history.</p>
+                `;
+                savePrompt.style.display = 'block';
+                setTimeout(() => {
+                    savePrompt.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

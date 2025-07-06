@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Places Crime Case - Detective File</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 10px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 420px;
+            height: calc(100vh - 20px);
+            background: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.2),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Enhanced Color Palette */
+        :root {
+            --primary-dark: #1a1f2e;
+            --primary-blue: #4f46e5;
+            --primary-accent: #f59e0b;
+            
+            --turn-1-color: #10b981;
+            --turn-2-color: #8b5cf6;
+            --turn-3-color: #f59e0b;
+            --turn-4-color: #ef4444;
+            --turn-5-color: #6366f1;
+            --turn-inactive: #94a3b8;
+            
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-light: #94a3b8;
+            
+            --success: #10b981;
+            --error: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            
+            /* Distance colors */
+            --distance-color: #6b7280;
+            --distance-bg: rgba(107, 114, 128, 0.1);
+            
+            /* Detective file colors */
+            --case-badge: #dc2626;
+            --evidence-color: #059669;
+            --suspect-color: #7c2d12;
+        }
+
+        /* Case Header */
+        .case-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #334155 100%);
+            color: white;
+            padding: 12px 16px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .case-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .case-badge {
+            background: var(--case-badge);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .case-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            line-height: 1.2;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .theme-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .difficulty-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .difficulty-badge.easy { background: var(--success); }
+        .difficulty-badge.medium { background: var(--primary-accent); }
+        .difficulty-badge.hard { background: var(--error); }
+
+        /* Detective File Tabs */
+        .detective-tabs {
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Tab Content Container */
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .tab-panel {
+            display: none;
+            height: 100%;
+            padding: 16px;
+            background: var(--bg-light);
+        }
+
+        .tab-panel.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Case Details Tab */
+        .villain-profile {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .villain-portrait {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--suspect-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .villain-info h3 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .villain-title {
+            margin: 0;
+            font-size: 12px;
+            color: var(--suspect-color);
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .crime-summary {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .crime-summary h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .crime-summary p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .evidence-log {
+            background: var(--glass-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--glass-border);
+            flex: 1;
+        }
+
+        .evidence-log h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: var(--evidence-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .evidence-item {
+            background: rgba(5, 150, 105, 0.05);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .evidence-turn {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--evidence-color);
+            margin-bottom: 4px;
+        }
+
+        .evidence-content {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Investigation Board Tab (existing game UI) */
+        .investigation-board {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Turn Indicator */
+        .turn-indicator-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .turn-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .turn-progress-line {
+            position: absolute;
+            height: 3px;
+            background: var(--border-light);
+            left: 30px;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .turn-progress-fill {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, var(--turn-1-color), var(--turn-3-color));
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        .turn-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: white;
+            border: 2px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-light);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .turn-dot.active {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .turn-dot.active.turn-1 {
+            background: var(--turn-1-color);
+            border-color: var(--turn-1-color);
+            color: white;
+        }
+
+        .turn-dot.active.turn-2 {
+            background: var(--turn-2-color);
+            border-color: var(--turn-2-color);
+            color: white;
+        }
+
+        .turn-dot.active.turn-3 {
+            background: var(--turn-3-color);
+            border-color: var(--turn-3-color);
+            color: white;
+        }
+
+        .turn-dot.active.turn-4 {
+            background: var(--turn-4-color);
+            border-color: var(--turn-4-color);
+            color: white;
+        }
+
+        .turn-dot.active.turn-5 {
+            background: var(--turn-5-color);
+            border-color: var(--turn-5-color);
+            color: white;
+        }
+
+        .turn-dot.completed {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .turn-dot.no-image {
+            background: var(--bg-light);
+            border-color: var(--turn-inactive);
+            color: var(--turn-inactive);
+        }
+
+        /* Game Area */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            overflow-y: auto;
+            overflow-x: visible;
+        }
+
+        .locations-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Location Cards - more compact for tab interface */
+        .location-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+            width: 280px;
+            max-width: calc(100vw - 60px);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .location-number {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-input-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+            margin-left: 8px;
+        }
+
+        .letter-box {
+            border: 2px solid var(--border-light);
+            background: linear-gradient(135deg, white 0%, var(--bg-light) 100%);
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-family: 'Inter', monospace;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            font-size: 11px;
+            width: 18px;
+            height: 22px;
+        }
+
+        .letter-box:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+        }
+
+        .letter-box.filled {
+            background: linear-gradient(135deg, var(--primary-blue), #4338ca);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        .letter-box.correct {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-color: var(--success);
+            color: white;
+            animation: correctPulse 0.6s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Images Row - more compact */
+        .images-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 6px;
+            padding: 4px;
+            background: linear-gradient(135deg, var(--bg-light) 0%, rgba(248, 250, 252, 0.5) 100%);
+            border-radius: 8px;
+        }
+
+        .image-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+        }
+
+        .image-container.current {
+            width: 50px !important;
+            height: 50px !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-container.turn-1 { border-color: var(--turn-1-color); }
+        .image-container.turn-3 { border-color: var(--turn-3-color); }
+        .image-container.turn-5 { border-color: var(--turn-5-color); }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.3s ease;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-light), white);
+            border: 1px dashed var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: var(--text-light);
+            text-align: center;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        .turn-badge {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            color: white;
+            font-size: 6px;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: 700;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .turn-badge.turn-1 { background: var(--turn-1-color); }
+        .turn-badge.turn-3 { background: var(--turn-3-color); }
+        .turn-badge.turn-5 { background: var(--turn-5-color); }
+
+        /* Distance separators - more compact */
+        .distance-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            margin: 4px 0;
+        }
+
+        .distance-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--distance-color);
+            background: var(--distance-bg);
+            padding: 3px 6px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Action Area */
+        .action-area {
+            padding: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .action-button.turn-1 {
+            background: linear-gradient(135deg, var(--turn-1-color) 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-button.turn-2 {
+            background: linear-gradient(135deg, var(--turn-2-color) 0%, #7c3aed 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-button.turn-3 {
+            background: linear-gradient(135deg, var(--turn-3-color) 0%, #ea580c 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-button.turn-4 {
+            background: linear-gradient(135deg, var(--turn-4-color) 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .action-button.turn-5 {
+            background: linear-gradient(135deg, var(--turn-5-color) 0%, #4338ca 100%);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-button:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .location-section { width: 260px; }
+            .image-container { width: 35px; height: 35px; }
+            .image-container.current { width: 45px !important; height: 45px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Case Header -->
+        <div class="case-header">
+            <div class="case-header-content">
+                <div class="case-badge">CASE FILE</div>
+                <h1 class="case-title" id="caseTitle">The Great Festival Heist</h1>
+                <div class="case-meta">
+                    <span class="theme-badge" id="themeBadge">FESTIVALS</span>
+                    <span class="difficulty-badge medium" id="difficultyBadge">MEDIUM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detective File Tabs -->
+        <div class="detective-tabs">
+            <button class="tab-button" id="caseDetailsTab" onclick="switchTab('caseDetails')">
+                🗂️ Case Details
+            </button>
+            <button class="tab-button active" id="investigationTab" onclick="switchTab('investigation')">
+                🔍 Investigation Board
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Case Details Tab -->
+            <div class="tab-panel" id="caseDetailsPanel">
+                <!-- Villain Profile -->
+                <div class="villain-profile">
+                    <img src="https://ui-avatars.com/api/?name=JJ&size=60&background=7c2d12&color=fff&bold=true&rounded=true" 
+                         alt="Jolly Jamboree" class="villain-portrait" id="villainPortrait">
+                    <div class="villain-info">
+                        <h3 id="villainName">Jolly Jamboree</h3>
+                        <p class="villain-title" id="villainTitle">The Festival Thief</p>
+                    </div>
+                </div>
+
+                <!-- Crime Summary -->
+                <div class="crime-summary">
+                    <h4>Crime Summary</h4>
+                    <p id="crimeSummary">In a world filled with bright lights and joyous celebrations, the notorious Festival Thief has stolen the secret to the biggest festival in three vibrant cities, causing chaos and disappointment among revelers. With the clock ticking and parades at risk, detectives must follow the trail of glitter and music to uncover the thief's next move and restore the missing magic of these festive locations.</p>
+                </div>
+
+                <!-- Evidence Log -->
+                <div class="evidence-log">
+                    <h4>🔍 Evidence Collected</h4>
+                    <div id="evidenceList">
+                        <div class="evidence-item">
+                            <div class="evidence-turn">TURN 1 - INITIAL EVIDENCE</div>
+                            <div class="evidence-content">Three photograph fragments found at crime scenes. Images show festive locations with distinctive architecture and cultural elements.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investigation Board Tab (existing game UI) -->
+            <div class="tab-panel active" id="investigationPanel">
+                <div class="investigation-board">
+                    <!-- Turn Indicator -->
+                    <div class="turn-indicator-container">
+                        <div class="turn-indicator">
+                            <div class="turn-progress-line">
+                                <div class="turn-progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="turn-dot active turn-1" id="turn1" onclick="goToTurn(1)">1</div>
+                            <div class="turn-dot no-image" id="turn2" onclick="goToTurn(2)">2</div>
+                            <div class="turn-dot" id="turn3" onclick="goToTurn(3)">3</div>
+                            <div class="turn-dot no-image" id="turn4" onclick="goToTurn(4)">4</div>
+                            <div class="turn-dot" id="turn5" onclick="goToTurn(5)">5</div>
+                        </div>
+                    </div>
+
+                    <!-- Game Area -->
+                    <div class="game-area">
+                        <div class="locations-container">
+                            <!-- Place 1 -->
+                            <div class="location-section" id="place1">
+                                <div class="location-header">
+                                    <div class="location-number">Location 1</div>
+                                    <div class="header-input-row">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="images-row">
+                                    <div class="image-container turn-1 current" onclick="openImageModal(1, 1)">
+                                        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=400&fit=crop&crop=center" alt="Turn 1 evidence">
+                                        <div class="turn-badge turn-1">T1</div>
+                                    </div>
+                                    <div class="image-container turn-3" onclick="openImageModal(1, 3)">
+                                        <div class="image-placeholder">T3</div>
+                                    </div>
+                                    <div class="image-container turn-5" onclick="openImageModal(1, 5)">
+                                        <div class="image-placeholder">T5</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Distance Separator 1 -->
+                            <div class="distance-separator">
+                                <div class="distance-label">7,200 km</div>
+                            </div>
+
+                            <!-- Place 2 -->
+                            <div class="location-section" id="place2">
+                                <div class="location-header">
+                                    <div class="location-number">Location 2</div>
+                                    <div class="header-input-row">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="images-row">
+                                    <div class="image-container turn-1 current" onclick="openImageModal(2, 1)">
+                                        <img src="https://images.unsplash.com/photo-1520637836862-4d197d17c72a?w=400&h=400&fit=crop&crop=center" alt="Turn 1 evidence">
+                                        <div class="turn-badge turn-1">T1</div>
+                                    </div>
+                                    <div class="image-container turn-3" onclick="openImageModal(2, 3)">
+                                        <div class="image-placeholder">T3</div>
+                                    </div>
+                                    <div class="image-container turn-5" onclick="openImageModal(2, 5)">
+                                        <div class="image-placeholder">T5</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Distance Separator 2 -->
+                            <div class="distance-separator">
+                                <div class="distance-label">1,700 km</div>
+                            </div>
+
+                            <!-- Place 3 -->
+                            <div class="location-section" id="place3">
+                                <div class="location-header">
+                                    <div class="location-number">Location 3</div>
+                                    <div class="header-input-row">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                        <input type="text" class="letter-box" value="" maxlength="1">
+                                    </div>
+                                </div>
+                                
+                                <div class="images-row">
+                                    <div class="image-container turn-1 current" onclick="openImageModal(3, 1)">
+                                        <img src="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=400&fit=crop&crop=center" alt="Turn 1 evidence">
+                                        <div class="turn-badge turn-1">T1</div>
+                                    </div>
+                                    <div class="image-container turn-3" onclick="openImageModal(3, 3)">
+                                        <div class="image-placeholder">T3</div>
+                                    </div>
+                                    <div class="image-container turn-5" onclick="openImageModal(3, 5)">
+                                        <div class="image-placeholder">T5</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="action-area">
+            <button class="action-button turn-1" id="actionButton" onclick="submitEvidence()">
+                🔍 Analyze Evidence
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentTurn = 1;
+        let activeTab = 'investigation';
+
+        const gameData = {
+            caseTitle: "The Great Festival Heist",
+            villainName: "Jolly Jamboree",
+            villainTitle: "The Festival Thief",
+            theme: "FESTIVALS",
+            difficulty: "medium",
+            crimeSummary: "In a world filled with bright lights and joyous celebrations, the notorious Festival Thief has stolen the secret to the biggest festival in three vibrant cities, causing chaos and disappointment among revelers. With the clock ticking and parades at risk, detectives must follow the trail of glitter and music to uncover the thief's next move and restore the missing magic of these festive locations.",
+            turn4Clue: "PARADE",
+            places: [
+                { name: "RIO DE JANEIRO", country: "Brazil" },
+                { name: "VENICE", country: "Italy" },
+                { name: "NEW ORLEANS", country: "USA" }
+            ]
+        };
+
+        const turnData = {
+            1: { 
+                action: "Analyze Evidence",
+                evidence: "Three photograph fragments found at crime scenes. Images show festive locations with distinctive architecture and cultural elements."
+            },
+            2: { 
+                action: "Check Timestamps",
+                evidence: "Time zone analysis reveals the crimes occurred during peak festival seasons across different time zones."
+            },
+            3: { 
+                action: "Examine Patterns",
+                evidence: "Additional photographic evidence shows clearer architectural details and cultural elements common to festival cities."
+            },
+            4: { 
+                action: "Connect the Clues",
+                evidence: `Breakthrough! The key connection is: "${gameData.turn4Clue}". All locations share this common festival element.`
+            },
+            5: { 
+                action: "Solve the Case",
+                evidence: "Final evidence photos provide clear identifying features. Ready to make arrests and close the case."
+            }
+        };
+
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            
+            if (tabName === 'caseDetails') {
+                document.getElementById('caseDetailsTab').classList.add('active');
+                document.getElementById('caseDetailsPanel').classList.add('active');
+            } else {
+                document.getElementById('investigationTab').classList.add('active');
+                document.getElementById('investigationPanel').classList.add('active');
+            }
+            
+            activeTab = tabName;
+        }
+
+        function updateTurnDisplay() {
+            const dots = document.querySelectorAll('.turn-dot');
+            const progressFill = document.getElementById('progressFill');
+            const actionButton = document.getElementById('actionButton');
+            
+            // Update progress bar
+            const progressWidths = { 1: '0%', 2: '25%', 3: '50%', 4: '75%', 5: '100%' };
+            progressFill.style.width = progressWidths[currentTurn];
+            
+            // Update turn dots
+            dots.forEach((dot, index) => {
+                const turnNumber = index + 1;
+                dot.classList.remove('active', 'completed', 'turn-1', 'turn-2', 'turn-3', 'turn-4', 'turn-5');
+                
+                if (turnNumber < currentTurn) {
+                    dot.classList.add('completed');
+                } else if (turnNumber === currentTurn) {
+                    dot.classList.add('active', `turn-${turnNumber}`);
+                }
+            });
+            
+            // Update action button
+            const turnInfo = turnData[currentTurn];
+            actionButton.textContent = `🔍 ${turnInfo.action}`;
+            actionButton.className = `action-button turn-${currentTurn}`;
+            
+            // Update current turn images
+            updateImageDisplay();
+        }
+
+        function updateImageDisplay() {
+            const imageContainers = document.querySelectorAll('.image-container');
+            
+            imageContainers.forEach(container => {
+                container.classList.remove('current');
+                
+                // Highlight current turn's images
+                if ((container.classList.contains('turn-1') && currentTurn === 1) ||
+                    (container.classList.contains('turn-3') && currentTurn === 3) ||
+                    (container.classList.contains('turn-5') && currentTurn === 5)) {
+                    container.classList.add('current');
+                }
+                
+                // Show appropriate images based on turn
+                if (container.classList.contains('turn-3') && currentTurn >= 3) {
+                    if (container.querySelector('.image-placeholder')) {
+                        const locationId = container.closest('.location-section').id;
+                        const imageSrc = getImageForLocation(locationId, 3);
+                        container.innerHTML = `
+                            <img src="${imageSrc}" alt="Turn 3 evidence">
+                            <div class="turn-badge turn-3">T3</div>
+                        `;
+                    }
+                } else if (container.classList.contains('turn-5') && currentTurn >= 5) {
+                    if (container.querySelector('.image-placeholder')) {
+                        const locationId = container.closest('.location-section').id;
+                        const imageSrc = getImageForLocation(locationId, 5);
+                        container.innerHTML = `
+                            <img src="${imageSrc}" alt="Turn 5 evidence">
+                            <div class="turn-badge turn-5">T5</div>
+                        `;
+                    }
+                }
+            });
+        }
+
+        function getImageForLocation(locationId, turn) {
+            const images = {
+                'place1': {
+                    3: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1518639192441-8fce0c69e614?w=400&h=400&fit=crop&crop=center'
+                },
+                'place2': {
+                    3: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=400&h=400&fit=crop&crop=center'
+                },
+                'place3': {
+                    3: 'https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1520637736862-4d197d17c72a?w=400&h=400&fit=crop&crop=center'
+                }
+            };
+            return images[locationId][turn];
+        }
+
+        function addEvidence(turn, content) {
+            const evidenceList = document.getElementById('evidenceList');
+            const evidenceItem = document.createElement('div');
+            evidenceItem.className = 'evidence-item';
+            evidenceItem.innerHTML = `
+                <div class="evidence-turn">TURN ${turn} - ${turn === 4 ? 'BREAKTHROUGH' : 'EVIDENCE'}</div>
+                <div class="evidence-content">${content}</div>
+            `;
+            evidenceList.appendChild(evidenceItem);
+        }
+
+        function submitEvidence() {
+            const turnInfo = turnData[currentTurn];
+            
+            // Add evidence to case file
+            addEvidence(currentTurn, turnInfo.evidence);
+            
+            // Show evidence notification if on investigation tab
+            if (activeTab === 'investigation') {
+                showEvidenceNotification(currentTurn);
+            }
+            
+            // Progress to next turn or end game
+            if (currentTurn < 5) {
+                setTimeout(() => {
+                    currentTurn++;
+                    updateTurnDisplay();
+                }, 1000);
+            } else {
+                // Case solved!
+                setTimeout(() => {
+                    alert('🎉 Case Solved! You successfully tracked down Jolly Jamboree across all three festival cities!');
+                }, 1000);
+            }
+        }
+
+        function showEvidenceNotification(turn) {
+            // Create floating notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--evidence-color);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 600;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100px);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            `;
+            notification.textContent = `Evidence added to case file (Turn ${turn})`;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function goToTurn(turn) {
+            if (turn <= 5 && turn >= 1 && turn <= currentTurn) {
+                currentTurn = turn;
+                updateTurnDisplay();
+            }
+        }
+
+        function openImageModal(locationId, turn) {
+            console.log(`Opening evidence photo for location ${locationId}, turn ${turn}`);
+        }
+
+        // Auto-focus next input
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.letter-box');
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1) {
+                        this.classList.add('filled');
+                        const nextInput = this.nextElementSibling;
+                        if (nextInput && nextInput.classList.contains('letter-box') && !nextInput.value) {
+                            nextInput.focus();
+                        }
+                    } else {
+                        this.classList.remove('filled');
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value) {
+                        const prevInput = this.previousElementSibling;
+                        if (prevInput && prevInput.classList.contains('letter-box')) {
+                            prevInput.focus();
+                        }
+                    }
+                });
+            });
+            
+            updateTurnDisplay();
+        });
+    </script>
+</body>
+</html>

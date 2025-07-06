@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Places Game - Compact Fixed Layout</title>
+    <link rel="stylesheet" href="shared-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 10px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 420px;
+            height: calc(100vh - 20px);
+            background: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.2),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        /* Enhanced Color Palette */
+        :root {
+            --primary-dark: #1a1f2e;
+            --primary-blue: #4f46e5;
+            --primary-accent: #f59e0b;
+            
+            --turn-1-color: #10b981;
+            --turn-2-color: #8b5cf6;
+            --turn-3-color: #f59e0b;
+            --turn-4-color: #ef4444;
+            --turn-5-color: #6366f1;
+            --turn-inactive: #94a3b8;
+            
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-light: #94a3b8;
+            
+            --success: #10b981;
+            --error: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            
+            /* Distance colors */
+            --distance-color: #6b7280;
+            --distance-bg: rgba(107, 114, 128, 0.1);
+        }
+
+        /* Compact Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #334155 100%);
+            color: white;
+            padding: 10px 16px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-button, .profile-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-button:hover, .profile-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-display {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .theme-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin: 0;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .turn-4-phrase {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .turn-4-phrase.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .time-difference-info {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .time-difference-info.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Compact Turn Indicator */
+        .turn-indicator-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .turn-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .turn-progress-line {
+            position: absolute;
+            height: 3px;
+            background: var(--border-light);
+            left: 30px;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .turn-progress-fill {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, var(--turn-1-color), var(--turn-3-color));
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        .turn-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            background: white;
+            border: 2px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-light);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .turn-dot.active {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .turn-dot.active.turn-1 {
+            background: var(--turn-1-color);
+            border-color: var(--turn-1-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .turn-dot.active.turn-2 {
+            background: var(--turn-2-color);
+            border-color: var(--turn-2-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .turn-dot.active.turn-3 {
+            background: var(--turn-3-color);
+            border-color: var(--turn-3-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .turn-dot.active.turn-4 {
+            background: var(--turn-4-color);
+            border-color: var(--turn-4-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .turn-dot.active.turn-5 {
+            background: var(--turn-5-color);
+            border-color: var(--turn-5-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .turn-dot.completed {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .turn-dot.no-image {
+            background: var(--bg-light);
+            border-color: var(--turn-inactive);
+            color: var(--turn-inactive);
+        }
+
+        /* Compact Main Game Area */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            position: relative;
+            background: var(--bg-light);
+            overflow-y: auto;
+            overflow-x: visible;
+        }
+
+        .locations-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Place positioning with time differences */
+        .place-1 {
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .place-1.with-time {
+            transform: translateX(-25px);
+        }
+
+        .place-2 {
+            flex-shrink: 0;
+            position: relative;
+            transform: translateX(0);
+        }
+
+        .place-3 {
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .place-3.with-time {
+            transform: translateX(25px);
+        }
+
+        /* Compact Location Cards */
+        .location-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            padding: 8px;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                0 2px 4px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+            width: 300px;
+            max-width: calc(100vw - 80px);
+        }
+
+        .location-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.12),
+                0 4px 8px rgba(0, 0, 0, 0.16);
+            border-color: var(--primary-blue);
+        }
+
+        /* Compact Header - Input boxes next to Place label */
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .location-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--bg-light);
+            padding: 3px 8px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-right: 8px;
+        }
+
+        /* Input boxes next to place label */
+        .header-input-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+        }
+
+        /* Compact Distance labels */
+        .distance-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            margin: 6px 0;
+        }
+
+        .distance-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--distance-color);
+            background: var(--distance-bg);
+            padding: 4px 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(107, 114, 128, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .distance-line {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, var(--distance-color), transparent);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        /* Time difference indicators */
+        .time-difference {
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .time-difference.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .time-difference.ahead {
+            left: -50px;
+            background: linear-gradient(135deg, var(--turn-1-color) 0%, #059669 100%);
+        }
+
+        .time-difference.behind {
+            right: -50px;
+            background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%);
+        }
+
+        /* Compact Images Row */
+        .images-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: linear-gradient(135deg, var(--bg-light) 0%, rgba(248, 250, 252, 0.5) 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .image-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Base sizes for all images */
+        .image-container.turn-1,
+        .image-container.turn-3,
+        .image-container.turn-5 {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Current turn image is larger */
+        .image-container.current {
+            width: 65px !important;
+            height: 65px !important;
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Border colors */
+        .image-container.turn-1 {
+            border-color: var(--turn-1-color);
+        }
+
+        .image-container.turn-3 {
+            border-color: var(--turn-3-color);
+        }
+
+        .image-container.turn-5 {
+            border-color: var(--turn-5-color);
+        }
+
+        .image-container:hover {
+            transform: scale(1.02);
+        }
+
+        .image-container.current:hover {
+            transform: scale(1.08);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter 0.3s ease;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-light), white);
+            border: 1px dashed var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: var(--text-light);
+            text-align: center;
+            line-height: 1.1;
+            font-weight: 600;
+        }
+
+        .turn-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            color: white;
+            font-size: 7px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 700;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .turn-badge.turn-1 { background: var(--turn-1-color); }
+        .turn-badge.turn-3 { background: var(--turn-3-color); }
+        .turn-badge.turn-5 { background: var(--turn-5-color); }
+
+        /* Larger Input Boxes */
+        .letter-box {
+            border: 2px solid var(--border-light);
+            background: linear-gradient(135deg, white 0%, var(--bg-light) 100%);
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            font-family: 'Inter', monospace;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            font-size: 12px;
+            width: 22px;
+            height: 26px;
+        }
+
+        .letter-box:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+        }
+
+        .letter-box.filled {
+            background: linear-gradient(135deg, var(--primary-blue), #4338ca);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        .letter-box.correct {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-color: var(--success);
+            color: white;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .letter-box.incorrect {
+            background: linear-gradient(135deg, var(--error), #dc2626);
+            border-color: var(--error);
+            color: white;
+            animation: incorrectShake 0.6s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        /* Compact Action Area */
+        .action-area {
+            padding: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .action-button.turn-1 {
+            background: linear-gradient(135deg, var(--turn-1-color) 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .action-button.turn-2 {
+            background: linear-gradient(135deg, var(--turn-2-color) 0%, #7c3aed 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-button.turn-3 {
+            background: linear-gradient(135deg, var(--turn-3-color) 0%, #ea580c 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .action-button.turn-4 {
+            background: linear-gradient(135deg, var(--turn-4-color) 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .action-button.turn-5 {
+            background: linear-gradient(135deg, var(--turn-5-color) 0%, #4338ca 100%);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Compact Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #334155 100%);
+            color: white;
+            padding: 6px 16px;
+            text-align: center;
+            font-size: 10px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-center {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .game-timer {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Inter', monospace;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        /* Extra compact adjustments for very small screens */
+        @media (max-height: 650px) {
+            .header { padding: 8px 14px; }
+            .theme-title { font-size: 18px; }
+            .turn-indicator-container { padding: 4px 14px; }
+            .location-section { padding: 6px; width: 290px; }
+            .action-area { padding: 6px; }
+            .action-button { padding: 10px; font-size: 12px; }
+            .footer { padding: 4px 16px; }
+        }
+
+        @media (max-width: 380px) {
+            .location-section { width: 280px; }
+            .place-1.with-time { transform: translateX(-20px); }
+            .place-3.with-time { transform: translateX(20px); }
+            .time-difference.ahead { left: -45px; }
+            .time-difference.behind { right: -45px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Compact Header -->
+        <div class="header">
+            <div class="header-content">
+                <button class="menu-button">☰</button>
+                <div class="theme-display">
+                    <div class="theme-title" id="themeTitle">COASTAL</div>
+                    <div class="turn-4-phrase" id="turn4Phrase">Cities by the sea</div>
+                    <div class="time-difference-info" id="timeDiffInfo">Time differences shown</div>
+                </div>
+                <button class="profile-button">👤</button>
+            </div>
+        </div>
+
+        <!-- Compact Turn Indicator -->
+        <div class="turn-indicator-container">
+            <div class="turn-indicator">
+                <div class="turn-progress-line">
+                    <div class="turn-progress-fill" id="progressFill"></div>
+                </div>
+                <div class="turn-dot active turn-1" id="turn1" onclick="goToTurn(1)">1</div>
+                <div class="turn-dot no-image" id="turn2" onclick="goToTurn(2)">2</div>
+                <div class="turn-dot" id="turn3" onclick="goToTurn(3)">3</div>
+                <div class="turn-dot no-image" id="turn4" onclick="goToTurn(4)">4</div>
+                <div class="turn-dot" id="turn5" onclick="goToTurn(5)">5</div>
+            </div>
+        </div>
+
+        <!-- Compact Main Game Area -->
+        <div class="game-area">
+            <div class="locations-container">
+                <!-- Place 1 -->
+                <div class="place-1" id="place1Container">
+                    <div class="location-section" id="place1">
+                        <div class="time-difference behind" id="place1TimeDiff">-8h</div>
+                        <div class="location-header">
+                            <div class="location-number">Place 1</div>
+                            <div class="header-input-row">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                            </div>
+                        </div>
+                        
+                        <div class="images-row">
+                            <div class="image-container turn-1" onclick="openImageModal(1, 1)">
+                                <img src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=400&fit=crop&crop=center" alt="Turn 1 hint">
+                                <div class="turn-badge turn-1">T1</div>
+                            </div>
+                            <div class="image-container turn-3" onclick="openImageModal(1, 3)">
+                                <div class="image-placeholder">T3<br>Coming</div>
+                            </div>
+                            <div class="image-container turn-5" onclick="openImageModal(1, 5)">
+                                <div class="image-placeholder">T5<br>Coming</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance Separator 1 -->
+                <div class="distance-separator" id="distance1">
+                    <div class="distance-line"></div>
+                    <div class="distance-label">1,200 km</div>
+                </div>
+
+                <!-- Place 2 - BASELINE -->
+                <div class="place-2" id="place2Container">
+                    <div class="location-section" id="place2">
+                        <div class="location-header">
+                            <div class="location-number">Place 2</div>
+                            <div class="header-input-row">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                            </div>
+                        </div>
+                        
+                        <div class="images-row">
+                            <div class="image-container turn-1" onclick="openImageModal(2, 1)">
+                                <img src="https://images.unsplash.com/photo-1549144511-f099e773c147?w=400&h=400&fit=crop&crop=center" alt="Turn 1 hint">
+                                <div class="turn-badge turn-1">T1</div>
+                            </div>
+                            <div class="image-container turn-3" onclick="openImageModal(2, 3)">
+                                <div class="image-placeholder">T3<br>Coming</div>
+                            </div>
+                            <div class="image-container turn-5" onclick="openImageModal(2, 5)">
+                                <div class="image-placeholder">T5<br>Coming</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance Separator 2 -->
+                <div class="distance-separator" id="distance2">
+                    <div class="distance-line"></div>
+                    <div class="distance-label">2,400 km</div>
+                </div>
+
+                <!-- Place 3 -->
+                <div class="place-3" id="place3Container">
+                    <div class="location-section" id="place3">
+                        <div class="time-difference ahead" id="place3TimeDiff">+6h</div>
+                        <div class="location-header">
+                            <div class="location-number">Place 3</div>
+                            <div class="header-input-row">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                                <input type="text" class="letter-box" value="" maxlength="1">
+                            </div>
+                        </div>
+                        
+                        <div class="images-row">
+                            <div class="image-container turn-1" onclick="openImageModal(3, 1)">
+                                <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=400&h=400&fit=crop&crop=center" alt="Turn 1 hint">
+                                <div class="turn-badge turn-1">T1</div>
+                            </div>
+                            <div class="image-container turn-3" onclick="openImageModal(3, 3)">
+                                <div class="image-placeholder">T3<br>Coming</div>
+                            </div>
+                            <div class="image-container turn-5" onclick="openImageModal(3, 5)">
+                                <div class="image-placeholder">T5<br>Coming</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compact Action Area -->
+        <div class="action-area">
+            <button class="action-button turn-1" id="actionButton" onclick="submitTurn()">Turn 1 Check</button>
+        </div>
+
+        <!-- Compact Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">PLACES</div>
+                <div class="footer-center">
+                    <span>⏱️</span>
+                    <span class="game-timer" id="gameTimer">00:00</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Help</a>
+                    <a href="#" class="footer-link">About</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTurn = 1;
+        let gameStartTime = Date.now();
+        let gameTimerInterval;
+
+        const gameData = {
+            places: [
+                { name: "BARCELONA", timeOffset: -8 },
+                { name: "ROME", timeOffset: 0 },      // Baseline
+                { name: "LISBON", timeOffset: 6 }
+            ]
+        };
+
+        const turnData = {
+            1: { theme: "COASTAL", phrase: "", showTime: false },
+            2: { theme: "COASTAL", phrase: "", showTime: true },
+            3: { theme: "COASTAL", phrase: "", showTime: true },
+            4: { theme: "COASTAL", phrase: "Cities by the sea", showTime: true },
+            5: { theme: "COASTAL", phrase: "Cities by the sea", showTime: true }
+        };
+
+        function updateGameTimer() {
+            const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timerDisplay = document.getElementById('gameTimer');
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startGameTimer() {
+            gameTimerInterval = setInterval(updateGameTimer, 1000);
+            updateGameTimer();
+        }
+
+        function updateTurnDisplay() {
+            const dots = document.querySelectorAll('.turn-dot');
+            const progressFill = document.getElementById('progressFill');
+            const actionButton = document.getElementById('actionButton');
+            const turn4Phrase = document.getElementById('turn4Phrase');
+            const timeDiffInfo = document.getElementById('timeDiffInfo');
+            
+            // Update progress bar
+            const progressWidths = { 1: '0%', 2: '25%', 3: '50%', 4: '75%', 5: '100%' };
+            progressFill.style.width = progressWidths[currentTurn];
+            
+            // Update turn dots
+            dots.forEach((dot, index) => {
+                const turnNumber = index + 1;
+                dot.classList.remove('active', 'completed', 'turn-1', 'turn-2', 'turn-3', 'turn-4', 'turn-5');
+                
+                if (turnNumber < currentTurn) {
+                    dot.classList.add('completed');
+                } else if (turnNumber === currentTurn) {
+                    dot.classList.add('active', `turn-${turnNumber}`);
+                }
+            });
+            
+            // Update action button
+            actionButton.textContent = currentTurn === 5 ? "Final Answer" : `Turn ${currentTurn} Check`;
+            actionButton.className = `action-button turn-${currentTurn}`;
+            
+            // Update theme display
+            const data = turnData[currentTurn];
+            if (data.phrase && currentTurn === 4) {
+                turn4Phrase.classList.add('visible');
+            } else {
+                turn4Phrase.classList.remove('visible');
+            }
+            
+            // Update time difference display
+            if (data.showTime) {
+                timeDiffInfo.classList.add('visible');
+                showTimeDirections();
+            } else {
+                timeDiffInfo.classList.remove('visible');
+                hideTimeDirections();
+            }
+            
+            // Update images based on turn
+            updateImageDisplay();
+        }
+
+        function showTimeDirections() {
+            const place1TimeDiff = document.getElementById('place1TimeDiff');
+            const place3TimeDiff = document.getElementById('place3TimeDiff');
+            const place1Container = document.getElementById('place1Container');
+            const place3Container = document.getElementById('place3Container');
+            
+            setTimeout(() => {
+                if (place1TimeDiff) place1TimeDiff.classList.add('visible');
+                if (place3TimeDiff) place3TimeDiff.classList.add('visible');
+                if (place1Container) place1Container.classList.add('with-time');
+                if (place3Container) place3Container.classList.add('with-time');
+            }, 300);
+        }
+
+        function hideTimeDirections() {
+            const place1TimeDiff = document.getElementById('place1TimeDiff');
+            const place3TimeDiff = document.getElementById('place3TimeDiff');
+            const place1Container = document.getElementById('place1Container');
+            const place3Container = document.getElementById('place3Container');
+            
+            if (place1TimeDiff) place1TimeDiff.classList.remove('visible');
+            if (place3TimeDiff) place3TimeDiff.classList.remove('visible');
+            if (place1Container) place1Container.classList.remove('with-time');
+            if (place3Container) place3Container.classList.remove('with-time');
+        }
+
+        function updateImageDisplay() {
+            const imageContainers = document.querySelectorAll('.image-container');
+            
+            imageContainers.forEach(container => {
+                container.classList.remove('current');
+                
+                // Show appropriate images based on turn
+                if (container.classList.contains('turn-3')) {
+                    if (currentTurn >= 3) {
+                        const placeholder = container.querySelector('.image-placeholder');
+                        if (placeholder) {
+                            const locationId = container.closest('.location-section').id;
+                            const imageSrc = getImageForLocation(locationId, 3);
+                            container.innerHTML = `
+                                <img src="${imageSrc}" alt="Turn 3 hint">
+                                <div class="turn-badge turn-3">T3</div>
+                            `;
+                        }
+                    } else {
+                        // Reset to placeholder if we go back to earlier turns
+                        const img = container.querySelector('img');
+                        if (img) {
+                            container.innerHTML = `<div class="image-placeholder">T3<br>Coming</div>`;
+                        }
+                    }
+                } else if (container.classList.contains('turn-5')) {
+                    if (currentTurn >= 5) {
+                        const placeholder = container.querySelector('.image-placeholder');
+                        if (placeholder) {
+                            const locationId = container.closest('.location-section').id;
+                            const imageSrc = getImageForLocation(locationId, 5);
+                            container.innerHTML = `
+                                <img src="${imageSrc}" alt="Turn 5 hint">
+                                <div class="turn-badge turn-5">T5</div>
+                            `;
+                        }
+                    } else {
+                        // Reset to placeholder if we go back to earlier turns
+                        const img = container.querySelector('img');
+                        if (img) {
+                            container.innerHTML = `<div class="image-placeholder">T5<br>Coming</div>`;
+                        }
+                    }
+                }
+                
+                // Highlight current turn's images - FIXED LOGIC
+                if ((container.classList.contains('turn-1') && currentTurn === 1) ||
+                    (container.classList.contains('turn-3') && currentTurn === 3) ||
+                    (container.classList.contains('turn-5') && currentTurn === 5)) {
+                    container.classList.add('current');
+                }
+            });
+        }
+
+        function getImageForLocation(locationId, turn) {
+            const images = {
+                'place1': {
+                    3: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center'
+                },
+                'place2': {
+                    3: 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=400&fit=crop&crop=center'
+                },
+                'place3': {
+                    3: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&h=400&fit=crop&crop=center',
+                    5: 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=400&h=400&fit=crop&crop=center'
+                }
+            };
+            return images[locationId][turn];
+        }
+
+        function submitTurn() {
+            // Collect all input values
+            const locations = document.querySelectorAll('.location-section');
+            const answers = [];
+            
+            locations.forEach((location, index) => {
+                const inputs = location.querySelectorAll('.letter-box');
+                const word = Array.from(inputs).map(input => input.value).join('');
+                answers.push(word);
+            });
+            
+            console.log(`Turn ${currentTurn} answers:`, answers);
+            
+            // Animation
+            const button = document.getElementById('actionButton');
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Progress to next turn or end game
+            if (currentTurn < 5) {
+                setTimeout(() => {
+                    currentTurn++;
+                    updateTurnDisplay();
+                }, 500);
+            } else {
+                // Game finished
+                console.log('Game completed!');
+                alert('🎉 Game completed! Final answers: ' + answers.join(', '));
+            }
+        }
+
+        function openImageModal(locationId, turn) {
+            console.log(`Opening image modal for location ${locationId}, turn ${turn}`);
+        }
+
+        function goToTurn(turn) {
+            if (turn <= 5 && turn >= 1) {
+                currentTurn = turn;
+                updateTurnDisplay();
+            }
+        }
+
+        // Auto-focus next input
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.letter-box');
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    if (this.value.length === 1) {
+                        this.classList.add('filled');
+                        const nextInput = this.nextElementSibling;
+                        if (nextInput && nextInput.classList.contains('letter-box') && !nextInput.value) {
+                            nextInput.focus();
+                        }
+                    } else {
+                        this.classList.remove('filled');
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value) {
+                        const prevInput = this.previousElementSibling;
+                        if (prevInput && prevInput.classList.contains('letter-box')) {
+                            prevInput.focus();
+                        }
+                    }
+                });
+            });
+            
+            // Initialize - set proper initial state BEFORE updateTurnDisplay
+            const turn4Phrase = document.getElementById('turn4Phrase');
+            const timeDiffInfo = document.getElementById('timeDiffInfo');
+            if (turn4Phrase) turn4Phrase.classList.remove('visible');
+            if (timeDiffInfo) timeDiffInfo.classList.remove('visible');
+            hideTimeDirections(); // Ensure time differences are hidden initially
+            
+            updateTurnDisplay();
+            startGameTimer();
+            
+            // Add click listeners to turn dots
+            document.querySelectorAll('.turn-dot').forEach((dot, index) => {
+                dot.addEventListener('click', () => goToTurn(index + 1));
+            });
+        });
+    </script>
+</body>
+</html>
