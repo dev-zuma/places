@@ -592,9 +592,8 @@
             flex: 1;
             text-align: center;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
         }
         
         .header-right {
@@ -622,14 +621,6 @@
             color: var(--primary-black);
             text-transform: uppercase;
             font-family: 'Courier New', monospace;
-        }
-
-        .case-meta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-            margin-top: 4px;
         }
         
         .turn-4-clue {
@@ -662,16 +653,51 @@
             }
         }
 
+        /* Theme Ribbon Styles */
+        .theme-ribbon {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-top: 3px solid var(--primary-orange);
+            border-bottom: 3px solid var(--primary-orange);
+            padding: 6px 8px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 8px rgba(255, 69, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-ribbon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
         .theme-text {
             color: var(--primary-black);
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
             text-transform: uppercase;
             font-family: 'Courier New', monospace;
-            text-decoration: underline;
-            text-decoration-color: var(--primary-orange);
-            text-decoration-thickness: 2px;
-            text-underline-offset: 2px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
         }
 
         .difficulty-badge {
@@ -1954,10 +1980,6 @@
                     </div>
                     <div class="header-center" style="flex: 1;">
                         <h1 class="case-title" id="caseTitle"></h1>
-                        <div class="case-meta">
-                            <span class="theme-text" id="themeBadge"></span>
-                            <!-- Turn 4 clue moved to Location 1 card -->
-                        </div>
                     </div>
                     <div class="header-right">
                         <div id="userMenuContainer" class="user-menu-container">
@@ -2010,6 +2032,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Theme Ribbon -->
+            <div class="theme-ribbon">
+                <span class="theme-text" id="themeBadge"></span>
             </div>
 
             <!-- Detective File Tabs -->
