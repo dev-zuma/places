@@ -487,10 +487,7 @@
         }
 
         .profile-modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             background: 
                 linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
@@ -505,6 +502,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            margin: 20px;
         }
 
         @media (max-width: 420px) {
@@ -513,6 +511,7 @@
                 max-height: 75vh;
                 width: 88%;
                 max-width: none;
+                margin: 10px;
             }
         }
 
@@ -521,6 +520,7 @@
                 width: 92%;
                 padding: 12px;
                 max-height: 70vh;
+                margin: 5px;
             }
         }
 
@@ -619,13 +619,12 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
         }
 
         .edit-username-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             background: 
                 linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
@@ -636,6 +635,7 @@
             max-width: 300px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border: 3px solid var(--primary-orange);
+            margin: 20px;
         }
 
         .edit-username-content::before {
@@ -3548,7 +3548,7 @@
                 if (helpModal.style.display === 'block') {
                     closeHelpModal();
                 }
-                if (profileModal.style.display === 'block') {
+                if (profileModal.style.display === 'flex') {
                     closeProfileModal();
                 }
             }
@@ -3666,7 +3666,7 @@
             // Pre-fill with current username
             input.value = currentUser.username || currentUser.name || currentUser.fullName;
             
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
             
             // Focus and select the input
             setTimeout(() => {
@@ -3724,7 +3724,7 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 const modal = document.getElementById('editUsernameModal');
-                if (modal.style.display === 'block') {
+                if (modal.style.display === 'flex') {
                     saveUsername();
                 }
             }
