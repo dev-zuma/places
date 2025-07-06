@@ -291,10 +291,11 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
+            overflow: hidden;
         }
 
         .help-modal-content {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -304,34 +305,46 @@
             background-color: #FFF8DC;
             padding: 20px;
             border-radius: 12px;
-            max-width: 90vw;
-            max-height: 85vh;
-            width: 350px;
+            width: 90%;
+            max-width: 350px;
+            max-height: 80vh;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border: 3px solid var(--primary-orange);
             overflow-y: auto;
-            margin: 0;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         @media (max-width: 420px) {
             .help-modal-content {
                 padding: 15px;
-                max-height: 80vh;
-                width: 90vw;
-                max-width: 90vw;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                margin: 0 auto;
+                max-height: 75vh;
+                width: 88%;
+                max-width: none;
             }
         }
 
         @media (max-width: 360px) {
             .help-modal-content {
-                width: 95vw;
-                max-width: 95vw;
+                width: 92%;
                 padding: 12px;
+                max-height: 70vh;
             }
+        }
+
+        /* Scrollbar styling for better mobile experience */
+        .help-modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .help-modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        .help-modal-content::-webkit-scrollbar-thumb {
+            background: var(--primary-teal);
+            border-radius: 3px;
         }
 
         .help-modal-content::before {
@@ -470,10 +483,11 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
+            overflow: hidden;
         }
 
         .profile-modal-content {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -483,33 +497,30 @@
             background-color: #FFF8DC;
             padding: 20px;
             border-radius: 12px;
-            max-width: 90vw;
-            max-height: 85vh;
-            width: 320px;
+            width: 90%;
+            max-width: 320px;
+            max-height: 80vh;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border: 3px solid var(--primary-orange);
-            margin: 0;
             overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         @media (max-width: 420px) {
             .profile-modal-content {
                 padding: 15px;
-                max-height: 80vh;
-                width: 90vw;
-                max-width: 90vw;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                margin: 0 auto;
+                max-height: 75vh;
+                width: 88%;
+                max-width: none;
             }
         }
 
         @media (max-width: 360px) {
             .profile-modal-content {
-                width: 95vw;
-                max-width: 95vw;
+                width: 92%;
                 padding: 12px;
+                max-height: 70vh;
             }
         }
 
@@ -1763,30 +1774,7 @@
             margin: 4px 0;
         }
 
-        /* Help Modal Styles */
-        .help-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .help-modal-content {
-            background: white;
-            border-radius: 12px;
-            max-width: 480px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
+        /* Help Modal Styles - Removed duplicate definition, using first one */
 
         .help-modal-header {
             background: 
@@ -3371,7 +3359,7 @@
 
         // Help Modal Functions
         function showHelpModal() {
-            document.getElementById('helpModal').style.display = 'flex';
+            document.getElementById('helpModal').style.display = 'block';
             // Close user menu if open
             const dropdown = document.getElementById('userMenuDropdown');
             const button = document.getElementById('userMenuButton');
@@ -3492,7 +3480,7 @@
                     const helpModal = document.getElementById('helpModal');
                     const profileModal = document.getElementById('profileModal');
                     // Only show help if neither modal is already open
-                    if (helpModal.style.display !== 'flex' && profileModal.style.display !== 'flex') {
+                    if (helpModal.style.display !== 'block' && profileModal.style.display !== 'block') {
                         showHelpModal();
                     }
                 }, 2000);
