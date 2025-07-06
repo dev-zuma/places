@@ -955,9 +955,6 @@
                         </div>
                         <p class="crime-summary">${game.crimeSummary}</p>
                         ${userStatsHTML}
-                        <div class="locations-preview">
-                            ${game.locations.map(loc => `<span class="location-chip">${loc.country}</span>`).join('')}
-                        </div>
                         ${!isSolved ? `
                         <div class="case-actions">
                             <button class="btn btn-primary" onclick="event.stopPropagation(); openCase('${game.id}')">
@@ -1008,20 +1005,8 @@
                 </div>
                 
                 <div class="modal-section">
-                    <h3>Target Locations</h3>
-                    <div class="locations-grid">
-                        ${game.locations.map(loc => `
-                            <div class="location-preview">
-                                <h4>${loc.name}</h4>
-                                <p>${loc.country}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                
-                <div class="modal-section">
-                    <h3>Key Intelligence</h3>
-                    <p style="color: var(--text-secondary); font-style: italic;">"${game.turn4Clue}"</p>
+                    <h3>Case Details</h3>
+                    <p style="color: var(--text-secondary);">A challenging detective case involving 3 connected locations around the world. Use your investigative skills to track down the criminal using evidence and clues revealed during the investigation.</p>
                 </div>
                 
                 <button 

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Test - Worldwide Chase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: inline-block;
+            background: #1A5B5B;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 10px 10px 0;
+        }
+        .test-link:hover {
+            background: #FF4500;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        h1 { color: #1A5B5B; }
+        h2 { color: #FF4500; }
+        ul li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Worldwide Chase Interface Test</h1>
+    
+    <div class="test-section">
+        <h2>✅ Server Status</h2>
+        <div class="status success">
+            <strong>Server Running:</strong> http://localhost:9091
+        </div>
+        <div class="status info">
+            <strong>Test Time:</strong> <span id="testTime"></span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Test Areas</h2>
+        <h3>1. Case Gallery Spoiler Elimination</h3>
+        <p>Test that case preview cards show NO location information.</p>
+        <a href="http://localhost:9091/game/" class="test-link" target="_blank">📁 Open Case Gallery</a>
+        
+        <h3>2. Help Modal Compactness</h3>
+        <p>Test that help modal is very short with only essential info.</p>
+        <a href="http://localhost:9091/game/detective.html?case=game_1751791994117_0rb0kh5f1" class="test-link" target="_blank">🔍 Open Detective Interface</a>
+        
+        <h3>3. Header 3-Line Layout</h3>
+        <p>Check header has: Line 1 (Logo + Menu), Line 2 (Case Title), Line 3 (Theme).</p>
+        <a href="http://localhost:9091/game/detective.html?case=game_1751791994117_0rb0kh5f1" class="test-link" target="_blank">🔍 Test Header Layout</a>
+        
+        <h3>4. Game Flow</h3>
+        <p>Ensure the game works properly without spoilers.</p>
+        <a href="http://localhost:9091/game/" class="test-link" target="_blank">🎮 Test Complete Flow</a>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Test Checklist</h2>
+        <ul>
+            <li><strong>Case Gallery:</strong> No location names or countries shown in preview cards</li>
+            <li><strong>Case Details Modal:</strong> No target locations revealed</li>
+            <li><strong>Help Modal:</strong> Compact and mobile-friendly</li>
+            <li><strong>Header Layout:</strong> 3-line structure with proper spacing</li>
+            <li><strong>Game Flow:</strong> Cases can be selected and played without spoilers</li>
+            <li><strong>Detective Interface:</strong> Loads correctly and functions properly</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Available Cases</h2>
+        <div id="casesList">Loading cases...</div>
+    </div>
+
+    <script>
+        // Set current time
+        document.getElementById('testTime').textContent = new Date().toLocaleString();
+        
+        // Load and display available cases
+        async function loadCases() {
+            try {
+                const response = await fetch('http://localhost:9091/api/cases');
+                const cases = await response.json();
+                
+                const casesList = document.getElementById('casesList');
+                casesList.innerHTML = cases.map(game => `
+                    <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <strong>${game.caseTitle}</strong> - ${game.theme} (${game.difficulty})
+                        <br>
+                        <small>Villain: ${game.villainName} - ${game.villainTitle}</small>
+                        <br>
+                        <a href="http://localhost:9091/game/detective.html?case=${game.id}" class="test-link" target="_blank">🔍 Test This Case</a>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('casesList').innerHTML = '<p style="color: red;">Error loading cases: ' + error.message + '</p>';
+            }
+        }
+        
+        loadCases();
+    </script>
+</body>
+</html>
