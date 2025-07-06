@@ -2,10 +2,16 @@
   "name": "places",
   "version": "1.0.0",
   "description": "## Quick Start",
-  "main": "server.js",
+  "main": "server-unified.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server-unified.js",
+    "dev": "nodemon server-unified.js",
+    "setup:production": "node scripts/setup-production.js",
+    "build": "npm install && npm run setup:production",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

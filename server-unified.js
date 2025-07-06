@@ -11,6 +11,11 @@ const OpenAI = require('openai');
 const app = express();
 const prisma = new PrismaClient();
 
+// Production environment detection
+const isProduction = process.env.NODE_ENV === 'production';
+const port = process.env.PORT || 9091;
+const productionDomain = process.env.PRODUCTION_DOMAIN || 'https://worldwidechase.onrender.com';
+
 // Initialize OpenAI client with error handling
 let openai = null;
 try {
@@ -40,7 +45,14 @@ try {
 }
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: isProduction 
+    ? [productionDomain, 'https://worldwidechase.onrender.com']
+    : ['http://localhost:9091', 'http://localhost:3001', 'http://localhost:8000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Serve static files from multiple directories
@@ -795,7 +807,12 @@ async function uploadImageToS3(imageUrl, gameId, locationPosition, turn) {
   // If S3 client is available, upload to S3
   if (s3Client && process.env.AWS_S3_BUCKET_NAME) {
     try {
-      console.log(`Uploading image to S3: ${imageUrl}`);
+      // Determine which bucket to use based on environment
+      const bucketName = isProduction && process.env.AWS_S3_PROD_BUCKET_NAME 
+        ? process.env.AWS_S3_PROD_BUCKET_NAME 
+        : process.env.AWS_S3_BUCKET_NAME;
+      
+      console.log(`Uploading image to S3 bucket: ${bucketName}`);
       
       // Download the image
       const fetch = (await import('node-fetch')).default;
@@ -817,7 +834,7 @@ async function uploadImageToS3(imageUrl, gameId, locationPosition, turn) {
       
       // Upload to S3
       const uploadCommand = new PutObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Bucket: bucketName,
         Key: s3Key,
         Body: buffer,
         ContentType: 'image/png',
@@ -826,7 +843,7 @@ async function uploadImageToS3(imageUrl, gameId, locationPosition, turn) {
       await s3Client.send(uploadCommand);
       
       // Return the S3 URL
-      const s3Url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+      const s3Url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
       console.log(`Image uploaded to S3: ${s3Url}`);
       return s3Url;
       
@@ -991,10 +1008,17 @@ app.post('/api/admin/clear-database', async (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Unified server running on http://localhost:${PORT}`);
-  console.log(`Game gallery: http://localhost:${PORT}/game/`);
-  console.log(`Admin portal: http://localhost:${PORT}/admin/`);
-  console.log(`Mockups: http://localhost:${PORT}/mockups/`);
+app.listen(port, () => {
+  console.log(`\n🚀 Unified server running on port ${port}`);
+  console.log(`📍 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+  console.log(`\n🎮 Game gallery: ${isProduction ? productionDomain : `http://localhost:${port}`}/game/`);
+  console.log(`🔧 Admin portal: ${isProduction ? productionDomain : `http://localhost:${port}`}/admin/`);
+  
+  if (isProduction) {
+    console.log(`\n🌐 Production URL: ${productionDomain}`);
+    console.log(`📦 S3 Bucket: ${process.env.AWS_S3_PROD_BUCKET_NAME || process.env.AWS_S3_BUCKET_NAME}`);
+    console.log(`💾 Database: ${process.env.DATABASE_URL || 'file:/db/production.db'}`);
+  } else {
+    console.log(`\n🎨 Mockups: http://localhost:${port}/mockups/`);
+  }
 });
