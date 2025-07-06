@@ -364,63 +364,63 @@
         }
 
         .help-section {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         .help-section h3 {
             font-family: 'Courier New', monospace;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--primary-orange);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
         }
 
         .help-section p, .help-section li {
             font-family: 'Courier New', monospace;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--primary-black);
-            line-height: 1.3;
-            margin-bottom: 4px;
+            line-height: 1.2;
+            margin-bottom: 2px;
         }
 
         .help-section ul {
-            margin: 6px 0;
-            padding-left: 14px;
+            margin: 4px 0;
+            padding-left: 12px;
         }
 
         .help-section li {
-            margin-bottom: 3px;
+            margin-bottom: 1px;
         }
 
         @media (max-width: 420px) {
             .help-modal-header {
-                font-size: 16px;
-                margin-bottom: 12px;
+                font-size: 15px;
+                margin-bottom: 10px;
             }
             
             .help-section {
-                margin-bottom: 12px;
+                margin-bottom: 8px;
             }
             
             .help-section h3 {
-                font-size: 12px;
-                margin-bottom: 5px;
-            }
-            
-            .help-section p, .help-section li {
-                font-size: 10px;
-                line-height: 1.2;
+                font-size: 11px;
                 margin-bottom: 3px;
             }
             
+            .help-section p, .help-section li {
+                font-size: 9px;
+                line-height: 1.1;
+                margin-bottom: 1px;
+            }
+            
             .help-section ul {
-                margin: 4px 0;
-                padding-left: 12px;
+                margin: 3px 0;
+                padding-left: 10px;
             }
             
             .help-section li {
-                margin-bottom: 2px;
+                margin-bottom: 1px;
             }
         }
 
@@ -1988,6 +1988,10 @@
                                         <span class="menu-icon">👤</span>
                                         Sign In
                                     </button>
+                                    <button class="menu-item" onclick="window.location.href='/game/'">
+                                        <span class="menu-icon">📁</span>
+                                        Cases
+                                    </button>
                                     <button class="menu-item" onclick="showHelpModal()">
                                         <span class="menu-icon">❓</span>
                                         How to Play
@@ -1999,6 +2003,10 @@
                                     <button class="menu-item" onclick="showProfileModal()">
                                         <span class="menu-icon">👤</span>
                                         Profile
+                                    </button>
+                                    <button class="menu-item" onclick="window.location.href='/game/'">
+                                        <span class="menu-icon">📁</span>
+                                        Cases
                                     </button>
                                     <button class="menu-item" onclick="showHelpModal()">
                                         <span class="menu-icon">❓</span>
@@ -2220,7 +2228,7 @@
             
             // Populate case header
             document.getElementById('caseTitle').textContent = currentCase.caseTitle;
-            document.getElementById('themeBadge').textContent = 'THEME: ' + currentCase.theme;
+            document.getElementById('themeBadge').textContent = currentCase.theme;
             
             // Set up Turn 4 clue details for case file tab
             const turn4ClueDetailsElement = document.getElementById('turn4ClueDetails');
@@ -3500,39 +3508,38 @@
             <div class="help-modal-header">How to Play</div>
             <div class="help-content">
                 <div class="help-section">
-                    <h3>🔍 Your Mission</h3>
-                    <p>Track criminals by identifying 3 connected locations using thematic clues and evidence.</p>
+                    <h3>🔍 Mission</h3>
+                    <p>Identify 3 connected locations using clues and evidence.</p>
                 </div>
 
                 <div class="help-section">
-                    <h3>⏱️ Time Limit</h3>
-                    <p>5 minutes per case. Timer changes color as time runs out.</p>
+                    <h3>⏱️ Timer</h3>
+                    <p>5 minutes. Timer changes color when time runs low.</p>
                 </div>
 
                 <div class="help-section">
-                    <h3>🎲 Investigation Turns</h3>
+                    <h3>🎲 Turns</h3>
                     <ul>
-                        <li><span class="help-turn-indicator">T1</span>Theme + first evidence</li>
-                        <li><span class="help-turn-indicator">T2</span>Timezone differences</li>
-                        <li><span class="help-turn-indicator">T3</span>Clearer evidence</li>
-                        <li><span class="help-turn-indicator">T4</span>Additional clue</li>
-                        <li><span class="help-turn-indicator">T5</span>Final evidence</li>
+                        <li><span class="help-turn-indicator">T1</span>Theme + photos</li>
+                        <li><span class="help-turn-indicator">T2</span>Timezones</li>
+                        <li><span class="help-turn-indicator">T3</span>Clearer photos</li>
+                        <li><span class="help-turn-indicator">T4</span>Extra clue</li>
+                        <li><span class="help-turn-indicator">T5</span>Final photos</li>
                     </ul>
                 </div>
 
                 <div class="help-section">
                     <h3>🕵️ Tips</h3>
                     <ul>
-                        <li>Click photos to examine closely</li>
-                        <li>Use theme and Turn 4 clue</li>
+                        <li>Click photos to zoom</li>
+                        <li>Use theme & Turn 4 clue</li>
                         <li>Look for landmarks</li>
-                        <li>Check timezone hints</li>
                     </ul>
                 </div>
 
                 <div class="help-section">
-                    <h3>🏆 Scoring</h3>
-                    <p>Faster solving = higher detective ranking!</p>
+                    <h3>🏆 Score</h3>
+                    <p>Faster = better ranking!</p>
                 </div>
             </div>
         </div>
