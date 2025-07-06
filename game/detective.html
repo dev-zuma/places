@@ -154,10 +154,10 @@
                 #FFF8DC;
             background-size: 100% 42px;
             color: var(--primary-black);
-            height: 80px;
+            height: 60px;
             display: flex;
-            flex-direction: column;
-            padding: 8px 16px;
+            align-items: center;
+            padding: 0 16px;
             flex-shrink: 0;
             position: relative;
             border-bottom: 3px solid var(--primary-orange);
@@ -166,31 +166,10 @@
 
         .case-header-content {
             display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            gap: 2px;
-        }
-
-        .header-line {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 20px;
-        }
-
-        .header-line-1 {
             justify-content: space-between;
-            height: 24px;
-        }
-
-        .header-line-2 {
-            height: 22px;
-        }
-
-        .header-line-3 {
-            height: 20px;
+            width: 100%;
+            gap: 12px;
         }
 
         /* User Menu Styles */
@@ -590,10 +569,11 @@
         .header-left {
             display: flex;
             align-items: center;
+            gap: 12px;
         }
         
         .main-logo {
-            height: 20px;
+            height: 45px;
             width: auto;
         }
         
@@ -601,8 +581,9 @@
             flex: 1;
             text-align: center;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
         
         .header-right {
@@ -623,10 +604,10 @@
         }
 
         .case-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             margin: 0;
-            line-height: 1.1;
+            line-height: 1.2;
             color: var(--primary-black);
             text-transform: uppercase;
             font-family: 'Courier New', monospace;
@@ -634,9 +615,10 @@
 
         .case-meta {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+            margin-top: 4px;
         }
         
         .turn-4-clue {
@@ -671,7 +653,7 @@
 
         .theme-text {
             color: var(--primary-black);
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             font-family: 'Courier New', monospace;
@@ -679,7 +661,6 @@
             text-decoration-color: var(--primary-orange);
             text-decoration-thickness: 2px;
             text-underline-offset: 2px;
-            margin: 0;
         }
 
         .difficulty-badge {
@@ -1980,13 +1961,18 @@
             <!-- Case Header -->
             <div class="case-header">
                 <div class="case-header-content">
-                    <!-- Line 1: Logo and User Menu -->
-                    <div class="header-line header-line-1">
-                        <div class="header-left">
-                            <img src="wwc-logo.png" alt="Worldwide Chase" class="main-logo">
+                    <div class="header-left">
+                        <img src="wwc-logo.png" alt="Worldwide Chase" class="main-logo">
+                    </div>
+                    <div class="header-center" style="flex: 1;">
+                        <h1 class="case-title" id="caseTitle"></h1>
+                        <div class="case-meta">
+                            <span class="theme-text" id="themeBadge"></span>
+                            <!-- Turn 4 clue moved to Location 1 card -->
                         </div>
-                        <div class="header-right">
-                            <div id="userMenuContainer" class="user-menu-container">
+                    </div>
+                    <div class="header-right">
+                        <div id="userMenuContainer" class="user-menu-container">
                             <!-- User Menu Button -->
                             <button id="userMenuButton" class="user-menu-button" onclick="toggleUserMenu()">
                                 <span id="userMenuText">Sign In</span>
@@ -2033,20 +2019,6 @@
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Line 2: Case Title -->
-                    <div class="header-line header-line-2">
-                        <div class="header-center">
-                            <h1 class="case-title" id="caseTitle"></h1>
-                        </div>
-                    </div>
-                    
-                    <!-- Line 3: Theme -->
-                    <div class="header-line header-line-3">
-                        <div class="header-center">
-                            <span class="theme-text" id="themeBadge"></span>
                         </div>
                     </div>
                 </div>
