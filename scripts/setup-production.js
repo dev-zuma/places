@@ -13,10 +13,23 @@ const dbPath = isProduction ? '/db' : './prisma';
 console.log(`Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
 console.log(`Database path: ${dbPath}`);
 
-// Ensure database directory exists (for production)
-if (isProduction && !fs.existsSync(dbPath)) {
-  console.log(`Creating database directory at ${dbPath}...`);
-  fs.mkdirSync(dbPath, { recursive: true });
+// Check database directory (for production)
+if (isProduction) {
+  if (fs.existsSync(dbPath)) {
+    console.log(`✅ Database directory exists at ${dbPath}`);
+    // Check if directory is writable
+    try {
+      fs.accessSync(dbPath, fs.constants.W_OK);
+      console.log(`✅ Database directory is writable`);
+    } catch (error) {
+      console.error(`❌ Database directory is not writable: ${error.message}`);
+      process.exit(1);
+    }
+  } else {
+    console.log(`❌ Database directory does not exist at ${dbPath}`);
+    console.log(`Please ensure Render persistent disk is mounted at ${dbPath}`);
+    process.exit(1);
+  }
 }
 
 // Set DATABASE_URL for production
