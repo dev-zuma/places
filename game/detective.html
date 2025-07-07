@@ -2657,7 +2657,10 @@
                             <div class="distance-arrow-up"></div>
                             <div class="distance-line" style="height: ${gaps[index] - 16}px"></div>
                             <div class="distance-arrow-down"></div>
-                            <div class="distance-label">${Math.round(distances[index])} km</div>
+                            <div class="distance-label">
+                                ${Math.round(distances[index])} km<br>
+                                ${Math.round(distances[index] * 0.621371)} mi
+                            </div>
                         </div>
                     `;
                     container.appendChild(separator);
