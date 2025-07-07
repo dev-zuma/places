@@ -11,8 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **GitHub Repository**: https://github.com/dev-zuma/places
 - **Current Phase**: Complete Detective System (All Phases COMPLETED)
 - **Production Status**: Ready for deployment and user testing
-- **Last Updated**: 2025-07-06
-- **Interface**: Authentic detective case file experience with retro styling
+- **Last Updated**: 2025-07-07
+- **Interface**: Authentic detective case file experience with square corners and professional styling
 
 ## Project Structure
 
@@ -79,6 +79,10 @@ places/
 - **Mobile Optimization**: Touch-friendly, ultra-compact design that fits without scrolling
 - **Timer System**: 5-minute countdown with visual feedback
 - **Evidence Modals**: Click location images to view evidence in detective-style modals
+- **User Profile System**: Complete user account management with username editing and profile tracking
+- **Villain Image Modals**: Click villain portraits to view detailed suspect profiles
+- **Help System**: Interactive game instructions with auto-show for first-time users
+- **Theme Ribbon**: Golden gradient theme display with shimmer animation effects
 
 ## Development Commands
 
@@ -119,9 +123,21 @@ npx prisma studio
 # 2. Restart server: pkill -f "node server-unified.js" && node server-unified.js &
 # 3. Use Playwright MCP Server to test at: http://localhost:9091
 
+# Automated test scripts (located in tests/ folder):
+node tests/verify-detective-interface.js                      # Full system verification
+node tests/test-detective-interface.js                        # Playwright UI testing
+node tests/verify-villain-modal.js                           # Villain modal verification
+node tests/verify-profile-modal.js                           # Profile modal verification
+node tests/verify-theme-ribbon.js                            # Theme ribbon verification
+
+# Manual test pages:
+http://localhost:9091/tests/test-villain-modal.html          # Villain modal testing
+http://localhost:9091/tests/test-profile-modal.html          # Profile modal testing
+http://localhost:9091/tests/manual-test-help-modal.html      # Help modal testing
+
 # Test API endpoints
-curl http://localhost:9091/api/cases                           # View published cases
-curl -X POST -H "Content-Type: application/json" \           # Generate new case
+curl http://localhost:9091/api/cases                         # View published cases
+curl -X POST -H "Content-Type: application/json" \          # Generate new case
   -d '{"userInput":"music","difficulty":"medium"}' \
   http://localhost:9091/api/generate
 
@@ -131,6 +147,9 @@ curl -X POST -H "Content-Type: application/json" \           # Generate new case
 # 3. Case file backgrounds and typography consistency
 # 4. Image modal functionality and evidence viewing
 # 5. Timer countdown and color change behaviors
+# 6. User profile system and authentication flow
+# 7. Villain modal interactions and suspect profiles
+# 8. Help system and first-time user experience
 ```
 
 ## Access & Testing
@@ -208,12 +227,16 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
 - **Case File Interface**: Authentic detective documentation experience
 
 ### Detective Interface Features
-1. **Case Header**: Compact header with logo, case title, theme, and Turn 4 clue
-2. **Evidence Collection**: Two-tab system (Case Details + Investigation Board)
-3. **Location Cards**: Three location cards with evidence images and input fields
-4. **Timer System**: Countdown timer with color-coded urgency
-5. **Evidence Modals**: Full-screen evidence viewing with case file styling
-6. **Turn Progression**: 5-turn system with visual progress tracking
+1. **Case Header**: Compact header with logo, case title, and user menu system
+2. **Theme Ribbon**: Golden gradient theme display with shimmer animation below header
+3. **Evidence Collection**: Two-tab system (Case Details + Investigation Board)
+4. **Villain Portraits**: Clickable suspect mugshots that open detailed profile modals
+5. **Location Cards**: Three location cards with evidence images and input fields
+6. **Timer System**: Countdown timer with color-coded urgency
+7. **Evidence Modals**: Full-screen evidence viewing with case file styling
+8. **Turn Progression**: 5-turn system with visual progress tracking
+9. **User Profile System**: Complete account management with username editing
+10. **Help System**: Interactive game instructions with first-time auto-display
 
 ### Detailed Game Mechanics
 
@@ -300,6 +323,7 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
 - **Typewriter Font**: Courier New for realistic case file typography
 - **Evidence Photos**: Professional evidence presentation style
 - **Official Layout**: Mugshots, evidence logs, case summaries
+- **Square Corners**: Professional document styling with no rounded borders
 - **Professional Feel**: Interface resembles real police/detective documentation
 
 ## Database Schema (Prisma)
@@ -337,6 +361,34 @@ model Location {
 }
 ```
 
+## Test Organization
+
+### Test Folder Structure
+```
+tests/                          # Reusable test scripts (gitignored)
+├── verify-*.js                 # System verification scripts
+├── test-*.js                   # Automated UI test scripts  
+├── test-*.html                 # Manual test pages
+└── manual-test-*.html          # Interactive test interfaces
+
+test-artifacts/                 # Test reports and screenshots (gitignored)
+├── *-test-report.md            # Test documentation
+├── *test*.png                  # Test screenshots
+└── *.log                       # Test logs
+```
+
+### Key Test Scripts
+- **verify-detective-interface.js**: Full system health check (server, API, UI)
+- **test-detective-interface.js**: Playwright automated UI testing with screenshots
+- **verify-villain-modal.js**: Villain modal functionality verification
+- **verify-profile-modal.js**: User profile system testing
+- **test-villain-modal.js**: Comprehensive villain modal testing with Puppeteer
+
+### Manual Test Pages
+- **test-villain-modal.html**: Interactive villain modal testing interface
+- **test-profile-modal.html**: Profile modal positioning and functionality tests
+- **manual-test-help-modal.html**: Help system testing with mobile optimization
+
 ## Critical Development Rules
 
 ### Location Selection Rules
@@ -372,19 +424,27 @@ AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
-## Recent Updates (2025-07-06)
+## Recent Updates (2025-07-07)
 
-### Major System Updates
+### Latest Interface Improvements
+- **Villain Image Modals**: Implemented clickable villain portraits that open detailed suspect profile modals
+- **Square Corner Design**: Removed all rounded borders from main container and modals for professional document appearance
+- **Modal Width Constraints**: Updated all modals to fit properly within viewport width on all devices
+- **User Profile System**: Complete user account management with username editing functionality
+- **Help Modal System**: Interactive game instructions with automatic display for first-time users
+- **Theme Ribbon**: Beautiful golden gradient theme display with shimmer animation effects
+
+### Previous Major Updates (2025-07-06)
 - **Unified Server**: Consolidated all functionality into `server-unified.js`
 - **GPT-Image-1 Integration**: Switched from DALL-E 3 to GPT-Image-1 for all image generation
 - **Base64 Handling**: Proper conversion of GPT-Image-1 base64 responses to data URLs
 - **Painterly Style**: Updated villain portraits to storybook painting style
 - **Code Cleanup**: Removed redundant files and test artifacts
 
-### Performance Improvements
+### Performance & UX Improvements
 - **Single Server Architecture**: Eliminated multiple server files
 - **Optimized Image Generation**: Medium quality GPT-Image-1 for faster generation
-- **Clean Codebase**: Removed test files, screenshots, and documentation artifacts
-- **Streamlined Development**: Single entry point with unified functionality
+- **Professional Styling**: Square corners and authentic case file appearance
+- **Enhanced User Experience**: Complete modal system with proper responsive design
 
 This project represents a complete, production-ready detective game experience that transforms geography education into an engaging criminal investigation simulation using cutting-edge AI image generation and authentic detective interface design.

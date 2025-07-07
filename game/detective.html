@@ -38,7 +38,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            border-radius: 20px;
             overflow: hidden;
             box-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.2),
@@ -133,7 +132,6 @@
             color: white;
             border: 2px solid var(--primary-gold);
             padding: 12px 24px;
-            border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
             margin-top: 16px;
@@ -151,7 +149,7 @@
         .case-header {
             background: 
                 linear-gradient(180deg, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 41px, transparent 41px),
-                #FFF8DC;
+                #FEEDC7;
             background-size: 100% 42px;
             color: var(--primary-black);
             height: 60px;
@@ -184,7 +182,6 @@
             color: white;
             border: 2px solid var(--primary-orange);
             padding: 6px 12px;
-            border-radius: 8px;
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
@@ -218,7 +215,6 @@
             right: 0;
             background: white;
             border: 2px solid var(--primary-teal);
-            border-radius: 8px;
             min-width: 140px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
             z-index: 1000;
@@ -252,11 +248,9 @@
         }
 
         .menu-item:first-child {
-            border-radius: 6px 6px 0 0;
         }
 
         .menu-item:last-child {
-            border-radius: 0 0 6px 6px;
         }
 
         .menu-header {
@@ -304,7 +298,6 @@
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
             background-color: #FFF8DC;
             padding: 20px;
-            border-radius: 12px;
             width: 90%;
             max-width: 350px;
             max-height: 80vh;
@@ -339,12 +332,10 @@
 
         .help-modal-content::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
         }
 
         .help-modal-content::-webkit-scrollbar-thumb {
             background: var(--primary-teal);
-            border-radius: 3px;
         }
 
         .help-modal-content::before {
@@ -442,7 +433,6 @@
             background: var(--primary-teal);
             color: white;
             padding: 2px 6px;
-            border-radius: 4px;
             font-size: 10px;
             font-weight: 700;
             margin-right: 4px;
@@ -493,7 +483,6 @@
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
             background-color: #FFF8DC;
             padding: 20px;
-            border-radius: 12px;
             width: 90%;
             max-width: 320px;
             max-height: 80vh;
@@ -595,7 +584,6 @@
             color: white;
             border: none;
             padding: 4px 8px;
-            border-radius: 4px;
             font-size: 10px;
             font-weight: 600;
             cursor: pointer;
@@ -630,7 +618,6 @@
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
             background-color: #FFF8DC;
             padding: 25px;
-            border-radius: 12px;
             width: 90%;
             max-width: 300px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -663,7 +650,6 @@
             width: 100%;
             padding: 12px;
             border: 2px solid var(--primary-teal);
-            border-radius: 6px;
             font-size: 14px;
             font-family: 'Courier New', monospace;
             text-align: center;
@@ -682,7 +668,6 @@
         .save-username-btn, .cancel-username-btn {
             padding: 10px 20px;
             border: none;
-            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Courier New', monospace;
@@ -707,6 +692,143 @@
 
         .cancel-username-btn:hover {
             background: rgba(26, 91, 91, 0.1);
+        }
+
+        /* Villain Image Modal Styles */
+        .villain-modal {
+            display: none;
+            position: fixed;
+            z-index: 2200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .villain-modal-content {
+            position: relative;
+            background: 
+                linear-gradient(90deg, #FFE4B5 0px, #FFE4B5 30px, transparent 30px),
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
+            background-color: #FFF8DC;
+            padding: 25px;
+            width: calc(100vw - 40px);
+            max-width: 380px;
+            max-height: 90vh;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--primary-orange);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .villain-modal-content::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #FF4500;
+        }
+
+        .villain-modal-header {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-teal);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            margin-left: 20px;
+        }
+
+        .villain-modal-image {
+            max-width: 100%;
+            max-height: 60vh;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 20px auto;
+            display: block;
+            position: relative;
+            z-index: 2;
+            margin-left: 20px;
+        }
+
+        .villain-modal-info {
+            position: relative;
+            z-index: 2;
+            margin-left: 20px;
+        }
+
+        .villain-modal-name {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .villain-modal-title {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-orange);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .villain-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-orange);
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 3;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .villain-modal-close:hover {
+            background-color: rgba(255, 69, 0, 0.1);
+        }
+
+        @media (max-width: 420px) {
+            .villain-modal-content {
+                width: calc(100vw - 20px);
+                max-width: 100%;
+                padding: 20px;
+                }
+            
+            .villain-modal-header {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .villain-modal-name {
+                font-size: 14px;
+            }
+            
+            .villain-modal-title {
+                font-size: 12px;
+            }
+            
+            .villain-modal-image {
+                max-height: 50vh;
+            }
         }
         
         .header-left {
@@ -737,7 +859,6 @@
             background: var(--case-badge);
             color: white;
             padding: 2px 8px;
-            border-radius: 6px;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.5px;
@@ -768,7 +889,6 @@
             position: relative;
             display: inline-block;
             padding: 2px 6px;
-            border-radius: 4px;
         }
         
         .turn-4-clue.flashing {
@@ -834,7 +954,6 @@
 
         .difficulty-badge {
             padding: 2px 6px;
-            border-radius: 4px;
             font-size: 10px;
             font-weight: 600;
             color: white;
@@ -1117,7 +1236,6 @@
             top: 50%;
             transform: translateY(-50%);
             z-index: 0;
-            border-radius: 2px;
         }
 
         .turn-progress-fill {
@@ -1125,14 +1243,12 @@
             height: 100%;
             background: linear-gradient(90deg, var(--turn-1-color), var(--turn-3-color));
             width: 0%;
-            border-radius: 2px;
             transition: width 0.8s ease;
         }
 
         .turn-dot {
             width: 24px;
             height: 24px;
-            border-radius: 6px;
             background: white;
             border: 2px solid var(--border-light);
             transition: all 0.3s ease;
@@ -1228,7 +1344,6 @@
         /* Location Cards - more compact for tab interface */
         .location-section {
             background: white;
-            border-radius: 16px;
             border: 2px solid var(--primary-teal);
             padding: 0px 16px 16px 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -1262,7 +1377,6 @@
             background: var(--primary-orange);
             color: white;
             padding: 6px 10px;
-            border-radius: 16px;
             font-size: 12px;
             font-weight: 700;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -1337,7 +1451,6 @@
             color: var(--primary-black);
             text-transform: uppercase;
             transition: all 0.3s ease;
-            border-radius: 6px;
             font-family: 'Inter', monospace;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
             font-size: 14px;
@@ -1387,7 +1500,6 @@
 
         .image-container {
             position: relative;
-            border-radius: 8px;
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1444,7 +1556,6 @@
             color: white;
             font-size: 6px;
             padding: 1px 3px;
-            border-radius: 3px;
             font-weight: 700;
             z-index: 2;
             backdrop-filter: blur(10px);
@@ -1512,7 +1623,6 @@
             color: white;
             background: var(--primary-orange);
             padding: 4px 10px;
-            border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             font-family: 'Courier New', monospace;
             white-space: nowrap;
@@ -1537,7 +1647,6 @@
             width: 200px;
             padding: 12px 16px;
             border: 3px solid var(--primary-orange);
-            border-radius: 12px;
             font-size: 13px;
             font-weight: 800;
             cursor: pointer;
@@ -1638,7 +1747,6 @@
             font-family: 'Courier New', monospace;
             background: rgba(26, 91, 91, 0.1);
             padding: 4px 8px;
-            border-radius: 6px;
             border: 1px solid var(--primary-teal);
             min-width: 60px;
         }
@@ -1666,7 +1774,6 @@
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
             background-color: #FFF8DC;
             padding: 20px;
-            border-radius: 12px;
             max-width: 90vw;
             max-height: 90vh;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -1699,7 +1806,6 @@
         .modal-image {
             max-width: 100%;
             max-height: 70vh;
-            border-radius: 8px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             margin-left: 20px;
         }
@@ -1794,7 +1900,6 @@
             text-align: left;
             background: rgba(26, 91, 91, 0.05);
             padding: 16px;
-            border-radius: 8px;
             border: 1px solid var(--primary-teal);
         }
         
@@ -1854,7 +1959,6 @@
             color: white;
             border: none;
             padding: 8px 12px;
-            border-radius: 6px;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -1883,7 +1987,6 @@
             right: 0;
             background: white;
             border: 1px solid var(--border-light);
-            border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             min-width: 160px;
             z-index: 1000;
@@ -1940,7 +2043,6 @@
                 repeating-linear-gradient(transparent 0px, transparent 40px, rgba(26, 91, 91, 0.05) 40px, rgba(26, 91, 91, 0.05) 42px);
             background-color: #FFF8DC;
             padding: 20px;
-            border-radius: 12px 12px 0 0;
             position: relative;
         }
 
@@ -1963,7 +2065,6 @@
             cursor: pointer;
             color: var(--primary-teal);
             padding: 4px;
-            border-radius: 4px;
             transition: background-color 0.2s ease;
         }
 
@@ -2004,7 +2105,6 @@
             border-left: 4px solid var(--primary-orange);
             padding: 12px 16px;
             margin: 12px 0;
-            border-radius: 0 4px 4px 0;
         }
 
         .help-step strong {
@@ -2015,7 +2115,6 @@
             background: rgba(26, 91, 91, 0.05);
             border: 1px solid rgba(26, 91, 91, 0.2);
             padding: 12px;
-            border-radius: 6px;
             margin: 16px 0;
         }
 
@@ -2040,7 +2139,6 @@
 
         .profile-modal-content {
             background: white;
-            border-radius: 12px;
             max-width: 400px;
             width: 100%;
             position: relative;
@@ -2050,7 +2148,6 @@
             background: var(--primary-teal);
             color: white;
             padding: 20px;
-            border-radius: 12px 12px 0 0;
             text-align: center;
         }
 
@@ -2070,7 +2167,6 @@
             cursor: pointer;
             color: white;
             padding: 4px;
-            border-radius: 4px;
             transition: background-color 0.2s ease;
         }
 
@@ -2108,7 +2204,9 @@
             <div class="case-header">
                 <div class="case-header-content">
                     <div class="header-left">
-                        <img src="wwc-logo.png" alt="Worldwide Chase" class="main-logo">
+                        <a href="/" style="display: block;">
+                            <img src="wwc-logo.png" alt="Worldwide Chase" class="main-logo">
+                        </a>
                     </div>
                     <div class="header-center" style="flex: 1;">
                         <h1 class="case-title" id="caseTitle"></h1>
@@ -2189,7 +2287,7 @@
                         <!-- Villain Profile -->
                         <div class="villain-profile">
                             <div class="villain-mugshot">
-                                <img id="villainPortrait" alt="" class="villain-portrait">
+                                <img id="villainPortrait" alt="" class="villain-portrait" onclick="showVillainModal()" style="cursor: pointer;">
                                 <div class="mugshot-label">SUSPECT</div>
                             </div>
                             <div class="villain-info">
@@ -2300,6 +2398,7 @@
 
     <script>
         let currentCase = null;
+        let gameData = null;
         let currentTurn = 1;
         let activeTab = 'caseDetails';
         let correctLocations = [false, false, false]; // Track which locations have been guessed
@@ -2372,6 +2471,9 @@
             document.getElementById('gameInterface').style.display = 'flex';
             document.getElementById('gameInterface').style.flexDirection = 'column';
             document.getElementById('gameInterface').style.height = '100%';
+            
+            // Set gameData for villain modal
+            gameData = currentCase;
             
             // Populate case header
             document.getElementById('caseTitle').textContent = currentCase.caseTitle;
@@ -2567,10 +2669,16 @@
             const actionButton = document.getElementById('actionButton');
             if (activeTab === 'caseDetails') {
                 actionButton.disabled = true;
-                actionButton.title = 'Switch to Investigation Board to analyze evidence';
+                actionButton.textContent = '→ Go to Investigation Board';
+                actionButton.title = 'Switch to Investigation Board to analyze evidence and submit answers';
             } else {
                 actionButton.disabled = false;
                 actionButton.title = '';
+                // Restore normal button text
+                const turnInfo = turnData[currentTurn];
+                if (turnInfo) {
+                    actionButton.textContent = turnInfo.action;
+                }
             }
         }
 
@@ -2941,8 +3049,7 @@
                 background: var(--evidence-color);
                 color: white;
                 padding: 12px 16px;
-                border-radius: 8px;
-                font-size: 12px;
+                    font-size: 12px;
                 font-weight: 600;
                 z-index: 1000;
                 opacity: 0;
@@ -3193,7 +3300,7 @@
             tempContainer.innerHTML = `
                 <h3 style="margin: 0 0 16px 0; color: #1A5B5B;">Sign In to Worldwide Chase</h3>
                 <div id="googleSignInButton"></div>
-                <button onclick="closeSignInModal()" style="margin-top: 12px; background: none; border: 1px solid #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button onclick="closeSignInModal()" style="margin-top: 12px; background: none; border: 1px solid #ccc; padding: 8px 16px; cursor: pointer;">Cancel</button>
             `;
             
             document.body.appendChild(tempContainer);
@@ -3275,8 +3382,7 @@
                 <div style="
                     background: white;
                     padding: 30px;
-                    border-radius: 12px;
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
                     max-width: 400px;
                     width: 90%;
                     text-align: center;
@@ -3290,8 +3396,7 @@
                             width: 100%;
                             padding: 12px;
                             border: 2px solid #1A5B5B;
-                            border-radius: 6px;
-                            font-size: 16px;
+                                            font-size: 16px;
                             font-family: 'Courier New', monospace;
                             text-align: center;
                         " maxlength="20" placeholder="Enter username">
@@ -3304,8 +3409,7 @@
                             color: white;
                             border: none;
                             padding: 12px 24px;
-                            border-radius: 6px;
-                            font-weight: 600;
+                                            font-weight: 600;
                             cursor: pointer;
                             font-family: 'Courier New', monospace;
                         ">Start Playing</button>
@@ -3314,8 +3418,7 @@
                             border: 2px solid #1A5B5B;
                             color: #1A5B5B;
                             padding: 12px 24px;
-                            border-radius: 6px;
-                            font-weight: 600;
+                                            font-weight: 600;
                             cursor: pointer;
                             font-family: 'Courier New', monospace;
                         ">Cancel</button>
@@ -3729,6 +3832,45 @@
                 }
             }
         });
+
+        // Villain Modal Functions
+        function showVillainModal() {
+            if (!gameData) return;
+            
+            const modal = document.getElementById('villainModal');
+            const villainImage = document.getElementById('villainModalImage');
+            const villainName = document.getElementById('villainModalName');
+            const villainTitle = document.getElementById('villainModalTitle');
+            
+            // Set villain information
+            villainImage.src = gameData.villainImageUrl || '/game/wwc-logo.png';
+            villainName.textContent = gameData.villainName || 'Unknown Suspect';
+            villainTitle.textContent = gameData.villainTitle || 'Criminal Mastermind';
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeVillainModal() {
+            document.getElementById('villainModal').style.display = 'none';
+        }
+
+        // Close villain modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('villainModal');
+            if (event.target === modal) {
+                closeVillainModal();
+            }
+        });
+
+        // Add Escape key handler for villain modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const villainModal = document.getElementById('villainModal');
+                if (villainModal && villainModal.style.display === 'flex') {
+                    closeVillainModal();
+                }
+            }
+        });
     </script>
 
     <!-- Help Modal -->
@@ -3804,6 +3946,19 @@
             <div class="edit-username-buttons">
                 <button class="save-username-btn" onclick="saveUsername()">Save</button>
                 <button class="cancel-username-btn" onclick="closeEditUsernameModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Villain Image Modal -->
+    <div id="villainModal" class="villain-modal">
+        <div class="villain-modal-content">
+            <button class="villain-modal-close" onclick="closeVillainModal()">&times;</button>
+            <div class="villain-modal-header">Suspect Profile</div>
+            <img id="villainModalImage" class="villain-modal-image" src="" alt="Villain Portrait">
+            <div class="villain-modal-info">
+                <div id="villainModalName" class="villain-modal-name"></div>
+                <div id="villainModalTitle" class="villain-modal-title"></div>
             </div>
         </div>
     </div>

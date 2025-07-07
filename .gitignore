@@ -154,3 +154,16 @@ temp/
 
 # Prisma
 prisma/migrations/dev/
+
+# Test files and artifacts
+tests/
+test-artifacts/
+*.test.js
+*.spec.js
+test-*.html
+verify-*.js
+check-*.js
+*-test-report.md
+*-test-summary.md
+*test*.png
+*screenshot*.png
