@@ -287,6 +287,7 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
 2. **Turn 2**: 
    - Timezone differences revealed for all 3 locations
    - Geographic clues through time zones (e.g., UTC-6, UTC+9, UTC+3)
+   - Distance separators appear showing km and miles between locations
    - Players can deduce approximate global regions
    - Evidence images remain the same (Turn 1 images)
 
@@ -345,7 +346,8 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
 - **Character Development**: Each villain has unique personality and backstory
 - **Thematic Relevance**: Villain's profession/interests match the case theme
 - **Visual Consistency**: Painterly storybook style maintains game aesthetic
-- **Diversity**: Random gender assignment and varied ethnicities
+- **Gender Consistency**: Villain portraits match pronouns used in case details
+- **Diversity**: Varied ethnicities and character designs for visual variety
 - **Engagement**: Compelling characters make cases more memorable
 
 #### Case File Authenticity Features
@@ -457,12 +459,12 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ## Recent Updates (2025-07-07)
 
 ### Latest Interface Improvements
-- **Villain Image Modals**: Implemented clickable villain portraits that open detailed suspect profile modals
-- **Square Corner Design**: Removed all rounded borders from main container and modals for professional document appearance
-- **Modal Width Constraints**: Updated all modals to fit properly within viewport width on all devices
-- **User Profile System**: Complete user account management with username editing functionality
-- **Help Modal System**: Interactive game instructions with automatic display for first-time users
-- **Theme Ribbon**: Beautiful golden gradient theme display with shimmer animation effects
+- **Villain Gender Consistency**: Fixed gender matching between villain portraits and case detail pronouns
+- **Dual-Unit Distance Display**: Turn 2 now shows both kilometers and miles between locations
+- **Mobile UI Enhancements**: Larger letter input boxes and full-width evidence modal images
+- **Case Gallery Polish**: Compact card design with transparent stamps and improved navigation
+- **Test Organization**: Moved test files to dedicated folders with proper documentation
+- **Visual Refinements**: Wider cards, thinner borders, and improved mobile responsiveness
 
 ### Previous Major Updates (2025-07-06)
 - **Unified Server**: Consolidated all functionality into `server-unified.js`
