@@ -152,6 +152,36 @@ curl -X POST -H "Content-Type: application/json" \          # Generate new case
 # 8. Help system and first-time user experience
 ```
 
+### Test File Organization
+**IMPORTANT**: All test files and test results must be organized in designated folders:
+
+```bash
+# Test script locations:
+tests/                              # All test scripts (.js files)
+├── automated/                     # Playwright and automated test scripts
+├── manual/                        # Manual test HTML pages  
+└── verification/                  # Verification and validation scripts
+
+# Test results and artifacts:
+test-artifacts/                    # Test reports, screenshots, and results
+├── *.md                          # Test reports and documentation
+├── *.png                         # Screenshots and visual test results
+└── *.log                         # Test execution logs
+
+# Test file naming conventions:
+test-[component]-[type].js         # e.g., test-villain-modal-automated.js
+verify-[feature].js               # e.g., verify-profile-modal.js
+manual-test-[component].html      # e.g., manual-test-help-modal.html
+[COMPONENT]_TEST_REPORT.md        # e.g., CASE_GALLERY_TEST_REPORT.md
+```
+
+**Guidelines:**
+- Never commit test files to the root directory
+- Use descriptive names that indicate the test purpose
+- Include test reports with screenshots in test-artifacts/
+- Clean up temporary test files after feature completion
+- Update .gitignore to exclude personal test files if needed
+
 ## Access & Testing
 
 ### Quick Start
