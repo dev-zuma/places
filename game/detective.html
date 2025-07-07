@@ -1339,34 +1339,36 @@
             align-items: center;
             padding: 20px 0;
             gap: 0;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* Location Cards - more compact for tab interface */
         .location-section {
             background: white;
-            border: 2px solid var(--primary-teal);
+            border: 1px solid rgba(26, 91, 91, 0.3);
             padding: 0px 16px 16px 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.4s ease;
             position: relative;
             overflow: visible;
-            width: 320px;
-            max-width: calc(100vw - 60px);
+            width: 360px;
+            max-width: calc(100vw - 40px);
         }
         
         .location-section:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-orange);
+            border-color: rgba(255, 69, 0, 0.5);
         }
         
         .location-section.timezone-shift-left {
-            transform: translateX(-35px);
+            transform: translateX(-25px);
             transition: transform 0.5s ease;
         }
         
         .location-section.timezone-shift-right {
-            transform: translateX(35px);
+            transform: translateX(25px);
             transition: transform 0.5s ease;
         }
         
@@ -1413,13 +1415,14 @@
         }
 
         .location-number {
-            font-size: 10px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--primary-orange);
             text-align: center;
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
         }
 
         .location-label {
@@ -1440,11 +1443,25 @@
         .word-group {
             display: flex;
             gap: 2px;
-            margin: 2px 6px;
+            margin: 2px 8px;
+            position: relative;
+        }
+        
+        /* Visual separator between word groups */
+        .word-group:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 20px;
+            background: rgba(26, 91, 91, 0.2);
+            border-radius: 1px;
         }
 
         .letter-box {
-            border: 2px solid var(--primary-teal);
+            border: 1px solid rgba(26, 91, 91, 0.5);
             background: white;
             text-align: center;
             font-weight: 600;
@@ -1453,15 +1470,17 @@
             transition: all 0.3s ease;
             font-family: 'Inter', monospace;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-            font-size: 14px;
-            width: 24px;
-            height: 28px;
+            font-size: 16px;
+            width: 32px;
+            height: 36px;
             margin: 1px;
             outline: none;
+            line-height: 1;
+            padding: 0;
         }
 
         .letter-box:focus {
-            border-color: var(--primary-orange);
+            border-color: rgba(255, 69, 0, 0.7);
             background: rgba(255, 69, 0, 0.05);
             transform: scale(1.05);
             box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -1471,7 +1490,7 @@
 
         .letter-box.filled {
             background: rgba(26, 91, 91, 0.05);
-            border-color: var(--primary-teal);
+            border-color: rgba(26, 91, 91, 0.6);
             font-weight: 700;
             color: var(--primary-teal);
         }
@@ -1503,11 +1522,12 @@
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
             width: 42px;
             height: 42px;
             background: white;
+            padding: 2px;
         }
         
         .image-container:hover {
@@ -1520,7 +1540,8 @@
             height: 52px !important;
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border-width: 3px;
+            border-width: 2px;
+            padding: 3px;
         }
 
         .image-container.turn-1 { border-color: var(--turn-1-color); }
@@ -1532,6 +1553,7 @@
             height: 100%;
             object-fit: cover;
             transition: filter 0.3s ease;
+            display: block;
         }
 
         .image-placeholder {
@@ -1804,8 +1826,9 @@
         }
         
         .modal-image {
-            max-width: 100%;
+            width: calc(100% - 20px);
             max-height: 70vh;
+            object-fit: contain;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             margin-left: 20px;
         }
@@ -1941,12 +1964,49 @@
         }
         
         /* Responsive */
-        @media (max-width: 380px) {
-            .location-section { width: 260px; }
+        @media (max-width: 420px) {
+            .location-section { 
+                width: calc(100vw - 80px);
+                max-width: 340px;
+            }
+            
+            .location-section.timezone-shift-left {
+                transform: translateX(-15px);
+            }
+            
+            .location-section.timezone-shift-right {
+                transform: translateX(15px);
+            }
             .image-container { width: 35px; height: 35px; }
             .image-container.current { width: 45px !important; height: 45px !important; }
             .action-button { width: 160px; font-size: 12px; }
             .timer-value { font-size: 16px; }
+            
+            /* Larger letter boxes for mobile */
+            .letter-box {
+                width: 36px;
+                height: 40px;
+                font-size: 18px;
+                font-weight: 700;
+            }
+            
+            /* Adjust word separators for mobile */
+            .word-group {
+                margin: 2px 6px;
+            }
+            
+            .word-group:not(:last-child)::after {
+                right: -5px;
+                height: 16px;
+                width: 1px;
+            }
+            
+            /* Full-width modal images on mobile */
+            .modal-image {
+                width: calc(100% - 10px);
+                margin-left: 10px;
+                max-height: 60vh;
+            }
         }
 
         /* User Menu Styles */
