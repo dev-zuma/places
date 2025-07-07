@@ -396,6 +396,7 @@ async function generateGameAsync(gameId, context) {
       {
         villainClothingDescription: gameContent.villainClothingDescription,
         villainAge: gameContent.villainAge,
+        villainGender: gameContent.villainGender,
         villainEthnicity: gameContent.villainEthnicity,
         villainDistinctiveFeature: gameContent.villainDistinctiveFeature
       }
@@ -586,12 +587,13 @@ For example:
 
 Requirements:
 1. Create a kid-friendly villain with a playful name and title that relates to the theme
-2. Write a crime story that connects the 3 locations WITHOUT revealing their names but hints at the thematic connection
-3. All content must be appropriate for ages 8-16
-4. Locations must be either ALL cities OR ALL countries that genuinely relate to the theme
-5. Include accurate timezone and coordinate data
-6. Create an educational interesting fact that explains the thematic connection between all locations
-7. Generate unique physical characteristics for the villain to create visual variety
+2. Choose a gender (male or female) that fits naturally with the villain name you create
+3. Write a crime story that connects the 3 locations WITHOUT revealing their names but hints at the thematic connection
+4. All content must be appropriate for ages 8-16
+5. Locations must be either ALL cities OR ALL countries that genuinely relate to the theme
+6. Include accurate timezone and coordinate data
+7. Create an educational interesting fact that explains the thematic connection between all locations
+8. Generate unique physical characteristics for the villain to create visual variety
 
 Return ONLY valid JSON in this exact format:
 {
@@ -607,6 +609,7 @@ Return ONLY valid JSON in this exact format:
   "interestingFact": "Educational fact connecting all 3 locations",
   "villainClothingDescription": "Detailed description of villain's outfit with subtle hints related to 1 or more locations",
   "villainAge": "Age range (e.g., mid-40s, early 30s, late 50s)",
+  "villainGender": "male or female",
   "villainEthnicity": "Ethnic background (e.g., Mediterranean, South American, half Japanese half African)",
   "villainDistinctiveFeature": "Unique physical trait (e.g., beauty spot on right cheek, piercing blue eyes, silver-streaked hair)",
   "locations": [
@@ -734,9 +737,12 @@ async function generateVillainPortrait(villainName, villainTitle, theme, villain
   const ethnicity = villainDetails.villainEthnicity || 'varied ethnicity';
   const distinctiveFeature = villainDetails.villainDistinctiveFeature || 'confident expression';
   
-  // Randomly assign gender for diversity if not specified
-  const genders = ['male', 'female'];
-  const gender = genders[Math.floor(Math.random() * genders.length)];
+  // Use provided gender or fall back to random assignment
+  let gender = villainDetails.villainGender;
+  if (!gender) {
+    const genders = ['male', 'female'];
+    gender = genders[Math.floor(Math.random() * genders.length)];
+  }
   
   const prompt = `Create a digital painting of a fictional ${gender} villain, shown from the chest up in a 3/4 view. 
 
