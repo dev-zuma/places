@@ -48,6 +48,13 @@ places/
 ├── result/           # Static result page
 ├── public/           # Static assets
 │   └── wwc-logo.png
+├── tests/            # Test files and scripts
+│   ├── *.js         # Test implementations (playwright, unit tests, etc.)
+│   └── *.html       # Test HTML pages for manual testing
+├── test-artifacts/   # Test outputs and documentation
+│   ├── *.md         # Test reports and summaries
+│   └── *.png        # Screenshots and visual test results
+├── test-results/     # Test execution results (auto-generated)
 └── .gitignore
 ```
 
@@ -182,6 +189,117 @@ manual-test-[component].html      # e.g., manual-test-help-modal.html
 - Clean up temporary test files after feature completion
 - Update .gitignore to exclude personal test files if needed
 
+## Testing Guidelines & File Organization
+
+### Test Folder Structure
+All test files MUST be organized in the appropriate folders:
+
+```bash
+/tests/               # Test implementations
+├── test-*.js        # Automated test scripts (Playwright, unit tests)
+├── verify-*.js      # Verification scripts for features
+├── *.html          # Manual test HTML pages
+└── README.md       # Test documentation (optional)
+
+/test-artifacts/     # Test outputs and documentation
+├── *-report.md     # Test reports and summaries
+├── *.png           # Screenshots and visual results
+├── *-summary.md    # Feature implementation summaries
+└── logs/           # Test execution logs (optional)
+
+/test-results/       # Auto-generated test results
+└── [timestamp]/    # Test run outputs (automated)
+```
+
+### Creating Tests
+```bash
+# Example: Creating a new feature test
+# 1. Create test script
+echo "// Test for new feature" > tests/test-new-feature.js
+
+# 2. Run the test and capture output
+node tests/test-new-feature.js > test-results/new-feature-$(date +%Y%m%d).log
+
+# 3. Take screenshots if needed (store in test-artifacts/)
+# Use Playwright MCP Server to capture screenshots
+
+# 4. Create test report
+echo "# New Feature Test Report" > test-artifacts/NEW_FEATURE_TEST_REPORT.md
+```
+
+### Test Naming Conventions
+```bash
+# Test scripts (in /tests/)
+test-[feature-name].js           # e.g., test-header-partial.js
+verify-[feature-name].js         # e.g., verify-header-partial.js
+[feature]-test.html             # e.g., header-injection-test.html
+
+# Test artifacts (in /test-artifacts/)
+[FEATURE]_TEST_REPORT.md        # e.g., HEADER_PARTIAL_TEST_REPORT.md
+[feature]-screenshot.png        # e.g., header-modal-open.png
+[FEATURE]_SUMMARY.md           # e.g., HEADER_PARTIAL_SUMMARY.md
+```
+
+### Testing Commands
+```bash
+# Run a specific test
+node tests/test-detective-interface.js
+
+# Run all verification scripts
+for test in tests/verify-*.js; do node "$test"; done
+
+# Clean old test results (older than 7 days)
+find test-results/ -type f -mtime +7 -delete
+
+# Generate test report template
+cat > test-artifacts/TEST_REPORT_TEMPLATE.md << EOF
+# [Feature] Test Report
+Date: $(date)
+Tested by: Claude Code
+
+## Test Summary
+- [ ] Feature functionality verified
+- [ ] Visual appearance correct
+- [ ] Mobile responsive
+- [ ] No console errors
+
+## Test Results
+[Add test results here]
+
+## Screenshots
+[Add screenshot references]
+
+## Issues Found
+[List any issues]
+EOF
+```
+
+### Best Practices
+1. **Always use test folders** - Never leave test files in root or source directories
+2. **Document with screenshots** - Include visual evidence in test-artifacts/
+3. **Clean up after testing** - Remove temporary files and failed test outputs
+4. **Use descriptive names** - Make it clear what each test is verifying
+5. **Include test reports** - Document what was tested and the results
+
+### Example Test Workflow
+```bash
+# 1. Create a new test for header functionality
+vim tests/test-header-menu.js
+
+# 2. Run the test
+node tests/test-header-menu.js
+
+# 3. If using Playwright, capture screenshots
+# Screenshots automatically saved to test-artifacts/
+
+# 4. Create test report
+vim test-artifacts/HEADER_MENU_TEST_REPORT.md
+
+# 5. Commit only source changes, not test files
+git add game/detective.html game/detective-header.js
+git commit -m "Add header partial implementation"
+```
+
 ## Access & Testing
 
 ### Quick Start
@@ -257,8 +375,11 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
 - **Case File Interface**: Authentic detective documentation experience
 
 ### Detective Interface Features
-1. **Case Header**: Compact header with logo, case title, and user menu system
-2. **Theme Ribbon**: Golden gradient theme display with shimmer animation below header
+1. **Case Header**: Compact header with logo, dynamic page title, and user menu system
+   - **Detective Page**: Shows the actual case title (e.g., "The Great Art Heist")
+   - **Gallery Page**: Shows "Case Gallery"
+   - **Shared Component**: Uses detective-header.js for consistency across pages
+2. **Theme Ribbon**: Golden gradient theme display with shimmer animation below header (detective page only)
 3. **Evidence Collection**: Two-tab system (Case Details + Investigation Board)
 4. **Villain Portraits**: Clickable suspect mugshots that open detailed profile modals
 5. **Location Cards**: Three location cards with evidence images and input fields
