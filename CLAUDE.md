@@ -9,10 +9,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Repository Status
 
 - **GitHub Repository**: https://github.com/dev-zuma/places
-- **Current Phase**: Complete Detective System (All Phases COMPLETED)
+- **Current Phase**: Enhanced Investigation Journal System (All Phases COMPLETED)
 - **Production Status**: Ready for deployment and user testing
-- **Last Updated**: 2025-07-07
-- **Interface**: Authentic detective case file experience with square corners and professional styling
+- **Last Updated**: 2025-01-09
+- **Interface**: Authentic detective case file experience with enhanced Investigation Journal
 
 ## Project Structure
 
@@ -38,6 +38,8 @@ places/
 ├── game/              # Frontend game system (Player Experience)
 │   ├── index.html    # Case gallery & browsing
 │   ├── detective.html # Detective case file interface (MAIN GAME)
+│   ├── detective-header.js # Shared header component
+│   ├── styles.css    # Complete game styling system
 │   └── wwc-logo.png  # Worldwide Chase logo
 ├── mockups/          # UI mockup designs & prototypes (reference)
 │   ├── index.html    # Gallery view of all mockups
@@ -85,11 +87,13 @@ places/
 - **Geographic Education**: Real coordinates, timezones, cultural landmarks
 - **Mobile Optimization**: Touch-friendly, ultra-compact design that fits without scrolling
 - **Timer System**: 5-minute countdown with visual feedback
+- **Investigation Journal**: Enhanced clues organization with Timeline and Locations views
 - **Evidence Modals**: Click location images to view evidence in detective-style modals
 - **User Profile System**: Complete user account management with username editing and profile tracking
 - **Villain Image Modals**: Click villain portraits to view detailed suspect profiles
 - **Help System**: Interactive game instructions with auto-show for first-time users
-- **Theme Ribbon**: Golden gradient theme display with shimmer animation effects
+- **Streamlined Check Answers**: Clean interface with only location inputs and submit button
+- **Spoiler Protection**: Generic labels preserve mystery without revealing location names
 
 ## Development Commands
 
@@ -379,15 +383,56 @@ Test Villain:     http://localhost:9091/api/test-villain-portrait # Test portrai
    - **Detective Page**: Shows the actual case title (e.g., "The Great Art Heist")
    - **Gallery Page**: Shows "Case Gallery"
    - **Shared Component**: Uses detective-header.js for consistency across pages
-2. **Theme Ribbon**: Golden gradient theme display with shimmer animation below header (detective page only)
-3. **Evidence Collection**: Two-tab system (Case Details + Investigation Board)
-4. **Villain Portraits**: Clickable suspect mugshots that open detailed profile modals
-5. **Location Cards**: Three location cards with evidence images and input fields
+2. **Investigation Journal**: Enhanced three-tab system with view toggles
+   - **Case Details**: Basic case information (villain, crime summary)
+   - **Investigation Journal**: Timeline and Locations views with evidence organization
+   - **Check Answers**: Streamlined location inputs and submit button only
+3. **Timeline View**: Chronological investigation journal showing turn-by-turn discoveries
+   - Turn-based evidence organization with visual progress indicators
+   - Text clues, geographic intelligence, and evidence photos by turn
+   - Breakthrough discoveries with special highlighting
+4. **Locations View**: Evidence dossiers organized by location
+   - Individual location profiles with all evidence photos
+   - Geographic data (timezones, distances) for each location
+   - Comparative analysis between locations
+5. **Villain Portraits**: Clickable suspect mugshots that open detailed profile modals
 6. **Timer System**: Countdown timer with color-coded urgency
 7. **Evidence Modals**: Full-screen evidence viewing with case file styling
 8. **Turn Progression**: 5-turn system with visual progress tracking
 9. **User Profile System**: Complete account management with username editing
 10. **Help System**: Interactive game instructions with first-time auto-display
+11. **Spoiler Protection**: Generic labels preserve mystery throughout investigation
+
+### Investigation Journal System
+
+#### Timeline View Organization
+The Timeline view presents a chronological journal of investigation discoveries:
+
+**Turn Structure:**
+- **Turn 1 - Initial Investigation**: Case opening briefing + first evidence photos
+- **Turn 2 - Geographic Analysis**: Distance and timezone intelligence data
+- **Turn 3 - Enhanced Surveillance**: Additional evidence photos with clearer details
+- **Turn 4 - Breakthrough Discovery**: Critical theme connection revealed
+- **Turn 5 - Final Evidence**: Clear identifying photos for location confirmation
+
+**Evidence Organization:**
+- **Text Clues**: Investigation updates and discoveries
+- **Geographic Intelligence**: Distance calculations and timezone data
+- **Evidence Photos**: Visual evidence organized by turn (1, 3, 5)
+- **Breakthrough Clues**: Special highlighting for Turn 4 discoveries
+
+#### Locations View Organization
+The Locations view presents evidence dossiers for each location:
+
+**Individual Dossiers:**
+- **Evidence Photos**: All available images for each location (Turn 1, 3, 5)
+- **Geographic Data**: Timezone information and distances to other locations
+- **Comparative Analysis**: Side-by-side location comparison capabilities
+
+**Spoiler Protection System:**
+- Generic labels ("Location 1", "Location 2", "Location 3") preserve mystery
+- Distance cards show "Loc 1↔2" instead of actual location names
+- Evidence photos labeled generically to maintain challenge
 
 ### Detailed Game Mechanics
 
@@ -577,9 +622,19 @@ AWS_ACCESS_KEY_ID=your_aws_access_key
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
-## Recent Updates (2025-07-07)
+## Recent Updates (2025-01-09)
 
-### Latest Interface Improvements
+### Latest Major Enhancement: Investigation Journal System
+- **Enhanced Clues Organization**: Complete redesign of evidence presentation
+- **Timeline View**: Chronological investigation journal with turn-by-turn discoveries
+- **Locations View**: Evidence dossiers organized by location for comparative analysis
+- **View Toggle System**: Switch between Timeline and Locations views in Investigation Journal
+- **Streamlined Check Answers**: Clean interface with only location inputs and submit button
+- **Spoiler Protection**: Generic labels preserve mystery without revealing location names
+- **Evidence Integration**: All clues, geographic data, and photos organized in dedicated tabs
+- **Mobile Optimization**: Responsive design for both Timeline and Locations views
+
+### Previous Interface Improvements (2025-07-07)
 - **Villain Gender Consistency**: Fixed gender matching between villain portraits and case detail pronouns
 - **Dual-Unit Distance Display**: Turn 2 now shows both kilometers and miles between locations
 - **Mobile UI Enhancements**: Larger letter input boxes and full-width evidence modal images
@@ -587,7 +642,7 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - **Test Organization**: Moved test files to dedicated folders with proper documentation
 - **Visual Refinements**: Wider cards, thinner borders, and improved mobile responsiveness
 
-### Previous Major Updates (2025-07-06)
+### Major System Updates (2025-07-06)
 - **Unified Server**: Consolidated all functionality into `server-unified.js`
 - **GPT-Image-1 Integration**: Switched from DALL-E 3 to GPT-Image-1 for all image generation
 - **Base64 Handling**: Proper conversion of GPT-Image-1 base64 responses to data URLs
@@ -599,5 +654,6 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - **Optimized Image Generation**: Medium quality GPT-Image-1 for faster generation
 - **Professional Styling**: Square corners and authentic case file appearance
 - **Enhanced User Experience**: Complete modal system with proper responsive design
+- **Investigation Journal**: Revolutionary evidence organization system with dual-view capabilities
 
 This project represents a complete, production-ready detective game experience that transforms geography education into an engaging criminal investigation simulation using cutting-edge AI image generation and authentic detective interface design.

@@ -73,13 +73,6 @@ function renderDetectiveHeader() {
                 </div>
             </div>
         </div>
-
-        ${!isGalleryPage ? `
-        <!-- Theme Ribbon (only for detective pages) -->
-        <div class="theme-ribbon">
-            <span class="theme-text" id="themeBadge"></span>
-        </div>
-        ` : ''}
     `;
 }
 
