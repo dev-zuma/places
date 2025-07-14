@@ -116,10 +116,10 @@
                             <p class="clues-subtitle">Evidence and discoveries from your investigation</p>
                             <div class="view-selector">
                                 <select class="view-dropdown" id="viewDropdown" onchange="switchView()">
-                                    <option value="distances">📏 Distances</option>
-                                    <option value="location1">📍 Location 1</option>
-                                    <option value="location2">📍 Location 2</option>
-                                    <option value="location3">📍 Location 3</option>
+                                    <option value="distances" id="distancesOption" style="display: none;">📏 Distances</option>
+                                    <option value="location1">🏙️ City 1</option>
+                                    <option value="location2">🏙️ City 2</option>
+                                    <option value="location3">🏙️ City 3</option>
                                     <option value="final" id="finalOption" style="display: none;">🎯 Final Location</option>
                                 </select>
                             </div>
@@ -135,19 +135,19 @@
                         <!-- Location Views -->
                         <div class="evidence-view hidden" id="location1View">
                             <div class="location-evidence" id="location1Evidence">
-                                <!-- Location 1 clues will be populated here -->
+                                <!-- City 1 clues will be populated here -->
                             </div>
                         </div>
                         
                         <div class="evidence-view hidden" id="location2View">
                             <div class="location-evidence" id="location2Evidence">
-                                <!-- Location 2 clues will be populated here -->
+                                <!-- City 2 clues will be populated here -->
                             </div>
                         </div>
                         
                         <div class="evidence-view hidden" id="location3View">
                             <div class="location-evidence" id="location3Evidence">
-                                <!-- Location 3 clues will be populated here -->
+                                <!-- City 3 clues will be populated here -->
                             </div>
                         </div>
                         
@@ -414,24 +414,7 @@
             });
         }
 
-        function displayV2Turn(turnNumber) {
-            // Find the turn data
-            const turn = currentCase.gameplayTurns.find(t => t.turn === turnNumber);
-            if (!turn) {
-                console.warn(`Turn ${turnNumber} not found`);
-                return;
-            }
-            
-            // Add turn to timeline
-            addV2TimelineEntry(turn);
-            
-            // Update views
-            if (cluesViewMode === 'timeline') {
-                updateV2TimelineView();
-            } else {
-                updateV2LocationsView();
-            }
-        }
+        // displayV2Turn function moved to line 1740 to avoid duplicate
 
         function addV2TimelineEntry(turn) {
             // Store for rendering
@@ -1451,8 +1434,19 @@
             } else if (tabName === 'investigation') {
                 document.getElementById('investigationTab').classList.add('active');
                 document.getElementById('investigationPanel').classList.add('active');
-                // Initialize with distances view
-                updateDistancesView();
+                // Initialize with appropriate view based on what's available
+                const dropdown = document.getElementById('viewDropdown');
+                const distancesOption = document.getElementById('distancesOption');
+                
+                if (distancesOption.style.display !== 'none') {
+                    // If distances are available, show distances view
+                    dropdown.value = 'distances';
+                    switchView();
+                } else {
+                    // Otherwise default to first city
+                    dropdown.value = 'location1';
+                    switchView();
+                }
             } else if (tabName === 'answers') {
                 document.getElementById('answersTab').classList.add('active');
                 document.getElementById('answersPanel').classList.add('active');
@@ -1502,21 +1496,21 @@
             
             let html = '';
             
-            // Only show Turn 1 content for Distances view
-            const turn1 = window.v2TimelineEntries.find(t => t.turn === 1);
+            // Only show Turn 4 content for Distances view
+            const turn4 = window.v2TimelineEntries.find(t => t.turn === 4);
             
-            if (!turn1) {
+            if (!turn4) {
                 container.innerHTML = '<div class="no-evidence">No distance information available yet.</div>';
                 return;
             }
             
-            const distances = turn1.clues.filter(c => c.type === 'distance');
-            const timeDiffs = turn1.clues.filter(c => c.type === 'time_difference');
+            const distances = turn4.clues.filter(c => c.type === 'distance');
+            const timeDiffs = turn4.clues.filter(c => c.type === 'time_difference');
             
             if (distances.length === 3 && timeDiffs.length === 3) {
                 html += `<div class="location-header">
                     <h4>Geographic Analysis</h4>
-                    <p class="location-subtitle">Distances and time differences between crime scenes</p>
+                    <p class="location-subtitle">Distances and time differences between cities</p>
                 </div>`;
                 
                 html += `<div class="timeline-entry clue-entry distance-diagram-entry">`;
@@ -1534,7 +1528,7 @@
         function updateLocationEvidence(locationPosition) {
             const container = document.getElementById(`location${locationPosition}Evidence`);
             if (!currentCase || !window.v2TimelineEntries) {
-                container.innerHTML = '<div class="no-evidence">No evidence available for this location yet.</div>';
+                container.innerHTML = '<div class="no-evidence">No evidence available for this city yet.</div>';
                 return;
             }
             
@@ -1586,8 +1580,8 @@
             
             if (locationClues.length > 0) {
                 html += `<div class="location-header">
-                    <h4>Location ${locationPosition} Evidence</h4>
-                    <p class="location-subtitle">Evidence and clues related to this crime scene</p>
+                    <h4>City ${locationPosition} Evidence</h4>
+                    <p class="location-subtitle">Evidence and clues related to this city</p>
                 </div>`;
                 
                 locationClues.forEach(clue => {
@@ -1595,9 +1589,9 @@
                 });
             } else {
                 html = `<div class="no-evidence">
-                    <h4>Location ${locationPosition}</h4>
-                    <p>No specific evidence for this location has been discovered yet.</p>
-                    <p class="hint">Continue investigating to uncover location-specific clues.</p>
+                    <h4>City ${locationPosition}</h4>
+                    <p>No specific evidence for this city has been discovered yet.</p>
+                    <p class="hint">Continue investigating to uncover city-specific clues.</p>
                 </div>`;
             }
             
@@ -1722,19 +1716,32 @@
         }
 
         function displayV2Turn(turnNumber) {
-            // Add turn data to timeline entries
-            if (currentCase && currentCase.gameplayTurns) {
-                const turnData = currentCase.gameplayTurns.find(t => t.turn === turnNumber);
-                if (turnData) {
-                    addV2Turn(turnData);
-                    
-                    // Update all views
-                    if (document.getElementById('viewDropdown').value === 'distances') {
-                        updateDistancesView();
-                    } else if (document.getElementById('viewDropdown').value.startsWith('location')) {
-                        const locationNum = parseInt(document.getElementById('viewDropdown').value.replace('location', ''));
-                        updateLocationEvidence(locationNum);
-                    }
+            // Find the turn data
+            const turn = currentCase.gameplayTurns.find(t => t.turn === turnNumber);
+            if (!turn) {
+                console.warn(`Turn ${turnNumber} not found`);
+                return;
+            }
+            
+            // Add turn to timeline
+            addV2TimelineEntry(turn);
+            
+            // Show distances option when Turn 4 is reached
+            if (turnNumber === 4) {
+                console.log('Turn 4 reached, showing distances option');
+                document.getElementById('distancesOption').style.display = 'block';
+            }
+            
+            // Update Investigation Journal views based on current dropdown selection
+            const dropdown = document.getElementById('viewDropdown');
+            if (dropdown) {
+                if (dropdown.value === 'distances') {
+                    updateDistancesView();
+                } else if (dropdown.value.startsWith('location')) {
+                    const locationNum = parseInt(dropdown.value.replace('location', ''));
+                    updateLocationEvidence(locationNum);
+                } else if (dropdown.value === 'final') {
+                    updateFinalEvidence();
                 }
             }
         }
@@ -2037,6 +2044,11 @@
             const signedInMenu = document.getElementById('signedInMenu');
             const menuUserName = document.getElementById('menuUserName');
             
+            // Safety check - if header elements aren't loaded yet, return early
+            if (!userMenuText || !signedOutMenu || !signedInMenu) {
+                return;
+            }
+            
             if (currentUser) {
                 // Update button text to show username
                 userMenuText.textContent = currentUser.username || currentUser.name || currentUser.fullName;
@@ -2047,7 +2059,9 @@
                 signedInMenu.classList.add('show');
                 
                 // Update user name in menu
-                menuUserName.textContent = `Detective ${currentUser.username || currentUser.name || currentUser.fullName}`;
+                if (menuUserName) {
+                    menuUserName.textContent = `Detective ${currentUser.username || currentUser.name || currentUser.fullName}`;
+                }
             } else {
                 // Show "Sign In" text
                 userMenuText.textContent = 'Sign In';
@@ -2136,11 +2150,14 @@
         }
 
         // Close help modal when clicking outside
-        document.getElementById('helpModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeHelpModal();
-            }
-        });
+        const helpModal = document.getElementById('helpModal');
+        if (helpModal) {
+            helpModal.addEventListener('click', function(event) {
+                if (event.target === this) {
+                    closeHelpModal();
+                }
+            });
+        }
 
         // Close modals with Escape key
         document.addEventListener('keydown', function(event) {

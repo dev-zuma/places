@@ -236,23 +236,31 @@ The bulk generation feature allows administrators to create multiple V2 games si
 
 ### Location Rules & Game Design
 
-**Location Requirements**:
-- ONLY cities OR countries (never mix types, states, parks, landmarks)
-- ALL 3 must be same type (3 major cities OR 3 sovereign countries)
+**Location Requirements (V2 Updated)**:
+- **ONLY cities** (never countries, states, parks, landmarks, regions)
+- ALL 4 locations (including final location) must be major cities
 - Geographic diversity across continents when possible
 - Thematic connection (e.g., space exploration → Houston, Cape Canaveral, Baikonur)
 
-**Turn Progression**:
-1. **Turn 1**: Theme + obscured evidence images + timer start
-2. **Turn 2**: Timezone/distance data revealed
-3. **Turn 3**: Clearer evidence images with more context
-4. **Turn 4**: Key thematic clue (breakthrough moment)
-5. **Turn 5**: Final clear identifying images
+**V2 Turn Progression (Updated)**:
+1. **Turn 1**: Theme + country clues (one for each country the cities are in) - NO images
+2. **Turn 2**: First image + cultural/geographic clues - NO distance/timezone data
+3. **Turn 3**: Second image + additional evidence - NO distance/timezone data
+4. **Turn 4**: ALL distance calculations + time differences between cities - NO images
+5. **Turn 5**: Final clues for 3 crime scenes - NO images, NO 4th location hints
+6. **Turn 6**: First clues about 4th final location - NO images
+7. **Turn 7**: Decisive clues for final location - NO images
 
-**Difficulty System**:
-- **Easy**: Famous cities with iconic landmarks
-- **Medium**: Mix of recognizable cities/countries  
-- **Hard**: Less obvious locations or challenging themes
+**V2 Difficulty System**:
+- **Easy**: All 3 cities are well-known capital/major cities
+- **Medium**: 2 well-known cities + 1 less well-known but important city
+- **Hard**: 1 well-known city + 2 less well-known but major cities
+
+**Image Generation Rules**:
+- Exactly 2 images per game
+- First image MUST be in Turn 2
+- Second image MUST be in Turn 3
+- NO images in turns 1, 4, 5, 6, or 7
 
 ## Database Schema
 
@@ -265,11 +273,12 @@ The bulk generation feature allows administrators to create multiple V2 games si
 
 ## Development Rules
 
-### Location Selection
-- **ONLY cities OR countries** (never parks, states, landmarks, regions)
-- ALL 3 must be same type (3 major cities OR 3 sovereign countries)
-- Pick internationally known cities (London, Tokyo) or sovereign nations (France, Japan)
-- Landmarks field contains attractions WITHIN each location
+### Location Selection (V2 Updated)
+- **ONLY cities** (never countries, parks, states, landmarks, regions)
+- ALL 4 locations (including final location) must be major cities
+- Follow difficulty-based selection: Easy (all well-known), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
+- Pick internationally known cities (London, Tokyo, Berlin) and important regional cities (Krakow, Almaty, Montevideo)
+- Landmarks field contains attractions WITHIN each city
 
 ### Testing Protocol
 1. Restart server after changes: `pkill -f "node server-unified.js" && node server-unified.js &`
@@ -295,6 +304,21 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### V2 Game Mechanics & UI Overhaul (2025-01-14)
+- **Cities-Only Focus**: V2 games now exclusively use cities (no countries, regions, or landmarks)
+- **Difficulty-Based Location Selection**: Easy (all well-known cities), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
+- **Turn Structure Reorganization**: 
+  - Turn 1: Theme + country clues (NO images)
+  - Turn 2 & 3: Images + evidence (NO distance data)
+  - Turn 4: Distance & time data (NO images)
+  - Turn 5-7: Final clues (NO images)
+- **Image Generation Rules**: Exactly 2 images per game in turns 2 and 3 only
+- **Investigation Journal Updates**: 
+  - Distances dropdown hidden until Turn 4
+  - Location labels changed to "City 1/2/3"
+  - Error handling improvements for missing DOM elements
+- **Backend Prompt Updates**: Updated location and clue generation prompts for consistent city-only gameplay
 
 ### V2 Bulk Generation System (2025-01-14)
 - **Bulk Game Creation**: Generate 3, 10, 20, or 30 games simultaneously

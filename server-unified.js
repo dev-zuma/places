@@ -1009,17 +1009,17 @@ GAME STRUCTURE:
 - Turns 6-7: Players deduce the 4th "final" location
 
 CRITICAL LOCATION RULES:
-- Pick EITHER all cities OR all countries (never mix)
-- ONLY use major cities or sovereign nations
+- ONLY use cities (never countries, states, regions, or other geographic entities)
+- ALL 4 locations (including final location) must be major cities
 - The 4th location should connect thematically/narratively (NOT geographically equidistant)
 
-LOCATION DIVERSITY REQUIREMENTS:
-- Use a balanced mix of well-known and lesser-known locations for educational value
-- Avoid relying only on the most common tourist destinations (London, Paris, NYC, Tokyo, Rome)
-- Include at least one location that may be new to most elementary school students
+LOCATION DIFFICULTY REQUIREMENTS:
+- EASY: All 3 locations must be well-known capital cities or major international cities (London, Paris, NYC, Tokyo, Rome, Berlin, Madrid, etc.)
+- MEDIUM: 2 locations are well-known major cities + 1 location is less well-known but still an important city
+- HARD: 1 location is well-known major city + 2 locations are less well-known but still major cities
 - Prioritize geographic diversity across different continents and regions when possible
 - Balance recognizable landmarks with educational discovery opportunities
-- Examples of good diversity: Cape Town + Singapore + Montreal, or Morocco + Kazakhstan + Peru
+- Examples: Easy = London + Paris + Tokyo; Medium = Berlin + Singapore + Krakow; Hard = Madrid + Almaty + Montevideo
 - Encourage learning about different cultures, climate zones, and geographic features
 
 GEOGRAPHIC ACCURACY REQUIREMENTS:
@@ -1069,6 +1069,14 @@ FINAL LOCATION OBJECTIVES:
 - CRIME_ORIGIN: Where the villain first learned their criminal skills
 - FAMILY_TIES: Where the villain's family/personal connections are
 - RETIREMENT_PLAN: Where the villain plans to retire with their loot
+
+IMAGE STRATEGY REQUIREMENTS:
+- Use exactly 2 images placed in turns 2 and 3 ONLY
+- First image MUST be in turn 2, second image MUST be in turn 3
+- NO images in turns 1, 4, 5, 6, or 7
+- villainElement can be: security_footage, belongings, reflection, shadow
+- level can be: obscured, medium, clear
+- specificItem should be "security camera footage" for security_footage, otherwise "DETERMINE_FROM_VILLAIN_AND_THEME"
 
 Return a complete game structure in JSON format:
 
@@ -1143,7 +1151,7 @@ Return a complete game structure in JSON format:
     "totalImages": 2,
     "placements": [
       {"turn": 2, "location": 1, "level": "obscured", "villainElement": "security_footage", "specificItem": "security camera footage"},
-      {"turn": 4, "location": 3, "level": "medium", "villainElement": "belongings", "specificItem": "DETERMINE_FROM_VILLAIN_AND_THEME"}
+      {"turn": 3, "location": 2, "level": "medium", "villainElement": "belongings", "specificItem": "DETERMINE_FROM_VILLAIN_AND_THEME"}
     ]
   }
 }`;
@@ -1195,10 +1203,11 @@ Game Data:
 ${JSON.stringify(enhancedGameData, null, 2)}
 
 REQUIREMENTS:
-- Turn 1 MUST include: theme reveal, ALL distance calculations between all 3 locations, ALL time differences between all 3 locations
-- Turns 2-5 MUST NOT include any distance or timezone/time difference clues - these are ONLY in Turn 1
+- Turn 1 MUST include: theme reveal + one clue about each country (currency, flag, geography, history, etc.)
+- Turn 4 MUST include: ALL distance calculations between all 3 locations + ALL time differences between all 3 locations
+- Turns 2-3 and 5 MUST NOT include any distance or timezone/time difference clues
 - Turn 5 MUST focus exclusively on the 3 crime scene locations - NO hints about a 4th location
-- Maximum of 2 images in turns 1-5 (as specified in imageStrategy)
+- Exactly 2 images in turns 2 and 3 ONLY (as specified in imageStrategy)
 - Distribute clues strategically across turns
 - Build suspense and difficulty appropriately
 - Final 2 turns (6-7) focus on deducing the 4th location
@@ -1249,28 +1258,35 @@ Then your distance clue MUST use exactly these values:
 - CRITICAL: For belongings clues, describe finding the EXACT item specified in imageStrategy.placements[].specificItem
 
 CLUE DISTRIBUTION RULES:
-- Turn 1 MUST have at least 4 clues: 1 theme + 3 distance clues (for each location pair) + 3 time difference clues
-- Turns 2-5: Distribute remaining clues (images, cultural, terrain, etc.) but NO distance/timezone clues
+- Turn 1 MUST have 4 clues: 1 theme + 3 country clues (one for each country the cities are in)
+- Turn 4 MUST have 6 clues: 3 distance clues (for each location pair) + 3 time difference clues
+- Turns 2-3 and 5: Distribute remaining clues (images, cultural, terrain, etc.) but NO distance/timezone clues
 - Turn 6-7 clues based on difficulty:
   - Easy: 2 clues in both turns 6 and 7
   - Medium: 2 clues in turn 6, 1 clue in turn 7
   - Hard: 1 clue each in turns 6 and 7
-- NO images in turns 6-7
+- NO images in turns 1, 4, 5, 6, or 7
 
 TURN 1 SPECIFIC REQUIREMENTS:
 - MUST include theme clue
+- MUST include 3 country clues: one clue about each country the cities are in
+- Country clues can be about currency, flag features, geography, history, culture, language, or other well-known country facts
+- Examples: "This country uses the Euro currency", "This nation's flag features a red maple leaf", "This country is famous for its fjords"
+- DO NOT mention specific country names - use descriptive clues about the countries
+
+TURN 4 SPECIFIC REQUIREMENTS:
 - MUST include 3 distance clues: Location 1↔2, Location 1↔3, Location 2↔3
 - MUST include 3 time difference clues showing hours between each location pair
-- Can optionally include 1-2 additional clues if needed
+- NO other clues in Turn 4 - only distances and time differences
 
 TURN STRUCTURE:
-- Turn 1: Theme reveal + ALL distances between locations + ALL time differences
+- Turn 1: Theme reveal + country clues (one for each country the cities are in) - NO images
 - Turn 2: First image (as per imageStrategy) + other clues (NO distance/timezone)
-- Turn 3: Additional clues + geographic patterns (NO distance/timezone)
-- Turn 4: Second image (as per imageStrategy) + breakthrough clue (NO distance/timezone)
-- Turn 5: Final clues for the 3 crime scenes ONLY (NO 4th location hints)
-- Turn 6: First clues about the 4th location
-- Turn 7: Decisive clues for the final location
+- Turn 3: Second image (as per imageStrategy) + additional clues (NO distance/timezone)
+- Turn 4: ALL distances between locations + ALL time differences (NO other clues, NO images)
+- Turn 5: Final clues for the 3 crime scenes ONLY (NO 4th location hints, NO images)
+- Turn 6: First clues about the 4th location - NO images
+- Turn 7: Decisive clues for the final location - NO images
 
 CLUE TYPES TO USE:
 - theme, distance, timezone, time_difference, image (required)
@@ -1327,11 +1343,11 @@ GEOGRAPHIC SPECIFICITY GUIDELINES:
 - Reference cultural regions: "Scandinavia", "Maghreb", "Balkans", "Caucasus"
 
 Generate all 7 turns with appropriate clue distribution. Make sure to include:
-- Turn 1: Theme + ALL 3 distance calculations + ALL 3 time differences (at least 7 clues total)
-- Turn 2-5: Various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
+- Turn 1: Theme + 3 country clues (one for each country the cities are in) - 4 clues total
+- Turn 2-3 and 5: Various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
+- Turn 4: ALL 3 distance calculations + ALL 3 time differences ONLY - 6 clues total
 - Turn 5: Focus ONLY on the 3 crime scenes - no hints about 4th location
-- Breakthrough clue in Turn 4
-- Images in the turns specified by imageStrategy (typically turns 2 and 4)
+- Images in the turns specified by imageStrategy (turns 2 and 3 ONLY)
 - Final location clues ONLY in Turns 6-7
 
 CALCULATION INSTRUCTIONS:
@@ -1345,12 +1361,23 @@ DISTANCE VERIFICATION CHECKLIST:
 ✓ Intercontinental distances are typically 8,000+ km
 ✓ Convert to miles by multiplying km by 0.621371
 
-EXAMPLE TURN 1 STRUCTURE (using verified real calculations):
+EXAMPLE TURN 1 STRUCTURE (with country clues):
 {
   "turn": 1,
   "narrative": "Welcome, young detectives! A mysterious case has landed on our desk...",
   "clues": [
     {"type": "theme", "content": "Art Museums", "description": "The villain has been targeting famous art museums!", "locationPositions": [1, 2, 3]},
+    {"type": "country", "content": "This country uses the Euro currency", "description": "The first location is in a country that adopted the Euro.", "locationPositions": [1], "data": {"locationPosition": 1}},
+    {"type": "country", "content": "This nation's flag features a red maple leaf", "description": "The second location is in a country known for its distinctive flag.", "locationPositions": [2], "data": {"locationPosition": 2}},
+    {"type": "country", "content": "This country is famous for its cherry blossoms", "description": "The third location is in a country known for seasonal flowers.", "locationPositions": [3], "data": {"locationPosition": 3}}
+  ]
+}
+
+EXAMPLE TURN 4 STRUCTURE (with distance and time calculations):
+{
+  "turn": 4,
+  "narrative": "Our investigation has revealed crucial geographic connections...",
+  "clues": [
     {"type": "distance", "content": "11,000 km / 6,835 miles", "description": "The first location is 11,000 kilometers from the second location.", "data": {"between": [1, 2], "kilometers": 11000, "miles": 6835}},
     {"type": "distance", "content": "6,700 km / 4,163 miles", "description": "The first location is 6,700 kilometers from the third location.", "data": {"between": [1, 3], "kilometers": 6700, "miles": 4163}},
     {"type": "distance", "content": "8,900 km / 5,530 miles", "description": "The second location is 8,900 kilometers from the third location.", "data": {"between": [2, 3], "kilometers": 8900, "miles": 5530}},
