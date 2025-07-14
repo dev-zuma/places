@@ -2143,6 +2143,224 @@ app.get('/api/v2/games/:id/status', async (req, res) => {
   }
 });
 
+// Function to generate diverse themes using OpenAI
+async function generateDiverseThemes(numberOfGames, baseTheme = '') {
+  try {
+    // Get existing themes from published games to avoid overlap
+    const existingGames = await prisma.gameV2.findMany({
+      where: { isPublished: true },
+      select: { theme: true },
+      take: 50, // Get recent themes
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    const existingThemes = existingGames.map(game => game.theme).filter(theme => theme && theme !== 'GENERATING...');
+    
+    let prompt = `Generate ${numberOfGames} diverse and creative themes for a geography detective game. Each theme should connect 3 locations worldwide through a compelling criminal case.
+
+REQUIREMENTS:
+- Each theme should be unique and engaging
+- Themes should span different categories (heists, mysteries, espionage, historical crimes, etc.)
+- Each theme should naturally connect to 3 major cities OR 3 countries
+- Themes should be appropriate for ages 10+ (educational and fun)
+- Avoid repetitive or similar themes
+
+EXISTING THEMES TO AVOID OVERLAP:
+${existingThemes.length > 0 ? existingThemes.slice(0, 20).join(', ') : 'None'}
+
+FORMAT: Return as a JSON array of strings, each being a concise theme description (2-4 words).
+
+EXAMPLES:
+["ancient artifact smuggling", "space technology theft", "diamond heist network", "art forgery ring", "cyber espionage case", "treasure hunt mystery"]`;
+
+    if (baseTheme) {
+      prompt += `\n\nBASE THEME INSPIRATION: ${baseTheme} (create variations and related themes)`;
+    }
+
+    if (openai && process.env.OPENAI_API_KEY) {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.8,
+        max_tokens: 500
+      });
+
+      const content = response.choices[0].message.content.trim();
+      
+      // Parse JSON response
+      try {
+        const themes = JSON.parse(content);
+        if (Array.isArray(themes) && themes.length >= numberOfGames) {
+          return themes.slice(0, numberOfGames);
+        }
+      } catch (parseError) {
+        console.log('Failed to parse OpenAI themes, using fallback');
+      }
+    }
+    
+    // Fallback themes if OpenAI fails
+    const fallbackThemes = [
+      "ancient artifact smuggling", "space technology theft", "diamond heist network", 
+      "art forgery ring", "cyber espionage case", "treasure hunt mystery",
+      "oil drilling conspiracy", "pharmaceutical espionage", "cultural relic theft",
+      "international money laundering", "wildlife trafficking", "nuclear secrets theft",
+      "fashion industry espionage", "archaeological discovery theft", "shipping container mystery",
+      "tech startup sabotage", "royal jewel heist", "music industry scandal",
+      "food supply chain conspiracy", "renewable energy sabotage"
+    ];
+    
+    // Shuffle and return required number
+    const shuffled = fallbackThemes.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, numberOfGames);
+    
+  } catch (error) {
+    console.error('Error generating diverse themes:', error);
+    // Return basic fallback
+    return Array(numberOfGames).fill(0).map((_, i) => `mystery case ${i + 1}`);
+  }
+}
+
+// Bulk generate V2 games
+app.post('/api/v2/games/bulk-generate', async (req, res) => {
+  try {
+    const { userInput, specificLocations, finalObjective, kidFriendly, villainIntegration, numberOfGames, bulkDifficulty } = req.body;
+    
+    const difficultyOptions = ['easy', 'medium', 'hard'];
+    const finalObjectiveOptions = [
+      'WHERE_STASHED', 'NEXT_TARGET', 'VILLAIN_HIDEOUT', 'EVIDENCE_SOURCE',
+      'VILLAIN_HOMETOWN', 'ACCOMPLICE_LOCATION', 'ESCAPE_ROUTE', 'TREASURE_DESTINATION',
+      'VILLAIN_INSPIRATION', 'FINAL_HEIST', 'CRIME_ORIGIN', 'FAMILY_TIES', 'RETIREMENT_PLAN'
+    ];
+    
+    // Generate diverse themes for bulk generation
+    console.log(`🎨 Generating ${numberOfGames} diverse themes for bulk generation...`);
+    const diverseThemes = await generateDiverseThemes(numberOfGames, userInput);
+    console.log(`✨ Generated themes: ${diverseThemes.join(', ')}`);
+    
+    const gameIds = [];
+    
+    // Create multiple games with different themes
+    for (let i = 0; i < numberOfGames; i++) {
+      // Determine difficulty for this game
+      let gameDifficulty;
+      if (bulkDifficulty) {
+        gameDifficulty = bulkDifficulty;
+      } else {
+        // Random difficulty
+        gameDifficulty = difficultyOptions[Math.floor(Math.random() * difficultyOptions.length)];
+      }
+      
+      // Random final objective if not specified
+      const gameFinalObjective = finalObjective || finalObjectiveOptions[Math.floor(Math.random() * finalObjectiveOptions.length)];
+      
+      // Use diverse theme for this game
+      const gameTheme = diverseThemes[i] || `mystery case ${i + 1}`;
+      
+      // Create initial game record
+      const game = await prisma.gameV2.create({
+        data: {
+          theme: 'GENERATING...',
+          phrase: 'Generation in progress',
+          category: 'Geography',
+          difficulty: gameDifficulty,
+          villainName: 'TBD',
+          villainTitle: 'TBD',
+          villainGender: 'TBD',
+          villainAge: 'TBD',
+          villainEthnicity: 'TBD',
+          villainDistinctiveFeature: 'TBD',
+          villainClothingDescription: 'TBD',
+          caseTitle: 'TBD',
+          crimeSummary: 'TBD',
+          interestingFact: 'TBD',
+          finalLocationObjective: gameFinalObjective,
+          finalLocationNarrative: 'TBD',
+          finalInterestingFact: 'TBD',
+          gameCompletionMessage: 'TBD'
+        }
+      });
+      
+      // Create generation tracking record
+      await prisma.generationV2.create({
+        data: {
+          gameV2Id: game.id,
+          status: 'pending',
+          currentStep: 'initialization',
+          totalSteps: 20,
+          completedSteps: 0
+        }
+      });
+      
+      gameIds.push(game.id);
+    }
+    
+    // Start async generation for all games with their unique themes
+    gameIds.forEach((gameId, index) => {
+      const gameTheme = diverseThemes[index] || `mystery case ${index + 1}`;
+      generateGameV2Async(gameId, { 
+        userInput: gameTheme, // Use unique theme for each game
+        specificLocations, 
+        difficulty: null, // Will be determined per game
+        finalObjective: null // Will be determined per game
+      });
+    });
+    
+    res.json({ 
+      gameIds, 
+      status: 'generating',
+      message: `Bulk generation started for ${numberOfGames} games`
+    });
+    
+  } catch (error) {
+    console.error('Bulk V2 game creation error:', error);
+    res.status(500).json({ 
+      error: 'Failed to start bulk V2 game generation',
+      details: error.message
+    });
+  }
+});
+
+// Get bulk generation status
+app.post('/api/v2/games/bulk-status', async (req, res) => {
+  try {
+    const { gameIds } = req.body;
+    
+    if (!gameIds || !Array.isArray(gameIds)) {
+      return res.status(400).json({ error: 'gameIds array is required' });
+    }
+    
+    const statuses = await prisma.generationV2.findMany({
+      where: {
+        gameV2Id: {
+          in: gameIds
+        }
+      },
+      include: {
+        gameV2: {
+          select: {
+            id: true,
+            theme: true,
+            caseTitle: true,
+            difficulty: true,
+            isPublished: true,
+            createdAt: true
+          }
+        }
+      },
+      orderBy: { gameV2Id: 'asc' }
+    });
+    
+    res.json(statuses);
+    
+  } catch (error) {
+    console.error('Bulk status fetch error:', error);
+    res.status(500).json({ 
+      error: 'Failed to get bulk generation status',
+      details: error.message
+    });
+  }
+});
+
 // Get all V2 games
 app.get('/api/v2/games', async (req, res) => {
   try {

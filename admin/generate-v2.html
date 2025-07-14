@@ -109,6 +109,37 @@
                         </div>
                     </fieldset>
 
+                    <fieldset class="bulk-generation-settings">
+                        <legend>🚀 Bulk Generation</legend>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="bulkGeneration" id="bulkGenerationToggle">
+                                Generate multiple games
+                            </label>
+                            <small>Generate multiple games at once with the same settings</small>
+                        </div>
+                        <div class="bulk-options" id="bulkOptions" style="display: none;">
+                            <div class="form-group">
+                                <label for="numberOfGames">Number of Games</label>
+                                <select id="numberOfGames" name="numberOfGames">
+                                    <option value="3">3 games</option>
+                                    <option value="10" selected>10 games</option>
+                                    <option value="20">20 games</option>
+                                    <option value="30">30 games</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bulkDifficulty">Difficulty Level</label>
+                                <select id="bulkDifficulty" name="bulkDifficulty">
+                                    <option value="" selected>Random (Mix of all)</option>
+                                    <option value="easy">Easy only</option>
+                                    <option value="medium">Medium only</option>
+                                    <option value="hard">Hard only</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
                     <button type="submit" class="generate-btn" id="generateV2Btn">
                         🎯 Generate V2 Detective Case
                     </button>
@@ -116,6 +147,7 @@
             </div>
 
             <div id="generationV2Status" class="generation-status hidden">
+                <div id="singleGenerationContent">
                 <div class="generation-header">
                     <h2>🎯 Creating Your Detective Case</h2>
                     <p>Our AI is crafting a unique mystery with villain, locations, and clues...</p>
@@ -225,11 +257,250 @@
                     <button id="cancelV2Generation" class="cancel-btn">Cancel Generation</button>
                     <button id="viewV2Game" class="view-btn hidden">View Generated Game</button>
                 </div>
+                </div>
+                
+                <div id="bulkGenerationContent" class="hidden">
+                    <div class="generation-header">
+                        <h2>🎯 Bulk Game Generation</h2>
+                        <p id="bulkStatusText">Generating multiple detective cases...</p>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="bulkProgressFill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <div class="progress-status">
+                                <span id="bulkProgressText">Starting...</span>
+                            </div>
+                            <span id="bulkProgressPercent">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bulk-status-container">
+                        <div class="bulk-status-header">
+                            <h3>Game Generation Progress</h3>
+                        </div>
+                        <div id="bulkProgressList">
+                            <!-- Dynamic content will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="generation-actions">
+                        <button id="cancelBulkGeneration" class="cancel-btn">Cancel Bulk Generation</button>
+                        <button id="viewGeneratedGames" class="view-btn hidden">View Generated Games</button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
     <style>
+        .bulk-generation-settings {
+            background: #f8f9fa;
+            border: 2px solid #4ecdc4;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .bulk-generation-settings legend {
+            color: #333;
+            font-weight: 600;
+            background: white;
+            padding: 0 10px;
+            border-radius: 4px;
+        }
+
+        .bulk-generation-settings label {
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bulk-generation-settings input[type="checkbox"] {
+            margin: 0;
+            width: auto;
+        }
+
+        /* Fix checkbox alignment for all fieldsets */
+        .crime-settings label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .crime-settings input[type="checkbox"] {
+            margin: 0;
+            width: auto;
+        }
+
+        .bulk-generation-settings small {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .bulk-options {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .bulk-options .form-group {
+            margin-bottom: 15px;
+        }
+
+        .bulk-options label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .bulk-options select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .bulk-options select:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
+        }
+
+        /* Bulk generation status styles */
+        .bulk-status-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .bulk-status-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .bulk-status-header h3 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+
+        .bulk-progress-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .bulk-progress-item.completed {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .bulk-progress-item.in-progress {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+            animation: pulse 2s infinite;
+        }
+
+        .bulk-progress-item.failed {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .bulk-progress-icon {
+            font-size: 20px;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .bulk-progress-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .bulk-progress-text {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .bulk-progress-theme {
+            font-size: 13px;
+            opacity: 0.7;
+            font-style: italic;
+            color: #666;
+        }
+
+        .bulk-progress-status {
+            font-size: 13px;
+            opacity: 0.8;
+            font-style: italic;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .bulk-progress-item.completed .bulk-progress-text {
+            color: #155724;
+        }
+
+        .bulk-progress-item.in-progress .bulk-progress-text {
+            color: #856404;
+        }
+
+        .bulk-progress-item.failed .bulk-progress-text {
+            color: #721c24;
+        }
+
+        .bulk-progress-item.completed .bulk-progress-theme {
+            color: #155724;
+            opacity: 0.8;
+        }
+
+        .bulk-progress-item.in-progress .bulk-progress-theme {
+            color: #856404;
+            opacity: 0.8;
+        }
+
+        .bulk-progress-item.failed .bulk-progress-theme {
+            color: #721c24;
+            opacity: 0.8;
+        }
+
+        .bulk-progress-item.completed .bulk-progress-status {
+            color: #155724;
+        }
+
+        .bulk-progress-item.in-progress .bulk-progress-status {
+            color: #856404;
+        }
+
+        .bulk-progress-item.failed .bulk-progress-status {
+            color: #721c24;
+        }
+
         .format-badge {
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             color: white;
@@ -540,11 +811,38 @@
     <script>
         let currentGenerationId = null;
         let statusInterval = null;
+        let bulkGenerationIds = [];
+        let bulkStatusInterval = null;
+
+        // Handle bulk generation toggle
+        document.getElementById('bulkGenerationToggle').addEventListener('change', (e) => {
+            const bulkOptions = document.getElementById('bulkOptions');
+            const difficultySelect = document.getElementById('difficulty');
+            
+            if (e.target.checked) {
+                bulkOptions.style.display = 'block';
+                difficultySelect.disabled = true;
+                difficultySelect.value = '';
+            } else {
+                bulkOptions.style.display = 'none';
+                difficultySelect.disabled = false;
+            }
+        });
 
         document.getElementById('generateV2Form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const isBulk = formData.get('bulkGeneration') === 'on';
+            
+            if (isBulk) {
+                await handleBulkGeneration(formData);
+            } else {
+                await handleSingleGeneration(formData);
+            }
+        });
+
+        async function handleSingleGeneration(formData) {
             const data = {
                 userInput: formData.get('userInput'),
                 specificLocations: formData.get('specificLocations'),
@@ -567,7 +865,7 @@
                 
                 if (result.gameId) {
                     currentGenerationId = result.gameId;
-                    showGenerationStatus();
+                    showSingleGenerationStatus();
                     startStatusPolling();
                 } else {
                     alert('Error: ' + (result.error || 'Unknown error'));
@@ -575,11 +873,80 @@
             } catch (error) {
                 alert('Error: ' + error.message);
             }
-        });
+        }
 
-        function showGenerationStatus() {
+        async function handleBulkGeneration(formData) {
+            const numberOfGames = parseInt(formData.get('numberOfGames'));
+            const bulkDifficulty = formData.get('bulkDifficulty');
+            
+            const baseData = {
+                userInput: formData.get('userInput'),
+                specificLocations: formData.get('specificLocations'),
+                finalObjective: formData.get('finalObjective'),
+                kidFriendly: formData.get('kidFriendly') === 'on',
+                villainIntegration: formData.get('villainIntegration') === 'on'
+            };
+
+            try {
+                const response = await fetch('/api/v2/games/bulk-generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...baseData,
+                        numberOfGames,
+                        bulkDifficulty
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.gameIds) {
+                    bulkGenerationIds = result.gameIds;
+                    showBulkGenerationStatus(numberOfGames);
+                    startBulkStatusPolling();
+                } else {
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function showSingleGenerationStatus() {
             document.querySelector('.generate-form-container').style.display = 'none';
             document.getElementById('generationV2Status').classList.remove('hidden');
+            document.getElementById('singleGenerationContent').classList.remove('hidden');
+            document.getElementById('bulkGenerationContent').classList.add('hidden');
+        }
+
+        function showBulkGenerationStatus(numberOfGames) {
+            document.querySelector('.generate-form-container').style.display = 'none';
+            document.getElementById('generationV2Status').classList.remove('hidden');
+            document.getElementById('singleGenerationContent').classList.add('hidden');
+            document.getElementById('bulkGenerationContent').classList.remove('hidden');
+            
+            document.getElementById('bulkStatusText').textContent = `Generating ${numberOfGames} detective cases...`;
+            
+            // Initialize progress list
+            const progressList = document.getElementById('bulkProgressList');
+            progressList.innerHTML = '';
+            
+            bulkGenerationIds.forEach((gameId, index) => {
+                const item = document.createElement('div');
+                item.className = 'bulk-progress-item';
+                item.id = `bulk-item-${gameId}`;
+                item.innerHTML = `
+                    <div class="bulk-progress-icon">⏳</div>
+                    <div class="bulk-progress-content">
+                        <div class="bulk-progress-text">Game ${index + 1} of ${numberOfGames}</div>
+                        <div class="bulk-progress-theme">Theme: Loading...</div>
+                    </div>
+                    <div class="bulk-progress-status">Waiting...</div>
+                `;
+                progressList.appendChild(item);
+            });
         }
 
         function startStatusPolling() {
@@ -601,6 +968,35 @@
                     console.error('Status polling error:', error);
                 }
             }, 2000);
+        }
+
+        function startBulkStatusPolling() {
+            bulkStatusInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/v2/games/bulk-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ gameIds: bulkGenerationIds })
+                    });
+                    
+                    const statuses = await response.json();
+                    updateBulkProgress(statuses);
+                    
+                    // Check if all games are completed or failed
+                    const allCompleted = statuses.every(status => 
+                        status.status === 'completed' || status.status === 'failed'
+                    );
+                    
+                    if (allCompleted) {
+                        clearInterval(bulkStatusInterval);
+                        showBulkCompletionActions();
+                    }
+                } catch (error) {
+                    console.error('Bulk status polling error:', error);
+                }
+            }, 3000);
         }
 
         function updateProgress(status) {
@@ -625,6 +1021,59 @@
             });
         }
 
+        function updateBulkProgress(statuses) {
+            const completedCount = statuses.filter(s => s.status === 'completed').length;
+            const failedCount = statuses.filter(s => s.status === 'failed').length;
+            const totalCount = statuses.length;
+            
+            const overallProgress = ((completedCount + failedCount) / totalCount) * 100;
+            document.getElementById('bulkProgressFill').style.width = overallProgress + '%';
+            document.getElementById('bulkProgressPercent').textContent = Math.round(overallProgress) + '%';
+            
+            const inProgressCount = totalCount - completedCount - failedCount;
+            let statusText = '';
+            if (inProgressCount > 0) {
+                statusText = `Generating ${inProgressCount} games...`;
+            } else if (failedCount > 0) {
+                statusText = `Completed with ${failedCount} failures`;
+            } else {
+                statusText = 'All games completed successfully!';
+            }
+            document.getElementById('bulkProgressText').textContent = statusText;
+            
+            // Update individual items
+            statuses.forEach((status, index) => {
+                const item = document.getElementById(`bulk-item-${status.gameV2Id}`);
+                if (!item) return;
+                
+                const icon = item.querySelector('.bulk-progress-icon');
+                const statusEl = item.querySelector('.bulk-progress-status');
+                const themeEl = item.querySelector('.bulk-progress-theme');
+                
+                // Update theme display
+                if (status.gameV2 && status.gameV2.theme) {
+                    const theme = status.gameV2.theme === 'GENERATING...' ? 'Loading...' : status.gameV2.theme;
+                    themeEl.textContent = `Theme: ${theme}`;
+                }
+                
+                item.className = 'bulk-progress-item';
+                
+                if (status.status === 'completed') {
+                    item.classList.add('completed');
+                    icon.textContent = '✅';
+                    statusEl.textContent = 'Completed';
+                } else if (status.status === 'failed') {
+                    item.classList.add('failed');
+                    icon.textContent = '❌';
+                    statusEl.textContent = 'Failed';
+                } else {
+                    item.classList.add('in-progress');
+                    icon.textContent = '⏳';
+                    statusEl.textContent = status.currentStep ? status.currentStep.replace(/_/g, ' ') : 'In progress...';
+                }
+            });
+        }
+
         function shouldMarkCompleted(step, currentStep) {
             const steps = [
                 'generating_content', 'content_generated', 'locations_created', 
@@ -644,6 +1093,11 @@
             document.getElementById('viewV2Game').classList.remove('hidden');
         }
 
+        function showBulkCompletionActions() {
+            document.getElementById('cancelBulkGeneration').style.display = 'none';
+            document.getElementById('viewGeneratedGames').classList.remove('hidden');
+        }
+
         function showError(error) {
             document.getElementById('progressV2Text').textContent = 'Error: ' + error;
             document.getElementById('progressV2Fill').style.backgroundColor = '#dc3545';
@@ -656,8 +1110,19 @@
             location.reload();
         });
 
+        document.getElementById('cancelBulkGeneration').addEventListener('click', () => {
+            if (bulkStatusInterval) {
+                clearInterval(bulkStatusInterval);
+            }
+            location.reload();
+        });
+
         document.getElementById('viewV2Game').addEventListener('click', () => {
             window.location.href = `/admin/game-details-v2.html?id=${currentGenerationId}`;
+        });
+
+        document.getElementById('viewGeneratedGames').addEventListener('click', () => {
+            window.location.href = '/admin/games-v2.html';
         });
     </script>
 </body>

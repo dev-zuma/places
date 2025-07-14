@@ -30,7 +30,7 @@ places/
 ├── admin/             # Admin portal UI (Content Management)
 │   ├── index.html    # Admin dashboard with V1/V2 format tabs
 │   ├── generate.html # V1 game generation page
-│   ├── generate-v2.html # V2 game generation page (3+1 format)
+│   ├── generate-v2.html # V2 game generation page (3+1 format) with bulk generation
 │   ├── games.html    # V1 games management page
 │   ├── games-v2.html # V2 games management page
 │   ├── game-details.html # V1 game details view
@@ -94,6 +94,7 @@ places/
 - Villain integration in location images
 - 16 varied story endings and educational facts
 - Performance tracking and optional form fields
+- **Bulk Generation**: Create 3, 10, 20, or 30 games at once with diverse themes
 
 ### Shared Features
 - Dual format admin portal for game management
@@ -177,6 +178,38 @@ npx prisma studio
 - **V1 Cases**: `/api/cases` | **V1 Games**: `/api/games`
 - **V2 Cases**: `/api/v2/cases` | **V2 Games**: `/api/v2/games`
 - **V2 Generation**: `/api/v2/games/generate`
+- **V2 Bulk Generation**: `/api/v2/games/bulk-generate`
+- **V2 Bulk Status**: `/api/v2/games/bulk-status`
+
+## Bulk Generation System (V2)
+
+### Overview
+The bulk generation feature allows administrators to create multiple V2 games simultaneously with diverse themes to prevent repetitive content.
+
+### Configuration Options
+- **Game Count**: 3, 10, 20, or 30 games (default: 10)
+- **Difficulty**: Random mix or fixed level (Easy, Medium, Hard)
+- **Theme Diversity**: AI-generated unique themes for each game
+- **All Standard Settings**: Kid-friendly, villain integration, final objectives
+
+### Theme Diversity Engine
+- **OpenAI Integration**: Uses GPT-4o-mini to generate diverse themes
+- **Existing Theme Analysis**: Queries published games to avoid repetition
+- **Category Distribution**: Spans heists, espionage, trafficking, mysteries, etc.
+- **Fallback System**: 20 pre-defined themes if OpenAI unavailable
+- **Base Theme Inspiration**: Uses user input to guide theme variations
+
+### UI Features
+- **Real-time Progress**: Shows "generating game X of Y..." with individual themes
+- **Status Tracking**: Visual indicators for completed, in-progress, and failed games
+- **Theme Display**: Each game shows its unique theme as soon as generated
+- **Bulk Status**: Overall progress bar plus individual game progress items
+
+### Technical Implementation
+- **API Endpoints**: `/api/v2/games/bulk-generate` and `/api/v2/games/bulk-status`
+- **Async Processing**: All games generate simultaneously in background
+- **Progress Tracking**: Real-time updates via polling mechanism
+- **Error Handling**: Graceful fallback for failed generations
 
 ## AI Image Generation
 - **Engine**: GPT-Image-1, medium quality
@@ -262,6 +295,15 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### V2 Bulk Generation System (2025-01-14)
+- **Bulk Game Creation**: Generate 3, 10, 20, or 30 games simultaneously
+- **Theme Diversity Engine**: AI-powered unique theme generation using OpenAI GPT-4o-mini
+- **Smart Theme Distribution**: Analyzes existing games to prevent repetitive themes
+- **Real-time Progress UI**: Shows individual game progress with theme names
+- **Difficulty Control**: Random mix or fixed difficulty levels
+- **Status Tracking**: Visual progress indicators for each game in bulk generation
+- **API Extensions**: New endpoints for bulk generation and status monitoring
 
 ### V2 Help System Update (2025-01-14)
 - Updated "How to Play" instructions for V2 gameplay (7 turns, 3+1 format)
