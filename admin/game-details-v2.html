@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V2 Game Details - Places Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <a href="/admin/games-v2.html" class="back-link">← Back to V2 Games</a>
+            <h1>V2 Game Details</h1>
+            <div class="header-actions">
+                <button id="publishBtn" class="action-btn">Publish Game</button>
+                <button id="deleteBtn" class="action-btn delete">Delete Game</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p>Loading game details...</p>
+            </div>
+
+            <div class="game-details" id="gameDetails" style="display: none;">
+                <!-- Game Overview -->
+                <div class="details-section">
+                    <h2>🎮 Game Overview</h2>
+                    <div class="overview-grid">
+                        <div class="overview-item">
+                            <label>Case Title:</label>
+                            <span id="caseTitle"></span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Theme:</label>
+                            <span id="theme"></span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Difficulty:</label>
+                            <span id="difficulty"></span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Final Objective:</label>
+                            <span id="finalObjective"></span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Status:</label>
+                            <span id="status"></span>
+                        </div>
+                        <div class="overview-item">
+                            <label>Created:</label>
+                            <span id="createdAt"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Villain Profile -->
+                <div class="details-section">
+                    <h2>🦹 Villain Profile</h2>
+                    <div class="villain-profile">
+                        <div class="villain-portrait">
+                            <img id="villainImage" src="" alt="Villain Portrait">
+                        </div>
+                        <div class="villain-info">
+                            <div class="villain-name" id="villainName"></div>
+                            <div class="villain-title" id="villainTitle"></div>
+                            <div class="villain-details">
+                                <div class="detail-item">
+                                    <strong>Age:</strong> <span id="villainAge"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Gender:</strong> <span id="villainGender"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Ethnicity:</strong> <span id="villainEthnicity"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Distinctive Feature:</strong> <span id="villainFeature"></span>
+                                </div>
+                            </div>
+                            <div class="villain-clothing">
+                                <strong>Clothing:</strong>
+                                <p id="villainClothing"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case Details -->
+                <div class="details-section">
+                    <h2>📋 Case Details</h2>
+                    <div class="case-summary">
+                        <p id="crimeSummary"></p>
+                    </div>
+                    <div class="interesting-facts">
+                        <div class="fact-item">
+                            <strong>Interesting Fact:</strong>
+                            <p id="interestingFact"></p>
+                        </div>
+                        <div class="fact-item">
+                            <strong>Final Interesting Fact:</strong>
+                            <p id="finalInterestingFact"></p>
+                        </div>
+                        <div class="fact-item">
+                            <strong>Completion Message:</strong>
+                            <p id="completionMessage"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Locations -->
+                <div class="details-section">
+                    <h2>🌍 Locations</h2>
+                    <div class="locations-grid">
+                        <div class="crime-locations">
+                            <h3>Crime Scene Locations</h3>
+                            <div id="crimeLocations"></div>
+                        </div>
+                        <div class="final-location-section">
+                            <h3>Final Location</h3>
+                            <div id="finalLocation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Turn-by-Turn Gameplay -->
+                <div class="details-section">
+                    <h2>🎯 Turn-by-Turn Gameplay</h2>
+                    <div class="gameplay-turns" id="gameplayTurns"></div>
+                </div>
+
+                <!-- Generation Details -->
+                <div class="details-section">
+                    <h2>⚙️ Generation Details</h2>
+                    <div class="generation-info" id="generationInfo"></div>
+                </div>
+
+                <!-- Test Play -->
+                <div class="details-section">
+                    <h2>🎮 Test Play</h2>
+                    <div class="test-play">
+                        <p>Test this game in the player interface:</p>
+                        <a id="testPlayLink" href="#" class="test-play-btn" target="_blank">
+                            🎯 Test Play Game
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal" onclick="closeImageModal()">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeImageModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <img id="modalImage" src="" alt="Evidence Image">
+        </div>
+    </div>
+
+    <script>
+        let currentGame = null;
+        const gameId = new URLSearchParams(window.location.search).get('id');
+
+        document.addEventListener('DOMContentLoaded', loadGameDetails);
+
+        async function loadGameDetails() {
+            if (!gameId) {
+                showError('No game ID provided');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/v2/games/${gameId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to load game details');
+                }
+                
+                currentGame = await response.json();
+                renderGameDetails();
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('gameDetails').style.display = 'block';
+                
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function renderGameDetails() {
+            // Game Overview
+            document.getElementById('caseTitle').textContent = currentGame.caseTitle;
+            document.getElementById('theme').textContent = `${currentGame.theme} - ${currentGame.phrase}`;
+            document.getElementById('difficulty').textContent = currentGame.difficulty;
+            document.getElementById('finalObjective').textContent = currentGame.finalLocationObjective;
+            document.getElementById('createdAt').textContent = new Date(currentGame.createdAt).toLocaleDateString();
+            
+            // Status
+            const status = getGameStatus(currentGame);
+            const statusElement = document.getElementById('status');
+            statusElement.innerHTML = `<span class="status-badge status-${status}">${status}</span>`;
+            
+            // Villain Profile
+            if (currentGame.villainImageUrl) {
+                document.getElementById('villainImage').src = currentGame.villainImageUrl;
+            }
+            document.getElementById('villainName').textContent = currentGame.villainName;
+            document.getElementById('villainTitle').textContent = currentGame.villainTitle;
+            document.getElementById('villainAge').textContent = currentGame.villainAge;
+            document.getElementById('villainGender').textContent = currentGame.villainGender;
+            document.getElementById('villainEthnicity').textContent = currentGame.villainEthnicity;
+            document.getElementById('villainFeature').textContent = currentGame.villainDistinctiveFeature;
+            document.getElementById('villainClothing').textContent = currentGame.villainClothingDescription;
+            
+            // Case Details
+            document.getElementById('crimeSummary').textContent = currentGame.crimeSummary;
+            document.getElementById('interestingFact').textContent = currentGame.interestingFact;
+            document.getElementById('finalInterestingFact').textContent = currentGame.finalInterestingFact;
+            document.getElementById('completionMessage').textContent = currentGame.gameCompletionMessage;
+            
+            // Locations
+            renderLocations();
+            
+            // Gameplay Turns
+            renderGameplayTurns();
+            
+            // Generation Details
+            renderGenerationInfo();
+            
+            // Update action buttons
+            updateActionButtons();
+            
+            // Test play link
+            document.getElementById('testPlayLink').href = `/game/detective-v2.html?case=${currentGame.id}`;
+        }
+
+        function renderLocations() {
+            // Crime scene locations
+            const crimeLocationsContainer = document.getElementById('crimeLocations');
+            crimeLocationsContainer.innerHTML = currentGame.locationsV2.map(location => {
+                const landmarks = JSON.parse(location.landmarks || '[]');
+                return `
+                    <div class="location-card">
+                        <div class="location-header">
+                            <div>
+                                <div class="location-name">Position ${location.position}: ${location.name}</div>
+                                <div class="location-country">${location.country}</div>
+                                <div class="location-coords">${location.latitude}°, ${location.longitude}°</div>
+                            </div>
+                        </div>
+                        <div class="location-details">
+                            <div class="location-detail">
+                                <strong>Timezone:</strong> ${location.timezoneName}
+                            </div>
+                            <div class="location-detail">
+                                <strong>UTC:</strong> ${location.timezoneOffset > 0 ? '+' : ''}${location.timezoneOffset}
+                            </div>
+                            ${location.hasImage ? `
+                                <div class="location-detail">
+                                    <strong>Image:</strong> Turn ${location.imageTurn} (${location.imageLevel})
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="landmarks">
+                            <strong>Landmarks:</strong>
+                            <div class="landmarks-list">
+                                ${landmarks.map(landmark => `<span class="landmark-tag">${landmark}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Final location
+            const finalLocationContainer = document.getElementById('finalLocation');
+            if (currentGame.finalLocationV2) {
+                const connections = JSON.parse(currentGame.finalLocationV2.clueConnections || '[]');
+                finalLocationContainer.innerHTML = `
+                    <div class="final-location-card">
+                        <div class="final-objective">
+                            <strong>Objective:</strong> ${currentGame.finalLocationObjective}
+                        </div>
+                        <div class="location-name">${currentGame.finalLocationV2.name}</div>
+                        <div class="location-country">${currentGame.finalLocationV2.country}</div>
+                        <div class="location-coords">${currentGame.finalLocationV2.latitude}°, ${currentGame.finalLocationV2.longitude}°</div>
+                        <div class="final-reason">
+                            <strong>Reason:</strong> ${currentGame.finalLocationV2.reason}
+                        </div>
+                        ${connections.length > 0 ? `
+                            <div class="final-reason">
+                                <strong>Connections:</strong>
+                                <ul>
+                                    ${connections.map(conn => `<li>${conn}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function renderClueLocationInfo(clue) {
+            // Show which locations this clue applies to
+            if (clue.locationPositions) {
+                try {
+                    const positions = JSON.parse(clue.locationPositions);
+                    if (positions && positions.length > 0) {
+                        const locationNames = positions.map(pos => {
+                            const location = currentGame.locationsV2.find(loc => loc.position === pos);
+                            return location ? `${pos}:${location.name}` : `${pos}`;
+                        });
+                        return `<span class="clue-locations">→ Locations: [${locationNames.join(', ')}]</span>`;
+                    }
+                } catch (e) {
+                    // Invalid JSON, show raw value
+                    return `<span class="clue-locations">→ Raw: ${clue.locationPositions}</span>`;
+                }
+            }
+            
+            // For distance/time clues, show "between" info
+            if (clue.data) {
+                try {
+                    const data = JSON.parse(clue.data);
+                    if (data.between && Array.isArray(data.between)) {
+                        return `<span class="clue-locations">→ Between: [${data.between.join(' ↔ ')}]</span>`;
+                    }
+                } catch (e) {
+                    // Ignore JSON parse errors
+                }
+            }
+            
+            return `<span class="clue-locations">→ General</span>`;
+        }
+
+        function renderImageClue(clue, currentTurn) {
+            const clueData = JSON.parse(clue.data || '{}');
+            
+            // Find the location that should be shown in this turn (by imageTurn)
+            const location = currentGame.locationsV2.find(loc => 
+                loc.hasImage && 
+                loc.imageTurn === currentTurn
+            );
+            
+            if (!location || !location.imageUrl) {
+                // If no location has an image for this turn, show a note
+                const allImageTurns = currentGame.locationsV2
+                    .filter(l => l.hasImage)
+                    .map(l => l.imageTurn)
+                    .sort((a, b) => a - b);
+                
+                return `<div class="image-clue-note">
+                    📷 Image evidence available in turns: ${allImageTurns.join(', ')}
+                    <br>Current turn ${currentTurn} has no image evidence.
+                </div>`;
+            }
+            
+            return `
+                <div class="image-clue">
+                    <img src="${location.imageUrl}" 
+                         alt="Location Evidence" 
+                         class="image-thumbnail"
+                         onclick="openImageModal('${location.imageUrl}', 'Turn ${currentTurn} Evidence - ${location.imageLevel || 'Unknown'} Level')"
+                         title="Click to view full size"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="image-error" style="display:none; padding: 10px; background: #ffe6e6; border: 1px solid #ff9999; border-radius: 4px;">
+                        ❌ Image failed to load: ${location.imageUrl}
+                    </div>
+                    <div class="image-clue-info">
+                        <strong>Evidence Level:</strong> ${location.imageLevel || 'Unknown'}<br>
+                        <strong>Villain Element:</strong> ${location.villainElement || 'None'}<br>
+                        <strong>Location:</strong> Position ${location.position} (${location.name})
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGameplayTurns() {
+            const turnsContainer = document.getElementById('gameplayTurns');
+            if (!currentGame.gameplayTurns || currentGame.gameplayTurns.length === 0) {
+                turnsContainer.innerHTML = '<p>No gameplay turns generated yet.</p>';
+                return;
+            }
+            
+            turnsContainer.innerHTML = currentGame.gameplayTurns.map(turn => `
+                <div class="turn-card">
+                    <div class="turn-header">
+                        Turn ${turn.turn}${turn.isFinalLocation ? ' (Final Location)' : ''}
+                    </div>
+                    <div class="turn-narrative">
+                        <p>${turn.narrative}</p>
+                    </div>
+                    <div class="turn-clues">
+                        ${turn.clues.map(clue => `
+                            <div class="clue-item">
+                                <div class="clue-header">
+                                    <span class="clue-type">${clue.type}</span>
+                                    ${renderClueLocationInfo(clue)}
+                                </div>
+                                ${clue.content ? `<div class="clue-content">${clue.content}</div>` : ''}
+                                ${clue.description ? `<div class="clue-description">${clue.description}</div>` : ''}
+                                ${clue.type === 'image' ? renderImageClue(clue, turn.turn) : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGenerationInfo() {
+            const generationContainer = document.getElementById('generationInfo');
+            if (!currentGame.generationV2) {
+                generationContainer.innerHTML = '<p>No generation information available.</p>';
+                return;
+            }
+            
+            const gen = currentGame.generationV2;
+            
+            // Calculate phase durations
+            const calculateDuration = (startTime, endTime) => {
+                if (!startTime || !endTime) return 'N/A';
+                const duration = new Date(endTime) - new Date(startTime);
+                return `${(duration / 1000).toFixed(1)}s`;
+            };
+            
+            const totalDuration = gen.startedAt && gen.completedAt ? 
+                calculateDuration(gen.startedAt, gen.completedAt) : 'N/A';
+            
+            generationContainer.innerHTML = `
+                <div class="generation-grid">
+                    <div class="generation-item">
+                        <label>Status:</label>
+                        <span class="status-badge status-${gen.status}">${gen.status}</span>
+                    </div>
+                    <div class="generation-item">
+                        <label>Progress:</label>
+                        <span>${gen.completedSteps}/${gen.totalSteps} steps</span>
+                    </div>
+                    <div class="generation-item">
+                        <label>Current Step:</label>
+                        <span>${gen.currentStep || 'N/A'}</span>
+                    </div>
+                    <div class="generation-item">
+                        <label>Started:</label>
+                        <span>${new Date(gen.startedAt).toLocaleString()}</span>
+                    </div>
+                    ${gen.completedAt ? `
+                        <div class="generation-item">
+                            <label>Completed:</label>
+                            <span>${new Date(gen.completedAt).toLocaleString()}</span>
+                        </div>
+                        <div class="generation-item">
+                            <label>Total Duration:</label>
+                            <span style="font-weight: 600; color: #007bff;">${totalDuration}</span>
+                        </div>
+                    ` : ''}
+                    ${gen.error ? `
+                        <div class="generation-item">
+                            <label>Error:</label>
+                            <span style="color: #dc3545;">${gen.error}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                
+                ${gen.completedAt ? `
+                    <div class="performance-timing">
+                        <h3>📊 Performance Timing</h3>
+                        <div class="timing-grid">
+                            <div class="timing-item">
+                                <label>Phase 1 (Core Content):</label>
+                                <span>${calculateDuration(gen.phase1StartTime, gen.phase1EndTime)}</span>
+                            </div>
+                            <div class="timing-item">
+                                <label>Phase 2 (Locations):</label>
+                                <span>${calculateDuration(gen.phase2StartTime, gen.phase2EndTime)}</span>
+                            </div>
+                            <div class="timing-item">
+                                <label>Phase 3 (Turn Clues):</label>
+                                <span>${calculateDuration(gen.phase3StartTime, gen.phase3EndTime)}</span>
+                            </div>
+                            <div class="timing-item">
+                                <label>Phase 4 (All Images):</label>
+                                <span>${calculateDuration(gen.phase4StartTime, gen.phase4EndTime)}</span>
+                            </div>
+                        </div>
+                        <div class="timing-subgrid">
+                            <h4>🎨 Individual Image Generation</h4>
+                            <div class="timing-grid">
+                                <div class="timing-item">
+                                    <label>Villain Portrait:</label>
+                                    <span>${calculateDuration(gen.villainImageStartTime, gen.villainImageEndTime)}</span>
+                                </div>
+                                ${gen.locationImage1StartTime ? `
+                                    <div class="timing-item">
+                                        <label>Location Image 1:</label>
+                                        <span>${calculateDuration(gen.locationImage1StartTime, gen.locationImage1EndTime)}</span>
+                                    </div>
+                                ` : ''}
+                                ${gen.locationImage2StartTime ? `
+                                    <div class="timing-item">
+                                        <label>Location Image 2:</label>
+                                        <span>${calculateDuration(gen.locationImage2StartTime, gen.locationImage2EndTime)}</span>
+                                    </div>
+                                ` : ''}
+                                ${gen.locationImage3StartTime ? `
+                                    <div class="timing-item">
+                                        <label>Location Image 3:</label>
+                                        <span>${calculateDuration(gen.locationImage3StartTime, gen.locationImage3EndTime)}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function updateActionButtons() {
+            const publishBtn = document.getElementById('publishBtn');
+            const status = getGameStatus(currentGame);
+            
+            if (status === 'completed') {
+                publishBtn.textContent = currentGame.isPublished ? 'Unpublish Game' : 'Publish Game';
+                publishBtn.classList.remove('hidden');
+                publishBtn.onclick = () => togglePublish();
+            } else {
+                publishBtn.classList.add('hidden');
+            }
+            
+            document.getElementById('deleteBtn').onclick = () => deleteGame();
+        }
+
+        function getGameStatus(game) {
+            if (game.isPublished) return 'published';
+            if (game.generationV2?.status === 'generating') return 'generating';
+            if (game.generationV2?.status === 'completed') return 'completed';
+            if (game.generationV2?.status === 'failed') return 'failed';
+            return 'unknown';
+        }
+
+        async function togglePublish() {
+            try {
+                const response = await fetch(`/api/v2/games/${gameId}/publish`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isPublished: !currentGame.isPublished })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentGame.isPublished = !currentGame.isPublished;
+                    updateActionButtons();
+                    
+                    // Update status display
+                    const statusElement = document.getElementById('status');
+                    const newStatus = getGameStatus(currentGame);
+                    statusElement.innerHTML = `<span class="status-badge status-${newStatus}">${newStatus}</span>`;
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteGame() {
+            if (!confirm('Are you sure you want to delete this V2 game? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/v2/games/${gameId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Game deleted successfully');
+                    window.location.href = '/admin/games-v2.html';
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function openImageModal(imageUrl, title) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            modalImg.src = imageUrl;
+            modalTitle.textContent = title;
+            modal.style.display = 'block';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('loadingState').innerHTML = `
+                <div class="empty-icon">❌</div>
+                <h3>Error Loading Game</h3>
+                <p>${message}</p>
+                <a href="/admin/games-v2.html" class="back-link">← Back to Games</a>
+            `;
+        }
+    </script>
+</body>
+</html>

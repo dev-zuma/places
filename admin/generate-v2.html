@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate V2 Game (3+1 Format) - Places Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <a href="/admin/" class="back-link">← Back to Dashboard</a>
+            <h1>Generate V2 Game (3+1 Format)</h1>
+            <div class="format-badge">NEW 3+1 FORMAT</div>
+        </header>
+
+        <main class="admin-main">
+            <div class="format-explanation">
+                <h2>🎮 What's New in V2 Games?</h2>
+                <div class="format-features">
+                    <div class="feature">
+                        <strong>3+1 Structure:</strong> Players first identify 3 crime locations, then deduce where the villain is hiding/striking next
+                    </div>
+                    <div class="feature">
+                        <strong>Turn-by-Turn Clues:</strong> 7 turns with varied clue types (distances, timezones, breakthrough moments)
+                    </div>
+                    <div class="feature">
+                        <strong>Final Interesting Fact:</strong> Surprising "aha moment" after solving the case
+                    </div>
+                    <div class="feature">
+                        <strong>Villain Integration:</strong> Images include villain elements (security footage, belongings, etc.)
+                    </div>
+                </div>
+            </div>
+
+            <div class="generate-form-container">
+                <form id="generateV2Form" class="generate-form">
+                    <div class="form-instructions">
+                        <p>🤖 Let AI generate a complete 3+1 detective case! Choose your theme and final objective.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userInput">Theme or Description</label>
+                        <textarea id="userInput" name="userInput" rows="3" 
+                                  placeholder="Examples:&#10;• space exploration&#10;• ancient civilizations&#10;• diamond heists&#10;• olympic sports"></textarea>
+                        <small>Describe what kind of locations/theme you want</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specificLocations">Specific Locations (Optional)</label>
+                        <input type="text" id="specificLocations" name="specificLocations" 
+                               placeholder="e.g., Paris, Tokyo, New York">
+                        <small>Specify 3 exact cities/countries, or leave blank for AI to choose</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty</label>
+                        <select id="difficulty" name="difficulty">
+                            <option value="" selected>Let AI choose</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="finalObjective">Final Location Objective</label>
+                        <select id="finalObjective" name="finalObjective">
+                            <option value="" selected>Let AI choose</option>
+                            <optgroup label="Primary Objectives">
+                                <option value="WHERE_STASHED">Where villain hid stolen goods</option>
+                                <option value="NEXT_TARGET">Where villain will strike next</option>
+                                <option value="VILLAIN_HIDEOUT">Where villain is hiding</option>
+                                <option value="EVIDENCE_SOURCE">Where key evidence originated</option>
+                            </optgroup>
+                            <optgroup label="Character-Based">
+                                <option value="VILLAIN_HOMETOWN">Where villain is originally from</option>
+                                <option value="ACCOMPLICE_LOCATION">Where villain's partner is located</option>
+                                <option value="ESCAPE_ROUTE">Where villain plans to flee</option>
+                                <option value="FAMILY_TIES">Where villain's family connections are</option>
+                            </optgroup>
+                            <optgroup label="Crime-Based">
+                                <option value="TREASURE_DESTINATION">Where villain plans to sell goods</option>
+                                <option value="VILLAIN_INSPIRATION">Location that inspired the crime spree</option>
+                                <option value="FINAL_HEIST">Villain's ultimate target</option>
+                                <option value="CRIME_ORIGIN">Where villain learned their skills</option>
+                                <option value="RETIREMENT_PLAN">Where villain plans to retire</option>
+                            </optgroup>
+                        </select>
+                        <small>What the 4th location represents in your detective story</small>
+                    </div>
+
+                    <fieldset class="crime-settings">
+                        <legend>🕵️ Game Settings</legend>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="kidFriendly" checked>
+                                Kid-friendly content (Ages 10+)
+                            </label>
+                            <small>Keep all content appropriate for ages 10+ (elementary school level)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="villainIntegration" checked>
+                                Include villain in images
+                            </label>
+                            <small>Add villain elements to location images (security footage, belongings, etc.)</small>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit" class="generate-btn" id="generateV2Btn">
+                        🎯 Generate V2 Detective Case
+                    </button>
+                </form>
+            </div>
+
+            <div id="generationV2Status" class="generation-status hidden">
+                <div class="generation-header">
+                    <h2>🎯 Creating Your Detective Case</h2>
+                    <p>Our AI is crafting a unique mystery with villain, locations, and clues...</p>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressV2Fill"></div>
+                    </div>
+                    <div class="progress-info">
+                        <div class="progress-status">
+                            <span id="progressV2Text">Starting...</span>
+                        </div>
+                        <span id="progressV2Percent">0%</span>
+                    </div>
+                </div>
+
+                <div class="checklist-container">
+                    <div class="checklist-phases">
+                        <div class="checklist-section">
+                            <h3>📝 Phase 1: Core Content</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="generating_content">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Creating villain & locations</span>
+                                </div>
+                                <div class="checklist-item" data-step="content_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Core content ready</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            <h3>🌍 Phase 2: Locations</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="locations_created">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Setting up location data</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            <h3>🎮 Phase 3: Gameplay</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="turns_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Generating 7 turns of clues</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            <h3>🎨 Phase 4: Villain</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="generating_villain_portrait">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Creating villain portrait</span>
+                                </div>
+                                <div class="checklist-item" data-step="villain_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Portrait completed</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            <h3>📸 Phase 5: Evidence</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="generating_location_image_1">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Evidence photo 1</span>
+                                </div>
+                                <div class="checklist-item" data-step="location_image_1_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Photo 1 ready</span>
+                                </div>
+                                <div class="checklist-item" data-step="generating_location_image_2">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Evidence photo 2</span>
+                                </div>
+                                <div class="checklist-item" data-step="location_image_2_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Photo 2 ready</span>
+                                </div>
+                                <div class="checklist-item" data-step="images_generated">
+                                    <span class="status-icon">⏳</span>
+                                    <span>All evidence ready</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checklist-section">
+                            <h3>✅ Final Steps</h3>
+                            <div class="checklist-items">
+                                <div class="checklist-item" data-step="completed">
+                                    <span class="status-icon">⏳</span>
+                                    <span>Case file complete!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="generation-actions">
+                    <button id="cancelV2Generation" class="cancel-btn">Cancel Generation</button>
+                    <button id="viewV2Game" class="view-btn hidden">View Generated Game</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .format-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .format-explanation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .format-explanation h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+        }
+
+        .format-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .feature strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Improved generation status styles */
+        #generationV2Status {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .generation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .generation-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .generation-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Enhanced progress bar */
+        .progress-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .progress-bar {
+            height: 24px;
+            background: #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        #progressV2Fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #progressV2Fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 30px 30px;
+            animation: progress-animation 1s linear infinite;
+        }
+
+        @keyframes progress-animation {
+            0% { background-position: 0 0; }
+            100% { background-position: 30px 0; }
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        .progress-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #progressV2Text {
+            color: #495057;
+            font-weight: 500;
+            background: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 2px solid #667eea;
+            font-size: 14px;
+            text-transform: capitalize;
+        }
+
+        #progressV2Percent {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 20px;
+            background: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Phase sections with better styling */
+        .checklist-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .checklist-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #667eea;
+        }
+
+        .checklist-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checklist-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .checklist-item[data-status="completed"] {
+            border-left-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .checklist-item[data-status="in_progress"] {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .checklist-item .status-icon {
+            font-size: 16px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .checklist-item[data-status="completed"] .status-icon {
+            background: #28a745;
+            color: white;
+        }
+
+        .checklist-item[data-status="in_progress"] .status-icon {
+            background: #ffc107;
+            color: white;
+        }
+
+        /* Phase-specific colors */
+        .checklist-section:nth-child(1) { border-top-color: #667eea; }
+        .checklist-section:nth-child(2) { border-top-color: #764ba2; }
+        .checklist-section:nth-child(3) { border-top-color: #4ecdc4; }
+        .checklist-section:nth-child(4) { border-top-color: #ff6b6b; }
+        .checklist-section:nth-child(5) { border-top-color: #28a745; }
+
+        .generation-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .cancel-btn, .view-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cancel-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .view-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .checklist-phases {
+                grid-template-columns: 1fr;
+            }
+            
+            #generationV2Status {
+                padding: 20px;
+            }
+            
+            .progress-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+
+    <script>
+        let currentGenerationId = null;
+        let statusInterval = null;
+
+        document.getElementById('generateV2Form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                userInput: formData.get('userInput'),
+                specificLocations: formData.get('specificLocations'),
+                difficulty: formData.get('difficulty'),
+                finalObjective: formData.get('finalObjective'),
+                kidFriendly: formData.get('kidFriendly') === 'on',
+                villainIntegration: formData.get('villainIntegration') === 'on'
+            };
+
+            try {
+                const response = await fetch('/api/v2/games/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.gameId) {
+                    currentGenerationId = result.gameId;
+                    showGenerationStatus();
+                    startStatusPolling();
+                } else {
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        function showGenerationStatus() {
+            document.querySelector('.generate-form-container').style.display = 'none';
+            document.getElementById('generationV2Status').classList.remove('hidden');
+        }
+
+        function startStatusPolling() {
+            statusInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/v2/games/${currentGenerationId}/status`);
+                    const status = await response.json();
+                    
+                    updateProgress(status);
+                    
+                    if (status.status === 'completed') {
+                        clearInterval(statusInterval);
+                        showCompletionActions();
+                    } else if (status.status === 'failed') {
+                        clearInterval(statusInterval);
+                        showError(status.error);
+                    }
+                } catch (error) {
+                    console.error('Status polling error:', error);
+                }
+            }, 2000);
+        }
+
+        function updateProgress(status) {
+            const progress = (status.completedSteps / status.totalSteps) * 100;
+            document.getElementById('progressV2Fill').style.width = progress + '%';
+            document.getElementById('progressV2Percent').textContent = Math.round(progress) + '%';
+            document.getElementById('progressV2Text').textContent = status.currentStep.replace(/_/g, ' ');
+
+            // Update checklist items
+            const currentStep = status.currentStep;
+            const checklistItems = document.querySelectorAll('.checklist-item');
+            
+            checklistItems.forEach(item => {
+                const step = item.getAttribute('data-step');
+                if (step === currentStep) {
+                    item.setAttribute('data-status', 'in_progress');
+                    item.querySelector('.status-icon').textContent = '⏳';
+                } else if (shouldMarkCompleted(step, currentStep)) {
+                    item.setAttribute('data-status', 'completed');
+                    item.querySelector('.status-icon').textContent = '✅';
+                }
+            });
+        }
+
+        function shouldMarkCompleted(step, currentStep) {
+            const steps = [
+                'generating_content', 'content_generated', 'locations_created', 
+                'turns_generated', 'generating_villain_portrait', 'villain_generated', 
+                'generating_location_image_1', 'location_image_1_generated',
+                'generating_location_image_2', 'location_image_2_generated',
+                'generating_location_image_3', 'location_image_3_generated',
+                'images_generated', 'completed'
+            ];
+            const stepIndex = steps.indexOf(step);
+            const currentIndex = steps.indexOf(currentStep);
+            return stepIndex < currentIndex;
+        }
+
+        function showCompletionActions() {
+            document.getElementById('cancelV2Generation').style.display = 'none';
+            document.getElementById('viewV2Game').classList.remove('hidden');
+        }
+
+        function showError(error) {
+            document.getElementById('progressV2Text').textContent = 'Error: ' + error;
+            document.getElementById('progressV2Fill').style.backgroundColor = '#dc3545';
+        }
+
+        document.getElementById('cancelV2Generation').addEventListener('click', () => {
+            if (statusInterval) {
+                clearInterval(statusInterval);
+            }
+            location.reload();
+        });
+
+        document.getElementById('viewV2Game').addEventListener('click', () => {
+            window.location.href = `/admin/game-details-v2.html?id=${currentGenerationId}`;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+**Worldwide Chase** is a geography-themed detective game where players solve crime cases by identifying connected locations based on thematic clues and progressively revealed visual evidence. Each case features AI-generated villains, crime narratives, and educational geography content presented in an authentic detective case file interface. This is a production-ready web application built with modern technologies.
+
+The game now features **two distinct formats**:
+- **V1 Games**: Original 3-location format (5 turns, identify 3 locations)
+- **V2 Games**: Enhanced 3+1 format (7 turns, identify 3 locations + deduce 4th final location)
+
+## Repository Status
+
+- **GitHub Repository**: https://github.com/dev-zuma/places
+- **Current Phase**: V2 Game System Implementation (COMPLETED)
+- **Production Status**: Ready for deployment and user testing
+- **Last Updated**: 2025-01-11
+- **Interface**: Dual-format detective case file experience with V1/V2 game management
+
+## Project Structure
+
+```
+places/
+├── CLAUDE.md           # This file - project guidance
+├── server-unified.js   # Main production server (admin + game + API)
+├── start-server.bat    # Windows batch file to start server
+├── test-villain-styles.html # Villain portrait testing tool
+├── package.json        # Node.js dependencies
+├── package-lock.json   # Dependency lock file
+├── .env               # Environment variables (API keys)
+├── prisma/            # Database ORM
+│   ├── schema.prisma  # Database schema definition
+│   ├── dev.db        # SQLite development database
+│   └── migrations/   # Database migration files
+├── admin/             # Admin portal UI (Content Management)
+│   ├── index.html    # Admin dashboard with V1/V2 format tabs
+│   ├── generate.html # V1 game generation page
+│   ├── generate-v2.html # V2 game generation page (3+1 format)
+│   ├── games.html    # V1 games management page
+│   ├── games-v2.html # V2 games management page
+│   ├── game-details.html # V1 game details view
+│   ├── game-details-v2.html # V2 game details view with performance timing
+│   └── styles.css    # Admin portal styles
+├── game/              # Frontend game system (Player Experience)
+│   ├── index.html    # Case gallery & browsing
+│   ├── detective.html # Detective case file interface (MAIN GAME)
+│   ├── detective-header.js # Shared header component
+│   ├── styles.css    # Complete game styling system
+│   └── wwc-logo.png  # Worldwide Chase logo
+├── mockups/          # UI mockup designs & prototypes (reference)
+│   ├── index.html    # Gallery view of all mockups
+│   ├── shared-styles.css # Common styles and theme colors
+│   ├── mockup-22-compact-fixed.html # Original geography game design
+│   └── mockup-23-detective-file.html # Detective file interface prototype
+├── history/          # Static history page
+├── result/           # Static result page
+├── public/           # Static assets
+│   └── wwc-logo.png
+├── tests/            # Test files and scripts
+│   ├── *.js         # Test implementations (playwright, unit tests, etc.)
+│   └── *.html       # Test HTML pages for manual testing
+├── test-artifacts/   # Test outputs and documentation
+│   ├── *.md         # Test reports and summaries
+│   └── *.png        # Screenshots and visual test results
+├── test-results/     # Test execution results (auto-generated)
+└── .gitignore
+```
+
+[Rest of the file remains unchanged]
+
+## Test Organization Guidelines
+
+### Test File Organization
+- Use `/tests/`, `/test-results/`, and `/test-artifacts/` for storing tests and related content
+- Organize test files and artifacts systematically in these designated folders
+
+[Remainder of the file remains exactly the same]

@@ -861,83 +861,6 @@
             margin-bottom: 8px;
             text-transform: uppercase;
         }
-
-        /* Gallery Tabs */
-        .gallery-tabs {
-            display: flex;
-            background: rgba(26, 91, 91, 0.05);
-            border-bottom: 2px solid var(--primary-orange);
-            border-top: 1px solid rgba(26, 91, 91, 0.1);
-            margin: 0;
-            padding: 0;
-        }
-
-        .gallery-tabs .tab-button {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 12px 16px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .gallery-tabs .tab-button:hover {
-            background: rgba(26, 91, 91, 0.1);
-            color: var(--primary-teal);
-        }
-
-        .gallery-tabs .tab-button.active {
-            background: var(--primary-teal);
-            color: white;
-            font-weight: 700;
-        }
-
-        .gallery-tabs .tab-button.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary-orange);
-        }
-
-        /* Solved Case Styling */
-        .case-card.solved {
-            position: relative;
-            opacity: 0.85;
-        }
-
-        .case-card.solved::before {
-            content: 'CAPTURED';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            background: rgba(220, 53, 69, 0.95);
-            color: white;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: 900;
-            padding: 8px 16px;
-            border: 3px solid #dc3545;
-            border-radius: 4px;
-            z-index: 10;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-            letter-spacing: 2px;
-        }
-
-        .case-card.solved .villain-portrait {
-            filter: grayscale(30%);
-        }
     </style>
 </head>
 <body>
@@ -1027,16 +950,6 @@
                             <span>Solved</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- Gallery Tabs -->
-                <div class="gallery-tabs">
-                    <button class="tab-button active" id="unsolvedTab" onclick="switchGalleryTab('unsolved')">
-                        Unsolved Cases
-                    </button>
-                    <button class="tab-button" id="solvedTab" onclick="switchGalleryTab('solved')">
-                        Solved Cases
-                    </button>
                 </div>
 
                 <!-- Loading State -->
@@ -1139,12 +1052,11 @@
         let allCases = [];
         let currentUser = null;
         let userHistory = [];
-        let currentTab = 'unsolved'; // Track current gallery tab
 
         // Load cases on page load
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeGoogleSignIn();
-            await checkUserAuth();
+            checkUserAuth();
             await loadCases();
         });
 
@@ -1171,99 +1083,18 @@
             }
         }
 
-        async function checkUserAuth() {
+        function checkUserAuth() {
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 updateUserUI();
-                await loadUserHistory();
+                loadUserHistory();
             }
         }
 
-        async function loadUserHistory() {
-            if (!currentUser) {
-                userHistory = [];
-                return;
-            }
-            
-            // Load from localStorage first (for backup/offline support)
-            const localResults = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
-            userHistory = localResults;
-            
-            // Try to load from database for more accurate data
-            try {
-                const response = await fetch(`/api/v2/players/${currentUser.id}/results`);
-                if (response.ok) {
-                    const dbResults = await response.json();
-                    
-                    // Convert database results to format expected by gallery
-                    const convertedResults = dbResults.map(result => ({
-                        caseId: result.gameV2Id,
-                        gameId: result.gameV2Id, // Alternative field name
-                        captured: result.solvedLocations && result.solvedFinal,
-                        success: result.solvedLocations && result.solvedFinal,
-                        score: result.pointsEarned || 0,
-                        pointsEarned: result.pointsEarned || 0,
-                        turnsUsed: result.turnsUsed || 0,
-                        timeTaken: 0, // Not stored in V2 database model yet
-                        date: result.solvedAt || new Date().toISOString(),
-                        userId: currentUser.id,
-                        userName: currentUser.username || currentUser.name,
-                        // Include game details for potential future use
-                        gameTitle: result.gameV2?.caseTitle,
-                        villainName: result.gameV2?.villainName,
-                        theme: result.gameV2?.theme,
-                        difficulty: result.gameV2?.difficulty
-                    }));
-                    
-                    // Merge database results with local results, preferring database
-                    const dbCaseIds = new Set(convertedResults.map(r => r.caseId));
-                    const localOnlyResults = localResults.filter(r => !dbCaseIds.has(r.caseId));
-                    
-                    userHistory = [...convertedResults, ...localOnlyResults];
-                    
-                    console.log(`✅ Loaded ${convertedResults.length} results from database, ${localOnlyResults.length} from localStorage`);
-                } else {
-                    console.log('ℹ️  Could not load results from database, using localStorage only');
-                }
-            } catch (error) {
-                console.error('❌ Failed to load user history from database:', error);
-                console.log('ℹ️  Using localStorage results only');
-            }
-            
-            // Re-render cases after loading history
-            renderCases();
-        }
-
-        // Gallery tab switching
-        function switchGalleryTab(tab) {
-            currentTab = tab;
-            
-            // Update tab buttons
-            document.getElementById('unsolvedTab').classList.toggle('active', tab === 'unsolved');
-            document.getElementById('solvedTab').classList.toggle('active', tab === 'solved');
-            
-            // Re-render cases with current filter
-            renderCases();
-        }
-
-        // Check if a case is solved by the current user
-        function isCaseSolved(caseId) {
-            if (!currentUser || !userHistory) return false;
-            return userHistory.some(result => result.caseId === caseId);
-        }
-
-        // Get filtered cases based on current tab
-        function getFilteredCases() {
-            if (!currentUser) {
-                // If not logged in, show all cases as unsolved
-                return currentTab === 'unsolved' ? allCases : [];
-            }
-            
-            if (currentTab === 'solved') {
-                return allCases.filter(game => isCaseSolved(game.id));
-            } else {
-                return allCases.filter(game => !isCaseSolved(game.id));
+        function loadUserHistory() {
+            if (currentUser) {
+                userHistory = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
             }
         }
 
@@ -1297,7 +1128,7 @@
         async function loadCases() {
             try {
                 showLoading();
-                const response = await fetch('/api/v2/cases');
+                const response = await fetch('/api/cases');
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch cases');
@@ -1327,31 +1158,16 @@
             const casesContainer = document.getElementById('casesContainer');
             const emptyState = document.getElementById('emptyState');
             
-            // Get filtered cases based on current tab
-            const filteredCases = getFilteredCases();
-            
-            if (filteredCases.length === 0) {
+            if (allCases.length === 0) {
                 casesContainer.style.display = 'none';
                 emptyState.style.display = 'block';
-                
-                // Update empty state message based on tab
-                const emptyStateTitle = emptyState.querySelector('h3');
-                const emptyStateText = emptyState.querySelector('p');
-                
-                if (currentTab === 'solved') {
-                    emptyStateTitle.textContent = 'No Solved Cases';
-                    emptyStateText.textContent = 'Complete some cases to see them here with the CAPTURED stamp!';
-                } else {
-                    emptyStateTitle.textContent = 'No Unsolved Cases';
-                    emptyStateText.textContent = currentUser ? 'Congratulations! You\'ve solved all available cases!' : 'Check back later for new criminal cases to solve.';
-                }
                 return;
             }
             
             casesContainer.style.display = 'flex';
             emptyState.style.display = 'none';
             
-            casesContainer.innerHTML = filteredCases.map(game => createCaseCard(game)).join('');
+            casesContainer.innerHTML = allCases.map(game => createCaseCard(game)).join('');
             updateStats(); // Update solved count
         }
 
@@ -1396,7 +1212,7 @@
         }
 
         function solveCase(caseId) {
-            window.location.href = `detective-v2.html?case=${caseId}`;
+            window.location.href = `detective.html?case=${caseId}`;
         }
 
         function showCaseDetails(caseId) {

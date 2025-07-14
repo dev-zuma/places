@@ -45,17 +45,25 @@
         </header>
 
         <main class="admin-main">
-            <div class="action-cards">
+            <div class="format-selector">
+                <h2>🎮 Game Formats</h2>
+                <div class="format-tabs">
+                    <button class="format-tab active" data-format="v1">V1 Games (Original)</button>
+                    <button class="format-tab" data-format="v2">V2 Games (3+1 Format)</button>
+                </div>
+            </div>
+
+            <div class="action-cards" id="v1Actions">
                 <a href="/admin/generate.html" class="action-card generate-card">
                     <div class="card-icon">🎲</div>
-                    <h2>Generate New Game</h2>
-                    <p>Create a new Places game with AI-generated content and images</p>
+                    <h2>Generate V1 Game</h2>
+                    <p>Create a new Places game with the original format</p>
                 </a>
 
                 <a href="/admin/games.html" class="action-card games-card">
                     <div class="card-icon">📚</div>
-                    <h2>Manage Games</h2>
-                    <p>View, edit, and publish existing games</p>
+                    <h2>Manage V1 Games</h2>
+                    <p>View, edit, and publish existing V1 games</p>
                 </a>
 
                 <div class="action-card data-card">
@@ -64,6 +72,33 @@
                     <p>Clear user data and database for testing</p>
                     <button id="clearUserDataBtn" class="clear-data-btn">Clear User Data</button>
                     <button id="clearDatabaseBtn" class="clear-data-btn" style="margin-top: 8px; background: rgba(220, 53, 69, 0.8);">Clear Database</button>
+                </div>
+            </div>
+
+            <div class="action-cards" id="v2Actions" style="display: none;">
+                <a href="/admin/generate-v2.html" class="action-card generate-card">
+                    <div class="card-icon">🎯</div>
+                    <h2>Generate V2 Game</h2>
+                    <p>Create a new 3+1 format game with turn-by-turn clues</p>
+                    <div class="card-badge">NEW</div>
+                </a>
+
+                <a href="/admin/games-v2.html" class="action-card games-card">
+                    <div class="card-icon">🎮</div>
+                    <h2>Manage V2 Games</h2>
+                    <p>View, edit, and publish V2 games with enhanced features</p>
+                    <div class="card-badge">NEW</div>
+                </a>
+
+                <div class="action-card info-card">
+                    <div class="card-icon">✨</div>
+                    <h2>V2 Features</h2>
+                    <div class="feature-list">
+                        <div class="feature-item">🎯 3+1 Structure: Find 3 locations, then deduce the 4th</div>
+                        <div class="feature-item">🎮 Turn-by-Turn Clues: 7 turns with varied evidence</div>
+                        <div class="feature-item">🦹 Villain Integration: Images include villain elements</div>
+                        <div class="feature-item">🧠 Final Aha Moment: Surprising educational conclusion</div>
+                    </div>
                 </div>
             </div>
 
@@ -85,6 +120,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeAdminAuth();
             checkAdminAuth();
+            initializeFormatTabs();
         });
 
         async function initializeAdminAuth() {
@@ -272,6 +308,29 @@
         document.getElementById('adminSignOutButton').addEventListener('click', signOutAdmin);
         document.getElementById('clearUserDataBtn').addEventListener('click', clearAllUserData);
         document.getElementById('clearDatabaseBtn').addEventListener('click', clearDatabase);
+
+        // Format tabs functionality
+        function initializeFormatTabs() {
+            const formatTabs = document.querySelectorAll('.format-tab');
+            formatTabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const format = e.target.dataset.format;
+                    switchFormat(format);
+                });
+            });
+        }
+
+        function switchFormat(format) {
+            // Update active tab
+            document.querySelectorAll('.format-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-format="${format}"]`).classList.add('active');
+
+            // Show/hide action cards
+            document.getElementById('v1Actions').style.display = format === 'v1' ? 'grid' : 'none';
+            document.getElementById('v2Actions').style.display = format === 'v2' ? 'grid' : 'none';
+        }
 
     </script>
     <script>

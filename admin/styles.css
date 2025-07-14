@@ -29,6 +29,90 @@ body {
     line-height: 1.6;
 }
 
+/* Clue Location Information */
+.clue-locations {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 6px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--info-color);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.clue-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.clue-type {
+    background: var(--primary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Generation Details Font Improvements */
+.generation-grid,
+.timing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.generation-item,
+.timing-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.generation-item label,
+.timing-item label {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.generation-item span,
+.timing-item span {
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: right;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.timing-subgrid {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timing-subgrid h4 {
+    margin-bottom: 12px;
+    color: var(--dark-color);
+    font-size: 16px;
+    font-weight: 600;
+}
+
 /* Authentication Gate */
 .auth-gate {
     position: fixed;
@@ -514,7 +598,7 @@ body {
 }
 
 .checklist-item span {
-    color: white;
+    color: black;
     font-size: 0.9rem;
     flex-grow: 1;
 }
@@ -1270,5 +1354,689 @@ textarea:focus {
     .games-table th:nth-child(3),
     .games-table td:nth-child(3) {
         display: none;
+    }
+}
+
+/* Format Selector Styles */
+.format-selector {
+    margin-bottom: 30px;
+}
+
+.format-selector h2 {
+    margin: 0 0 15px 0;
+    color: white;
+    font-size: 1.5em;
+}
+
+.format-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.format-tab {
+    padding: 12px 24px;
+    border: 2px solid var(--glass-border);
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.format-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.format-tab.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Card Badges */
+.card-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-card {
+    position: relative;
+}
+
+/* V2 Features List */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-card .card-icon {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.info-card h2 {
+    color: white;
+}
+
+.info-card p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== GAME DETAILS V2 SPECIFIC STYLES ===== */
+
+.details-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.details-section h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.3em;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.overview-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.overview-item label {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+.overview-item span {
+    color: #333;
+    font-size: 16px;
+}
+
+/* Override the small avatar style for game details */
+.game-details .villain-profile {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.game-details .villain-portrait img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border: none;
+}
+
+.villain-name {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.villain-title {
+    font-size: 1.1em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.villain-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.detail-item {
+    font-size: 14px;
+    color: #333;
+}
+
+.detail-item strong {
+    color: #666;
+}
+
+.detail-item span {
+    color: #333;
+    font-weight: 500;
+}
+
+.villain-clothing {
+    background: var(--light-color);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.villain-clothing strong {
+    color: #666 !important;
+}
+
+.villain-clothing p {
+    margin: 5px 0 0 0;
+    color: #333 !important;
+    font-weight: 500;
+}
+
+.case-summary {
+    background: var(--light-color);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--success-color);
+}
+
+.case-summary p {
+    margin: 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+.interesting-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fact-item {
+    background: #e7f3ff;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #0056b3;
+}
+
+.fact-item strong {
+    color: #0056b3;
+}
+
+.fact-item p {
+    margin: 5px 0 0 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 25px;
+}
+
+.crime-locations h3,
+.final-location-section h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.location-card {
+    background: var(--light-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.location-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.location-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.location-country {
+    color: #666;
+    font-size: 14px;
+}
+
+.location-coords {
+    font-size: 12px;
+    color: #888;
+}
+
+.location-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.location-detail {
+    font-size: 13px;
+    color: #333;
+}
+
+.location-detail strong {
+    color: #666;
+}
+
+.landmarks {
+    margin-top: 10px;
+}
+
+.landmarks strong {
+    color: #666;
+    font-size: 14px;
+}
+
+.landmarks-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.landmark-tag {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #495057;
+}
+
+.final-location-card {
+    background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.final-location-card .location-name {
+    color: white;
+    font-size: 1.2em;
+}
+
+.final-location-card .location-country {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.final-objective {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.final-reason {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.gameplay-turns {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.turn-card {
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.turn-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 18px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.turn-narrative {
+    padding: 20px;
+    background: #f8f9ff;
+    border-bottom: 1px solid #e0e6ff;
+}
+
+.turn-narrative p {
+    margin: 0;
+    line-height: 1.7;
+    color: #2c3e50;
+    font-size: 15px;
+}
+
+.turn-clues {
+    padding: 20px;
+    background: #fafbfc;
+}
+
+.clue-item {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--success-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.clue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.clue-type {
+    background: var(--success-color);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.clue-content {
+    color: #2c3e50;
+    line-height: 1.6;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.clue-description {
+    color: #5a6c7d;
+    font-size: 14px;
+    margin-top: 8px;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.generation-info {
+    background: var(--light-color);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.generation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.generation-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.generation-item label {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+.performance-timing {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+.performance-timing h3 {
+    margin: 0 0 15px 0;
+    color: #007bff;
+    font-size: 18px;
+}
+
+.timing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.timing-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--light-color);
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+}
+
+.timing-item label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.timing-item span {
+    font-weight: 600;
+    color: #007bff;
+    font-size: 14px;
+}
+
+.timing-subgrid {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.timing-subgrid h4 {
+    margin: 0 0 15px 0;
+    color: var(--success-color);
+    font-size: 16px;
+}
+
+.image-clue {
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--light-color);
+    border-radius: 8px;
+    border: 2px solid #007bff;
+}
+
+.image-thumbnail {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-bottom: 10px;
+}
+
+.image-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.image-clue-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.image-clue-error {
+    color: var(--danger-color);
+    font-style: italic;
+    padding: 10px;
+    background: #f8d7da;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.image-clue-note {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 10px;
+    background: #e2e3e5;
+    border-radius: 4px;
+    margin-top: 10px;
+    border-left: 3px solid var(--text-muted);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    text-align: center;
+}
+
+.close-button {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #999;
+}
+
+.close-button:hover {
+    color: #333;
+}
+
+#modalImage {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+#modalTitle {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.test-play {
+    text-align: center;
+    padding: 20px;
+    background: var(--light-color);
+    border-radius: 8px;
+}
+
+.test-play-btn {
+    display: inline-block;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.test-play-btn:hover {
+    transform: translateY(-2px);
+}
+
+.loading-state {
+    text-align: center;
+    padding: 60px;
+    color: #666;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-generating { background: #cce5ff; color: #004085; }
+.status-completed { background: #d4edda; color: #155724; }
+.status-published { background: #e7f3ff; color: #0056b3; }
+.status-failed { background: #f8d7da; color: #721c24; }
+
+/* Responsive design for game details */
+@media (max-width: 768px) {
+    .game-details .villain-profile {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-grid {
+        grid-template-columns: 1fr;
     }
 }

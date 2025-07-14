@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V2 Games Management - Places Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/styles.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <a href="/admin/" class="back-link">← Back to Dashboard</a>
+            <h1>V2 Games Management</h1>
+            <div class="header-actions">
+                <a href="/admin/generate-v2.html" class="generate-btn">
+                    🎯 Generate V2 Game
+                </a>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="format-info">
+                <h2>🎮 V2 Games (3+1 Format)</h2>
+                <p>These games feature the new 3+1 structure: players identify 3 crime locations, then deduce the 4th final location with turn-by-turn clues.</p>
+            </div>
+
+            <div class="games-filters">
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select id="statusFilter">
+                        <option value="">All</option>
+                        <option value="generating">Generating</option>
+                        <option value="completed">Completed</option>
+                        <option value="published">Published</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Difficulty:</label>
+                    <select id="difficultyFilter">
+                        <option value="">All</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Theme:</label>
+                    <input type="text" id="themeFilter" placeholder="Filter by theme...">
+                </div>
+            </div>
+
+            <div class="games-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalGames">0</div>
+                    <div class="stat-label">Total V2 Games</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="publishedGames">0</div>
+                    <div class="stat-label">Published</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="generatingGames">0</div>
+                    <div class="stat-label">Generating</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedGames">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+
+            <div class="games-grid" id="gamesGrid">
+                <!-- Games will be populated here -->
+            </div>
+
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p>Loading V2 games...</p>
+            </div>
+
+            <div class="empty-state hidden" id="emptyState">
+                <div class="empty-icon">🎮</div>
+                <h3>No V2 Games Yet</h3>
+                <p>Create your first V2 game with the new 3+1 format!</p>
+                <a href="/admin/generate-v2.html" class="generate-btn">Generate First V2 Game</a>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .format-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .format-info h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.4em;
+        }
+
+        .format-info p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .games-filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .games-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .game-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+
+        .game-theme {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .game-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.difficulty-easy { background: #d4edda; color: #155724; }
+        .badge.difficulty-medium { background: #fff3cd; color: #856404; }
+        .badge.difficulty-hard { background: #f8d7da; color: #721c24; }
+
+        .badge.status-generating { background: #cce5ff; color: #004085; }
+        .badge.status-completed { background: #d4edda; color: #155724; }
+        .badge.status-published { background: #e7f3ff; color: #0056b3; }
+        .badge.status-failed { background: #f8d7da; color: #721c24; }
+
+        .game-content {
+            padding: 15px;
+        }
+
+        .game-locations {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .location-item {
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .location-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .location-country {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .final-location {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .final-location-title {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .final-location-name {
+            font-weight: 600;
+        }
+
+        .game-progress {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn.view { background: #e7f3ff; color: #0056b3; }
+        .action-btn.view:hover { background: #cce5ff; }
+
+        .action-btn.publish { background: #d4edda; color: #155724; }
+        .action-btn.publish:hover { background: #c3e6cb; }
+
+        .action-btn.unpublish { background: #fff3cd; color: #856404; }
+        .action-btn.unpublish:hover { background: #ffeaa7; }
+
+        .action-btn.delete { background: #f8d7da; color: #721c24; }
+        .action-btn.delete:hover { background: #f5c6cb; }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+
+    <script>
+        let allGames = [];
+        let filteredGames = [];
+
+        // Load games on page load
+        document.addEventListener('DOMContentLoaded', loadGames);
+
+        // Filter event listeners
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('difficultyFilter').addEventListener('change', applyFilters);
+        document.getElementById('themeFilter').addEventListener('input', applyFilters);
+
+        async function loadGames() {
+            try {
+                const response = await fetch('/api/v2/games');
+                allGames = await response.json();
+                filteredGames = [...allGames];
+                
+                updateStats();
+                renderGames();
+                
+                document.getElementById('loadingState').classList.add('hidden');
+                
+                if (allGames.length === 0) {
+                    document.getElementById('emptyState').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading games:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="empty-icon">❌</div>
+                    <h3>Error Loading Games</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const total = allGames.length;
+            const published = allGames.filter(g => g.isPublished).length;
+            const generating = allGames.filter(g => g.generationV2?.status === 'generating').length;
+            const completed = allGames.filter(g => g.generationV2?.status === 'completed').length;
+
+            document.getElementById('totalGames').textContent = total;
+            document.getElementById('publishedGames').textContent = published;
+            document.getElementById('generatingGames').textContent = generating;
+            document.getElementById('completedGames').textContent = completed;
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            const themeFilter = document.getElementById('themeFilter').value.toLowerCase();
+
+            filteredGames = allGames.filter(game => {
+                const matchesStatus = !statusFilter || getGameStatus(game) === statusFilter;
+                const matchesDifficulty = !difficultyFilter || game.difficulty === difficultyFilter;
+                const matchesTheme = !themeFilter || game.theme.toLowerCase().includes(themeFilter);
+                
+                return matchesStatus && matchesDifficulty && matchesTheme;
+            });
+
+            renderGames();
+        }
+
+        function getGameStatus(game) {
+            if (game.isPublished) return 'published';
+            if (game.generationV2?.status === 'generating') return 'generating';
+            if (game.generationV2?.status === 'completed') return 'completed';
+            if (game.generationV2?.status === 'failed') return 'failed';
+            return 'unknown';
+        }
+
+        function renderGames() {
+            const container = document.getElementById('gamesGrid');
+            
+            if (filteredGames.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>No Games Match Your Filters</h3>
+                        <p>Try adjusting your search criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredGames.map(game => createGameCard(game)).join('');
+        }
+
+        function createGameCard(game) {
+            const status = getGameStatus(game);
+            const progress = game.generationV2 && game.generationV2.completedSteps && game.generationV2.totalSteps ? 
+                Math.round((game.generationV2.completedSteps / game.generationV2.totalSteps) * 100) : 0;
+
+            return `
+                <div class="game-card">
+                    <div class="game-header">
+                        <div class="game-title">${game.caseTitle || 'Untitled Game'}</div>
+                        <div class="game-theme">${game.theme || 'Unknown Theme'}${game.phrase ? ' • ' + game.phrase : ''}</div>
+                        <div class="game-badges">
+                            <span class="badge difficulty-${game.difficulty}">${game.difficulty}</span>
+                            <span class="badge status-${status}">${status}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-content">
+                        ${game.locationsV2 && game.locationsV2.length > 0 ? `
+                            <div class="game-locations">
+                                ${game.locationsV2.map(loc => `
+                                    <div class="location-item">
+                                        <div class="location-name">${loc.name}</div>
+                                        <div class="location-country">${loc.country}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${game.finalLocationV2 ? `
+                            <div class="final-location">
+                                <div class="final-location-title">Final Location (${game.finalLocationObjective})</div>
+                                <div class="final-location-name">${game.finalLocationV2.name}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${status === 'generating' ? `
+                            <div class="game-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span>${game.generationV2.currentStep ? game.generationV2.currentStep.replace(/_/g, ' ') : 'Generating...'}</span>
+                                    <span>${progress}%</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="game-actions">
+                            <a href="/admin/game-details-v2.html?id=${game.id}" class="action-btn view">View Details</a>
+                            ${status === 'completed' ? `
+                                <button class="action-btn ${game.isPublished ? 'unpublish' : 'publish'}" 
+                                        onclick="togglePublish('${game.id}', ${game.isPublished})">
+                                    ${game.isPublished ? 'Unpublish' : 'Publish'}
+                                </button>
+                            ` : ''}
+                            <button class="action-btn delete" onclick="deleteGame('${game.id}')">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function togglePublish(gameId, isCurrentlyPublished) {
+            try {
+                const response = await fetch(`/api/v2/games/${gameId}/publish`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isPublished: !isCurrentlyPublished })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadGames(); // Refresh the games list
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteGame(gameId) {
+            if (!confirm('Are you sure you want to delete this V2 game? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/v2/games/${gameId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadGames(); // Refresh the games list
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Auto-refresh for generating games
+        setInterval(() => {
+            if (allGames.some(game => game.generationV2?.status === 'generating')) {
+                loadGames();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
