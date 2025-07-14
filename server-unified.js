@@ -1308,6 +1308,7 @@ TURN 1 SPECIFIC REQUIREMENTS:
 - Country clues can be about currency, flag features, geography, history, culture, language, or other well-known country facts
 - Examples: "This country uses the Euro currency", "This nation's flag features a red maple leaf", "This country is famous for its fjords"
 - DO NOT mention specific country names - use descriptive clues about the countries
+- CRITICAL: When describing flags, use the EXACT country names from the location data to ensure accuracy
 
 TURN 4 SPECIFIC REQUIREMENTS:
 - MUST include 3 distance clues: Location 1↔2, Location 1↔3, Location 2↔3
@@ -1407,6 +1408,13 @@ EXAMPLE TURN 1 STRUCTURE (with country clues):
     {"type": "country", "content": "This country is famous for its cherry blossoms", "description": "The third location is in a country known for seasonal flowers.", "locationPositions": [3], "data": {"locationPosition": 3}}
   ]
 }
+
+COUNTRY DATA REFERENCE:
+Use the country names from the gameData.locations array to ensure accurate flag descriptions:
+- Location 1 country: gameData.locations[0].country
+- Location 2 country: gameData.locations[1].country  
+- Location 3 country: gameData.locations[2].country
+When creating flag clues, internally reference the actual country name to ensure accuracy, then describe the flag without mentioning the country name.
 
 EXAMPLE TURN 4 STRUCTURE (with distance and time calculations):
 {

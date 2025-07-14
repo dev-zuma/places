@@ -305,6 +305,12 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### V2 Country Clue Accuracy Fix (2025-01-14)
+- **Flag Description Accuracy**: Fixed inaccurate country flag descriptions in Turn 1 clues
+- **Data Reference System**: AI now uses actual country names from location data for accurate flag descriptions
+- **Prompt Enhancement**: Added explicit instructions to reference `gameData.locations[].country` for accuracy
+- **Quality Control**: Ensures country clues (currency, flag, geography, history) are factually correct
+
 ### V2 Data Management Improvements (2025-01-14)
 - **Enhanced Game Deletion**: V2 game deletion now properly removes all associated user data
 - **Complete Data Cleanup**: PlayerCaseV2 records are explicitly deleted before game removal
