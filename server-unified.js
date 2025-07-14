@@ -988,6 +988,31 @@ async function generateGameV2Async(gameId, context) {
   }
 }
 
+// Get most used cities from existing games to encourage diversity
+async function getMostUsedCities(limit = 20) {
+  try {
+    const cityUsage = await prisma.locationV2.groupBy({
+      by: ['name'],
+      _count: {
+        name: true
+      },
+      orderBy: {
+        _count: {
+          name: 'desc'
+        }
+      },
+      take: limit
+    });
+    
+    const mostUsedCities = cityUsage.map(city => city.name);
+    console.log(`📊 Most used cities: ${mostUsedCities.slice(0, 10).join(', ')}...`);
+    return mostUsedCities;
+  } catch (error) {
+    console.error('Error getting most used cities:', error);
+    return [];
+  }
+}
+
 async function generateGameContentV2(context) {
   if (!openai || !process.env.OPENAI_API_KEY) {
     throw new Error('OpenAI is not configured. Please check your API key settings.');
@@ -996,6 +1021,9 @@ async function generateGameContentV2(context) {
   try {
     console.log('🎯 Generating V2 game content with OpenAI...');
     
+    // Get most used cities for diversity guidance
+    const mostUsedCities = await getMostUsedCities(20);
+    
     const prompt = `Generate a REALISTIC, MODERN-DAY geography-based detective game using the new 3+1 format where players track a villain across 3 connected locations, then use those to deduce a 4th final location.
 
 User Input:
@@ -1003,6 +1031,13 @@ ${context.userInput ? `Theme/Description: ${context.userInput}` : 'No specific i
 ${context.specificLocations ? `Specific Locations: ${context.specificLocations}` : ''}
 Difficulty: ${context.difficulty || 'medium'}
 Final Objective: ${context.finalObjective || 'WHERE_STASHED'}
+
+CITY DIVERSITY GUIDANCE:
+${mostUsedCities.length > 0 ? 
+  `The following cities have been used most frequently in recent games, so please prioritize using DIFFERENT cities to provide players with diverse geography experiences: ${mostUsedCities.join(', ')}. 
+  
+Try to choose cities that are NOT in this list, while still meeting the difficulty requirements. This helps ensure players learn about a wider variety of locations around the world.` : 
+  'No prior city usage data available - choose diverse cities from different continents.'}
 
 GAME STRUCTURE:
 - Turns 1-5: Players identify 3 crime scene locations
@@ -2270,7 +2305,7 @@ app.post('/api/v2/games/bulk-generate', async (req, res) => {
     for (let i = 0; i < numberOfGames; i++) {
       // Determine difficulty for this game
       let gameDifficulty;
-      if (bulkDifficulty) {
+      if (bulkDifficulty && bulkDifficulty !== '') {
         gameDifficulty = bulkDifficulty;
       } else {
         // Random difficulty
@@ -2324,11 +2359,24 @@ app.post('/api/v2/games/bulk-generate', async (req, res) => {
     // Start async generation for all games with their unique themes
     gameIds.forEach((gameId, index) => {
       const gameTheme = diverseThemes[index] || `mystery case ${index + 1}`;
+      
+      // Get the difficulty for this specific game (already stored in database)
+      let gameDifficulty;
+      if (bulkDifficulty && bulkDifficulty !== '') {
+        gameDifficulty = bulkDifficulty;
+      } else {
+        // Random difficulty
+        gameDifficulty = difficultyOptions[Math.floor(Math.random() * difficultyOptions.length)];
+      }
+      
+      // Random final objective if not specified
+      const gameFinalObjective = finalObjective || finalObjectiveOptions[Math.floor(Math.random() * finalObjectiveOptions.length)];
+      
       generateGameV2Async(gameId, { 
         userInput: gameTheme, // Use unique theme for each game
         specificLocations, 
-        difficulty: null, // Will be determined per game
-        finalObjective: null // Will be determined per game
+        difficulty: gameDifficulty, // Use the actual difficulty
+        finalObjective: gameFinalObjective // Use the actual final objective
       });
     });
     
