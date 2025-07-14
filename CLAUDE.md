@@ -263,6 +263,13 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### V2 Help System Update (2025-01-14)
+- Updated "How to Play" instructions for V2 gameplay (7 turns, 3+1 format)
+- Enhanced help content accessible from both gallery and detective pages
+- Detailed turn breakdown: Turns 1-5 (crime scenes) + Turns 6-7 (final hunt)
+- Added Detective Tools section explaining Investigation Journal and evidence analysis
+- Included geographic education examples and scoring system explanation
+
 ### V2 Detective Interface Visual Improvements (2025-01-13)
 - Investigation Journal redesign with dropdown navigation
 - Consistent turn indicators (dark green past, orange current)
