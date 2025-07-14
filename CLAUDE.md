@@ -305,6 +305,16 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### Case Gallery UI Improvements & Endgame Modal Refinement (2025-01-14)
+- **Endgame Modal Streamlined**: Replaced two buttons ("New Case" + "Case Gallery"/"View Results") with single "Start New Case" button
+- **Modal Close Button Removed**: Eliminated "X" close button from endgame modal for cleaner experience
+- **Solved Cases Logic Fixed**: Cases now only appear in "Solved Cases" tab when suspect is actually captured, not just played
+- **Difficulty Filter Added**: New dropdown filter for unsolved cases with difficulty-based filtering (All, Easy, Medium, Hard)
+- **Dynamic Difficulty Counts**: Filter shows real-time counts for each difficulty level (e.g., "Easy (4)", "Medium (7)")
+- **Smart Filter Visibility**: Difficulty filter only appears on unsolved cases tab, auto-hides on solved cases
+- **Redundant Stats Removed**: Eliminated stats row showing case/theme/solved counts above tabs for cleaner interface
+- **Centered CAPTURED Overlay Removed**: Eliminated redundant center overlay on solved cases, keeping only top-right stamp
+
 ### V2 Country Clue Accuracy Fix (2025-01-14)
 - **Flag Description Accuracy**: Fixed inaccurate country flag descriptions in Turn 1 clues
 - **Data Reference System**: AI now uses actual country names from location data for accurate flag descriptions
