@@ -305,6 +305,11 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### V2 Data Management Improvements (2025-01-14)
+- **Enhanced Game Deletion**: V2 game deletion now properly removes all associated user data
+- **Complete Data Cleanup**: PlayerCaseV2 records are explicitly deleted before game removal
+- **Database Integrity**: Ensures no orphaned user progress data remains after game deletion
+
 ### V2 Game Mechanics & UI Overhaul (2025-01-14)
 - **Cities-Only Focus**: V2 games now exclusively use cities (no countries, regions, or landmarks)
 - **Difficulty-Based Location Selection**: Easy (all well-known cities), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)

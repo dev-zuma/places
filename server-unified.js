@@ -2599,13 +2599,21 @@ app.put('/api/v2/games/:id/publish', async (req, res) => {
 // Delete V2 game
 app.delete('/api/v2/games/:id', async (req, res) => {
   try {
+    const gameId = req.params.id;
+    
+    // First, delete all player case data for this game
+    await prisma.playerCaseV2.deleteMany({
+      where: { gameV2Id: gameId }
+    });
+    
+    // Then delete the game (this will cascade delete all related data)
     await prisma.gameV2.delete({
-      where: { id: req.params.id }
+      where: { id: gameId }
     });
     
     res.json({ 
       success: true,
-      message: 'V2 game deleted successfully'
+      message: 'V2 game and all user data deleted successfully'
     });
     
   } catch (error) {
