@@ -10,47 +10,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .signin-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 16px;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .status-indicator {
-            font-size: 16px;
-        }
-        
-        .status-text {
-            font-size: 12px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.9);
-            min-width: 80px;
-        }
-        
-        .signin-status.signed-in {
-            background: rgba(76, 175, 80, 0.2);
-        }
-        
-        .signin-status.signed-out {
-            background: rgba(244, 67, 54, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            .signin-status {
-                margin-left: 8px;
-                padding: 6px 8px;
-            }
-            
-            .status-text {
-                font-size: 11px;
-                min-width: 60px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -113,10 +72,6 @@
                     <div class="timer-display">
                         <div class="timer-label">TIME</div>
                         <div class="timer-value" id="timerValue">00:00</div>
-                    </div>
-                    <div class="signin-status" id="signinStatus">
-                        <div class="status-indicator" id="statusIndicator">❌</div>
-                        <div class="status-text" id="statusText">Not Signed In</div>
                     </div>
                 </div>
             </div>
@@ -1259,29 +1214,6 @@
             }
         }
 
-        function updateSigninStatus() {
-            const statusContainer = document.getElementById('signinStatus');
-            const statusIndicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            
-            if (!statusContainer || !statusIndicator || !statusText) {
-                // Elements not yet loaded
-                setTimeout(updateSigninStatus, 100);
-                return;
-            }
-            
-            if (currentUser) {
-                statusContainer.className = 'signin-status signed-in';
-                statusIndicator.textContent = '✅';
-                statusText.textContent = 'Signed In';
-                console.log('✅ Status indicator updated: SIGNED IN');
-            } else {
-                statusContainer.className = 'signin-status signed-out';
-                statusIndicator.textContent = '❌';
-                statusText.textContent = 'Not Signed In';
-                console.log('❌ Status indicator updated: NOT SIGNED IN');
-            }
-        }
 
         function updateHeaderForUser() {
             // Update the header to show signed-in state
@@ -1302,8 +1234,7 @@
                     if (signedInMenu) signedInMenu.classList.remove('hidden');
                     if (menuUserName) menuUserName.textContent = currentUser.username || currentUser.name || 'Detective';
                     
-                    console.log('🔄 Header UI updated for signed-in user');
-                }
+                    }
             }, 200);
         }
 
@@ -1945,12 +1876,8 @@
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 updateUserUI();
-                updateSigninStatus();
                 updateHeaderForUser();
-                console.log('🔐 USER SIGNED IN:', currentUser.username || currentUser.name, '(ID:', currentUser.id + ')');
             } else {
-                updateSigninStatus();
-                console.log('❌ NO USER SIGNED IN - scores will not be saved to leaderboard');
             }
         });
         
@@ -2529,8 +2456,10 @@
                 </div>
 
                 <div class="help-section">
-                    <h3>📊 Scoring System</h3>
-                    <p>Points awarded for accuracy, speed, and efficiency. Your detective record is saved automatically when signed in.</p>
+                    <h3>📊 Scoring & Leaderboard</h3>
+                    <p><strong>Weighted Scoring:</strong> Easy (1x), Medium (1.25x), Hard (1.75x) multipliers reward challenge level.</p>
+                    <p><strong>Performance Bonuses:</strong> +75 points for solving first 3 locations in ≤5 turns, +100 points for 6th turn final location.</p>
+                    <p><strong>Leaderboard:</strong> Compete across difficulty levels - Overall Champions, Easy Champions, Medium Masters, and Hard Heroes. Access via user menu when signed in.</p>
                 </div>
             </div>
         </div>
