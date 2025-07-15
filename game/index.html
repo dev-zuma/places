@@ -1243,13 +1243,51 @@
                         difficulty: result.gameV2?.difficulty
                     }));
                     
-                    // Merge database results with local results, preferring database
-                    const dbCaseIds = new Set(convertedResults.map(r => r.caseId));
-                    const localOnlyResults = localResults.filter(r => !dbCaseIds.has(r.caseId));
+                    // SYNC FIX: If database is empty but localStorage has V2 data, copy to database first
+                    if (convertedResults.length === 0 && localResults.length > 0) {
+                        console.log('🔄 Database is empty but localStorage has data. Copying V2 game data to database...');
+                        await copyLocalStorageToDatabase(localResults);
+                        
+                        // After copying to database, clear localStorage
+                        localStorage.removeItem(`userResults_${currentUser.id}`);
+                        
+                        // Reload from database to get the data we just saved
+                        const reloadResponse = await fetch(`/api/v2/players/${currentUser.id}/results`);
+                        if (reloadResponse.ok) {
+                            const reloadedResults = await reloadResponse.json();
+                            userHistory = reloadedResults.map(result => ({
+                                caseId: result.gameV2Id,
+                                gameId: result.gameV2Id,
+                                captured: result.solvedLocations && result.solvedFinal,
+                                success: result.solvedLocations && result.solvedFinal,
+                                score: result.pointsEarned || 0,
+                                pointsEarned: result.pointsEarned || 0,
+                                turnsUsed: result.turnsUsed || 0,
+                                timeTaken: 0,
+                                date: result.solvedAt || new Date().toISOString(),
+                                userId: currentUser.id,
+                                userName: currentUser.username || currentUser.name
+                            }));
+                            console.log('✅ localStorage data migrated to database and localStorage cleared');
+                        } else {
+                            userHistory = [];
+                        }
+                    } else {
+                        // Merge database results with local results, preferring database
+                        const dbCaseIds = new Set(convertedResults.map(r => r.caseId));
+                        const localOnlyResults = localResults.filter(r => !dbCaseIds.has(r.caseId));
+                        
+                        userHistory = [...convertedResults, ...localOnlyResults];
+                        
+                        // SYNC FIX: Update localStorage to match what we're using
+                        if (localOnlyResults.length === 0 && convertedResults.length > 0) {
+                            // Database has data, localStorage should match
+                            localStorage.setItem(`userResults_${currentUser.id}`, JSON.stringify(userHistory));
+                            console.log('🔄 localStorage synced with database data');
+                        }
+                    }
                     
-                    userHistory = [...convertedResults, ...localOnlyResults];
-                    
-                    console.log(`✅ Loaded ${convertedResults.length} results from database, ${localOnlyResults.length} from localStorage`);
+                    console.log(`✅ Loaded ${convertedResults.length} results from database, ${userHistory.length - convertedResults.length} from localStorage`);
                 } else {
                     console.log('ℹ️  Could not load results from database, using localStorage only');
                 }
@@ -1266,6 +1304,99 @@
                 updateDifficultyCounts();
             }
         }
+
+        // Copy localStorage V2 game data to database
+        async function copyLocalStorageToDatabase(localResults) {
+            const v2Results = localResults.filter(result => {
+                // Check if this is a V2 game by verifying it has the V2 game format
+                // V2 games should have specific fields or we can check against existing V2 games
+                return result.caseId && result.captured !== undefined;
+            });
+            
+            console.log(`📋 Found ${v2Results.length} localStorage results to migrate to database`);
+            
+            for (const result of v2Results) {
+                try {
+                    // Submit each result to the database using the same endpoint the game uses
+                    const response = await fetch(`/api/v2/games/${result.caseId}/submit-result`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            playerId: currentUser.id,
+                            playerEmail: currentUser.email,
+                            playerUsername: currentUser.username || currentUser.name,
+                            solvedLocations: result.captured || result.success || false,
+                            solvedFinal: result.captured || result.success || false,
+                            pointsEarned: result.score || result.pointsEarned || 0,
+                            turnsUsed: result.turnsUsed || 0,
+                            timeTaken: result.timeTaken || 0
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        console.log(`✅ Migrated case ${result.caseId} to database:`, responseData.message);
+                    } else {
+                        console.log(`⚠️ Failed to migrate case ${result.caseId}:`, await response.text());
+                    }
+                } catch (error) {
+                    console.error(`❌ Error migrating case ${result.caseId}:`, error);
+                }
+            }
+            
+            console.log('📤 Migration to database completed');
+        }
+
+        // Manual function to migrate localStorage to database and clear localStorage
+        window.migrateLocalStorageToDatabase = async function() {
+            if (!currentUser) {
+                console.log('❌ No user signed in');
+                return;
+            }
+            
+            const localStorageKey = `userResults_${currentUser.id}`;
+            const existingData = localStorage.getItem(localStorageKey);
+            
+            if (existingData) {
+                const localResults = JSON.parse(existingData);
+                console.log('🔄 Starting manual migration of localStorage to database...');
+                console.log('📋 Local data to migrate:', localResults);
+                
+                await copyLocalStorageToDatabase(localResults);
+                localStorage.removeItem(localStorageKey);
+                
+                // Reload user history to reflect changes
+                await loadUserHistory();
+                console.log('✅ Manual migration completed: localStorage migrated to database and cleared');
+            } else {
+                console.log('ℹ️ No localStorage data found for current user');
+            }
+        };
+
+        // Manual function to clear localStorage and sync with database (for debugging)
+        window.clearUserLocalStorage = function() {
+            if (!currentUser) {
+                console.log('❌ No user signed in');
+                return;
+            }
+            
+            const localStorageKey = `userResults_${currentUser.id}`;
+            const existingData = localStorage.getItem(localStorageKey);
+            
+            if (existingData) {
+                console.log('🗑️ Clearing localStorage for user:', currentUser.username || currentUser.name);
+                console.log('🗑️ Removed data:', JSON.parse(existingData));
+                localStorage.removeItem(localStorageKey);
+                
+                // Reload user history to reflect changes
+                loadUserHistory();
+                console.log('✅ localStorage cleared and user history reloaded');
+            } else {
+                console.log('ℹ️ No localStorage data found for current user');
+            }
+        };
 
         // Gallery tab switching
         function switchGalleryTab(tab) {
@@ -1389,7 +1520,6 @@
                 }
                 
                 allCases = await response.json();
-                updateStats();
                 renderCases();
                 hideLoading();
                 
@@ -1399,14 +1529,6 @@
             }
         }
 
-        function updateStats() {
-            const themes = new Set(allCases.map(c => c.theme));
-            const solvedCount = currentUser ? userHistory.filter(h => h.captured).length : 0;
-            
-            document.getElementById('totalCases').textContent = allCases.length;
-            document.getElementById('totalThemes').textContent = themes.size;
-            document.getElementById('solvedCases').textContent = solvedCount;
-        }
 
         function renderCases() {
             const casesContainer = document.getElementById('casesContainer');
@@ -1437,7 +1559,6 @@
             emptyState.style.display = 'none';
             
             casesContainer.innerHTML = filteredCases.map(game => createCaseCard(game)).join('');
-            updateStats(); // Update solved count
         }
 
         function createCaseCard(game) {

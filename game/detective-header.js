@@ -58,6 +58,10 @@ function renderDetectiveHeader() {
                                     <span class="menu-icon">📁</span>
                                     Cases
                                 </button>
+                                <button class="menu-item" onclick="window.location.href='/game/leaderboard.html'">
+                                    <span class="menu-icon">🏆</span>
+                                    Leaderboard
+                                </button>
                                 <button class="menu-item" onclick="showHelpModal()">
                                     <span class="menu-icon">❓</span>
                                     How to Play

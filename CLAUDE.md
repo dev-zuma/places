@@ -162,6 +162,7 @@ npx prisma studio
 ### Player Experience
 - **Case Gallery**: http://localhost:9091/game/
 - **Detective Game**: http://localhost:9091/game/detective.html
+- **Leaderboard**: http://localhost:9091/game/leaderboard.html
 
 ### Admin Portal
 - **Dashboard**: http://localhost:9091/admin/
@@ -180,6 +181,7 @@ npx prisma studio
 - **V2 Generation**: `/api/v2/games/generate`
 - **V2 Bulk Generation**: `/api/v2/games/bulk-generate`
 - **V2 Bulk Status**: `/api/v2/games/bulk-status`
+- **Leaderboard**: `/api/leaderboard?type=overall|easy|medium|hard`
 
 ## Bulk Generation System (V2)
 
@@ -304,6 +306,19 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### Leaderboard System & Data Sync Implementation (2025-01-15)
+- **Detective Leaderboard Added**: New competitive leaderboard page accessible via user dropdown menu
+- **V2 Game Focus**: Leaderboard exclusively tracks V2 format games (3+1 gameplay) with weighted scoring
+- **Weighted Scoring System**: Easy (1x), Medium (1.25x), Hard (1.75x) multipliers with performance bonuses
+- **Performance Bonuses**: 75 points for solving first 3 locations in ≤5 turns, 100 points for 6th turn final location
+- **Difficulty-Based Views**: Overall Champions, Easy Champions, Medium Masters, Hard Heroes with proper filtering
+- **User Highlighting**: Current user's row highlighted with visual indicators and ranking display
+- **Data Sync System**: Automatic localStorage-to-database migration preserves game progress during transitions
+- **Debug Integration**: Comprehensive debug logging for game completion and score submission tracking
+- **Visual Status Indicators**: Real-time sign-in status display during gameplay with console logging
+- **Responsive Design**: Mobile-first leaderboard design consistent with detective interface styling
+- **Error Handling**: Robust JavaScript error fixes and proper empty state messaging for unused difficulty levels
 
 ### Case Gallery UI Improvements & Endgame Modal Refinement (2025-01-14)
 - **Endgame Modal Streamlined**: Replaced two buttons ("New Case" + "Case Gallery"/"View Results") with single "Start New Case" button

@@ -9,6 +9,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .signin-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 16px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-indicator {
+            font-size: 16px;
+        }
+        
+        .status-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            min-width: 80px;
+        }
+        
+        .signin-status.signed-in {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .signin-status.signed-out {
+            background: rgba(244, 67, 54, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .signin-status {
+                margin-left: 8px;
+                padding: 6px 8px;
+            }
+            
+            .status-text {
+                font-size: 11px;
+                min-width: 60px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
@@ -70,6 +113,10 @@
                     <div class="timer-display">
                         <div class="timer-label">TIME</div>
                         <div class="timer-value" id="timerValue">00:00</div>
+                    </div>
+                    <div class="signin-status" id="signinStatus">
+                        <div class="status-indicator" id="statusIndicator">❌</div>
+                        <div class="status-text" id="statusText">Not Signed In</div>
                     </div>
                 </div>
             </div>
@@ -1087,10 +1134,18 @@
             document.getElementById('endGameModal').classList.add('show');
             
             // Save game result
-            saveGameResultV2(result === 'captured', timeTaken, gameScore, currentTurn);
+            saveGameResultV2(result === 'captured', timeTaken, gameScore, currentTurn, finalLocationCorrect);
         }
 
-        async function saveGameResultV2(success, timeTaken, score, turnsUsed) {
+        async function saveGameResultV2(success, timeTaken, score, turnsUsed, finalLocationCorrect) {
+            console.log('💾 SAVING GAME RESULT:', {
+                success,
+                score,
+                turnsUsed,
+                finalLocationCorrect,
+                currentUser: currentUser ? currentUser.username : 'NOT SIGNED IN'
+            });
+            
             const gameResult = {
                 caseId: currentCase.id,
                 success: success,
@@ -1131,6 +1186,17 @@
             
             // Save to database if user is logged in
             if (currentUser && currentCase) {
+                console.log('🚀 SUBMITTING TO DATABASE:', {
+                    playerId: currentUser.id,
+                    playerEmail: currentUser.email,
+                    playerUsername: currentUser.username || currentUser.name,
+                    solvedLocations: correctLocations.filter(Boolean).length >= 3,
+                    solvedFinal: finalLocationCorrect || false,
+                    pointsEarned: score || 0,
+                    turnsUsed: turnsUsed || 0,
+                    gameId: currentCase.id
+                });
+                
                 try {
                     const response = await fetch(`/api/v2/games/${currentCase.id}/submit-result`, {
                         method: 'POST',
@@ -1183,8 +1249,62 @@
                     }
                 }
             } else {
-                console.log('ℹ️  User not logged in, result saved locally only');
+                if (!currentUser) {
+                    console.warn('⚠️  USER NOT SIGNED IN - Score will NOT appear on leaderboard!');
+                    console.warn('⚠️  Sign in via the user menu to save scores to database');
+                } else if (!currentCase) {
+                    console.error('❌ No current case data available');
+                }
+                console.log('ℹ️  Result saved locally only (not submitted to leaderboard)');
             }
+        }
+
+        function updateSigninStatus() {
+            const statusContainer = document.getElementById('signinStatus');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            if (!statusContainer || !statusIndicator || !statusText) {
+                // Elements not yet loaded
+                setTimeout(updateSigninStatus, 100);
+                return;
+            }
+            
+            if (currentUser) {
+                statusContainer.className = 'signin-status signed-in';
+                statusIndicator.textContent = '✅';
+                statusText.textContent = 'Signed In';
+                console.log('✅ Status indicator updated: SIGNED IN');
+            } else {
+                statusContainer.className = 'signin-status signed-out';
+                statusIndicator.textContent = '❌';
+                statusText.textContent = 'Not Signed In';
+                console.log('❌ Status indicator updated: NOT SIGNED IN');
+            }
+        }
+
+        function updateHeaderForUser() {
+            // Update the header to show signed-in state
+            setTimeout(() => {
+                if (currentUser) {
+                    // Update user menu button text
+                    const userMenuText = document.getElementById('userMenuText');
+                    if (userMenuText) {
+                        userMenuText.textContent = currentUser.username || currentUser.name || 'User';
+                    }
+                    
+                    // Show signed-in menu, hide signed-out menu
+                    const signedOutMenu = document.getElementById('signedOutMenu');
+                    const signedInMenu = document.getElementById('signedInMenu');
+                    const menuUserName = document.getElementById('menuUserName');
+                    
+                    if (signedOutMenu) signedOutMenu.classList.add('hidden');
+                    if (signedInMenu) signedInMenu.classList.remove('hidden');
+                    if (menuUserName) menuUserName.textContent = currentUser.username || currentUser.name || 'Detective';
+                    
+                    console.log('🔄 Header UI updated for signed-in user');
+                }
+            }, 200);
         }
 
         function closeEndGameModal() {
@@ -1825,6 +1945,12 @@
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 updateUserUI();
+                updateSigninStatus();
+                updateHeaderForUser();
+                console.log('🔐 USER SIGNED IN:', currentUser.username || currentUser.name, '(ID:', currentUser.id + ')');
+            } else {
+                updateSigninStatus();
+                console.log('❌ NO USER SIGNED IN - scores will not be saved to leaderboard');
             }
         });
         
@@ -2191,12 +2317,17 @@
             document.getElementById('profileModal').classList.remove('show');
         }
 
-        // Close profile modal when clicking outside
-        document.getElementById('profileModal').addEventListener('click', function(event) {
-            if (event.target === this) {
-                closeProfileModal();
+        // Close profile modal when clicking outside (with safety check)
+        setTimeout(() => {
+            const profileModal = document.getElementById('profileModal');
+            if (profileModal) {
+                profileModal.addEventListener('click', function(event) {
+                    if (event.target === this) {
+                        closeProfileModal();
+                    }
+                });
             }
-        });
+        }, 100);
 
         function updateProfileDisplay() {
             const editButton = document.getElementById('editUsernameBtn');

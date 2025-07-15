@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leaderboard - Worldwide Chase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .leaderboard-table-container {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+            margin: 16px;
+            padding: 0;
+        }
+        
+        .leaderboard-table {
+            flex: 1;
+            min-height: 400px;
+            background: transparent !important;
+        }
+        
+        .leaderboard-table table {
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .leaderboard-table th {
+            color: #1F2937 !important;
+            font-weight: 600;
+        }
+        
+        .no-games-message {
+            text-align: center;
+            padding: 60px 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .no-games-message h4 {
+            color: #1F2937;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+        
+        .no-games-message p {
+            color: #6B7280;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Loading State -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-spinner"></div>
+            <h3>Loading Leaderboard...</h3>
+            <p>Gathering detective performance data</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-container hidden" id="errorContainer">
+            <h2>Leaderboard Unavailable</h2>
+            <p>Unable to load leaderboard data. Please try again later.</p>
+            <button class="back-button" onclick="window.location.href = 'index.html'">
+                ← Back to Case Gallery
+            </button>
+        </div>
+
+        <!-- Main Leaderboard Interface -->
+        <div id="leaderboardInterface" class="hidden">
+            <!-- Detective Header Container -->
+            <div id="detective-header-container"></div>
+
+            <!-- Leaderboard Tabs -->
+            <div class="detective-tabs">
+                <div class="tabs-left">
+                    <button class="tab-button active" id="leaderboardTab">
+                        Leaderboard
+                    </button>
+                </div>
+                <div class="tabs-right">
+                    <div class="leaderboard-type-selector">
+                        <select id="leaderboard-type" class="leaderboard-dropdown">
+                            <option value="overall">Overall Champions</option>
+                            <option value="easy">Easy Champions</option>
+                            <option value="medium">Medium Masters</option>
+                            <option value="hard">Hard Heroes</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <div class="tab-panel active" id="leaderboardPanel">
+                    <div class="leaderboard-content">
+                        <!-- Loading State for Table -->
+                        <div id="table-loading" class="table-loading-state">
+                            <div class="loading-spinner small"></div>
+                            <p>Loading rankings...</p>
+                        </div>
+                        
+                        <!-- Error State for Table -->
+                        <div id="table-error" class="table-error-state hidden">
+                            <p>Unable to load rankings. Please try again.</p>
+                            <button class="retry-button" onclick="loadLeaderboard(document.getElementById('leaderboard-type').value)">
+                                Retry
+                            </button>
+                        </div>
+
+                        <!-- Leaderboard Table -->
+                        <div class="leaderboard-table-container hidden" id="leaderboardTableContainer">
+                            <div class="leaderboard-header">
+                                <h3 id="leaderboard-title">🏆 Overall Champions</h3>
+                                <p id="leaderboard-description">Top detectives ranked by V2 case-solving performance</p>
+                            </div>
+
+                            <div class="leaderboard-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th class="rank-col">Rank</th>
+                                            <th class="detective-col">Detective</th>
+                                            <th class="score-col">Score</th>
+                                            <th class="solved-col">Solved</th>
+                                            <th class="rate-col">Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leaderboard-body">
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div class="empty-leaderboard hidden" id="empty-leaderboard">
+                                <div class="empty-state-icon">📊</div>
+                                <h4>No Rankings Yet</h4>
+                                <p>Be the first to complete V2 cases and claim the top spot!</p>
+                                <button class="start-playing-button" onclick="window.location.href = 'index.html'">
+                                    Start Playing
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="detective-header.js"></script>
+    <script>
+        let currentUsername = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set case title for header
+            setTimeout(() => {
+                const caseTitleElement = document.getElementById('caseTitle');
+                if (caseTitleElement) {
+                    caseTitleElement.textContent = 'Leaderboard';
+                }
+            }, 100);
+
+            // Get current username
+            currentUsername = localStorage.getItem('username');
+            
+            // Show main interface after brief delay
+            setTimeout(() => {
+                hideLoading();
+                showLeaderboardInterface();
+                loadLeaderboard('overall');
+            }, 800);
+
+            // Handle dropdown changes
+            document.getElementById('leaderboard-type').addEventListener('change', function() {
+                console.log('🔄 Dropdown changed to:', this.value);
+                loadLeaderboard(this.value);
+                updateLeaderboardTitle(this.value);
+            });
+        });
+
+        function showLeaderboardInterface() {
+            document.getElementById('leaderboardInterface').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingContainer').classList.add('hidden');
+        }
+
+        function showError() {
+            document.getElementById('loadingContainer').classList.add('hidden');
+            document.getElementById('errorContainer').classList.remove('hidden');
+        }
+
+        function updateLeaderboardTitle(type) {
+            const titles = {
+                'overall': '🏆 Overall Champions',
+                'easy': '🥉 Easy Champions', 
+                'medium': '🥈 Medium Masters',
+                'hard': '🥇 Hard Heroes'
+            };
+            
+            document.getElementById('leaderboard-title').textContent = titles[type] || titles.overall;
+        }
+
+        async function loadLeaderboard(type) {
+            console.log('📊 Loading leaderboard for type:', type);
+            showTableLoading();
+            
+            try {
+                const response = await fetch(`/api/leaderboard?type=${type}`);
+                if (!response.ok) throw new Error('Failed to fetch leaderboard data');
+                
+                const data = await response.json();
+                console.log('📈 Leaderboard data received:', data.length, 'players');
+                displayLeaderboard(data);
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                showTableError();
+            }
+        }
+
+        function displayLeaderboard(data) {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                showCustomEmptyState();
+                return;
+            }
+
+            data.forEach((player, index) => {
+                const row = document.createElement('tr');
+                const isCurrentUser = player.username === currentUsername;
+                
+                if (isCurrentUser) {
+                    row.classList.add('current-user-row');
+                }
+
+                const rank = index + 1;
+                const rankDisplay = getRankDisplay(rank);
+                
+                row.innerHTML = `
+                    <td class="rank-cell">${rankDisplay}</td>
+                    <td class="detective-cell">${player.username}</td>
+                    <td class="score-cell">${player.totalScore.toLocaleString()}</td>
+                    <td class="solved-cell">${player.solvedCount}/${player.totalPlayed}</td>
+                    <td class="rate-cell">${player.solveRate}%</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+
+            showLeaderboardTable();
+        }
+
+        function getRankDisplay(rank) {
+            if (rank <= 3) {
+                const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+                return `<span class="rank-medal">${medals[rank]}</span> ${rank}`;
+            }
+            return rank;
+        }
+
+        function showTableLoading() {
+            document.getElementById('table-loading').classList.remove('hidden');
+            document.getElementById('table-error').classList.add('hidden');
+            document.getElementById('leaderboardTableContainer').classList.add('hidden');
+            document.getElementById('empty-leaderboard').classList.add('hidden');
+        }
+
+        function showTableError() {
+            document.getElementById('table-loading').classList.add('hidden');
+            document.getElementById('table-error').classList.remove('hidden');
+            document.getElementById('leaderboardTableContainer').classList.add('hidden');
+            document.getElementById('empty-leaderboard').classList.add('hidden');
+        }
+
+        function showLeaderboardTable() {
+            document.getElementById('table-loading').classList.add('hidden');
+            document.getElementById('table-error').classList.add('hidden');
+            document.getElementById('leaderboardTableContainer').classList.remove('hidden');
+            document.getElementById('empty-leaderboard').classList.add('hidden');
+            
+            // Restore table HTML if it was replaced by empty message
+            const tableDiv = document.querySelector('.leaderboard-table');
+            if (!tableDiv.querySelector('table')) {
+                tableDiv.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="rank-col">Rank</th>
+                                <th class="detective-col">Detective</th>
+                                <th class="score-col">Score</th>
+                                <th class="solved-col">Solved</th>
+                                <th class="rate-col">Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('table-loading').classList.add('hidden');
+            document.getElementById('table-error').classList.add('hidden');
+            document.getElementById('leaderboardTableContainer').classList.add('hidden');
+            document.getElementById('empty-leaderboard').classList.remove('hidden');
+        }
+
+        function showCustomEmptyState() {
+            document.getElementById('table-loading').classList.add('hidden');
+            document.getElementById('table-error').classList.add('hidden');
+            document.getElementById('empty-leaderboard').classList.add('hidden');
+            
+            // Show table container but with custom empty message
+            const tableContainer = document.getElementById('leaderboardTableContainer');
+            tableContainer.classList.remove('hidden');
+            
+            const currentType = document.getElementById('leaderboard-type').value;
+            const difficultyNames = {
+                'overall': 'Overall',
+                'easy': 'Easy',
+                'medium': 'Medium', 
+                'hard': 'Hard'
+            };
+            
+            const difficultyName = difficultyNames[currentType] || 'this difficulty';
+            
+            // Replace table content with empty message
+            const tableDiv = tableContainer.querySelector('.leaderboard-table');
+            tableDiv.innerHTML = `
+                <div class="no-games-message">
+                    <h4>No ${difficultyName} Games Played</h4>
+                    <p>Complete some ${difficultyName.toLowerCase()} difficulty cases to see rankings here!</p>
+                </div>
+            `;
+        }
+    </script>
+
+    <style>
+        /* Leaderboard-specific styles that extend the detective interface */
+        
+        .leaderboard-type-selector {
+            display: flex;
+            align-items: center;
+        }
+
+        .leaderboard-dropdown {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .leaderboard-dropdown:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: var(--primary-color);
+        }
+
+        .leaderboard-content {
+            padding: 0;
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 0 16px;
+        }
+
+        .leaderboard-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+        }
+
+        .leaderboard-header p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .leaderboard-table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 0 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .leaderboard-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-table th.rank-col {
+            width: 80px;
+            text-align: center;
+        }
+
+        .leaderboard-table th.score-col,
+        .leaderboard-table th.solved-col,
+        .leaderboard-table th.rate-col {
+            width: 80px;
+            text-align: right;
+        }
+
+        .leaderboard-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 14px;
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .leaderboard-table tr:hover {
+            background: rgba(var(--primary-rgb), 0.05);
+        }
+
+        .current-user-row {
+            background: rgba(var(--accent-rgb), 0.1) !important;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .current-user-row:hover {
+            background: rgba(var(--accent-rgb), 0.15) !important;
+        }
+
+        .rank-cell {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .detective-cell {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .score-cell,
+        .solved-cell,
+        .rate-cell {
+            text-align: right;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .rank-medal {
+            font-size: 16px;
+            margin-right: 4px;
+        }
+
+        .table-loading-state,
+        .table-error-state {
+            text-align: center;
+            padding: 40px 16px;
+            color: var(--text-light);
+        }
+
+        .loading-spinner.small {
+            width: 24px;
+            height: 24px;
+            margin: 0 auto 16px;
+        }
+
+        .retry-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .retry-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .empty-leaderboard {
+            text-align: center;
+            padding: 60px 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-leaderboard h4 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+        }
+
+        .empty-leaderboard p {
+            color: var(--text-light);
+            margin: 0 0 24px 0;
+        }
+
+        .start-playing-button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .start-playing-button:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .leaderboard-dropdown {
+                min-width: 140px;
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+
+            .leaderboard-header h3 {
+                font-size: 20px;
+            }
+
+            .leaderboard-table {
+                margin: 0 8px;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+
+            .leaderboard-table th.score-col,
+            .leaderboard-table th.solved-col,
+            .leaderboard-table th.rate-col {
+                width: 70px;
+            }
+
+            .empty-leaderboard {
+                padding: 40px 16px;
+            }
+
+            .empty-state-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</body>
+</html>
