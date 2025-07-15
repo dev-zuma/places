@@ -149,7 +149,7 @@
             border: 2px solid var(--primary-teal);
             min-width: 140px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            z-index: 2000;
             display: none;
         }
 
@@ -314,24 +314,29 @@
             border-left-color: var(--success);
         }
 
-        .case-card.solved::after {
+        .case-card.solved .case-header {
+            position: relative;
+        }
+        
+        .case-card.solved .case-header::after {
             content: 'CAPTURED';
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 35px;
+            left: 245px;
             transform: rotate(-12deg);
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 900;
             color: var(--error);
             text-transform: uppercase;
             font-family: 'Courier New', monospace;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             border: 2px dashed var(--error);
             padding: 4px 8px;
-            background: transparent;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 3px;
             letter-spacing: 1px;
             pointer-events: none;
-            z-index: 10;
+            z-index: 15;
+            white-space: nowrap;
         }
 
         .case-header {
@@ -1008,6 +1013,10 @@
                         <button class="menu-item" onclick="window.location.href='/game/'">
                             <span class="menu-icon">📁</span>
                             Cases
+                        </button>
+                        <button class="menu-item" onclick="window.location.href='/game/leaderboard.html'">
+                            <span class="menu-icon">🏆</span>
+                            Leaderboard
                         </button>
                         <button class="menu-item" onclick="showHelpModal()">
                             <span class="menu-icon">❓</span>
