@@ -74,6 +74,9 @@
                                     <strong>Gender:</strong> <span id="villainGender"></span>
                                 </div>
                                 <div class="detail-item">
+                                    <strong>Race:</strong> <span id="villainRace"></span>
+                                </div>
+                                <div class="detail-item">
                                     <strong>Ethnicity:</strong> <span id="villainEthnicity"></span>
                                 </div>
                                 <div class="detail-item">
@@ -210,6 +213,7 @@
             document.getElementById('villainTitle').textContent = currentGame.villainTitle;
             document.getElementById('villainAge').textContent = currentGame.villainAge;
             document.getElementById('villainGender').textContent = currentGame.villainGender;
+            document.getElementById('villainRace').textContent = currentGame.villainRace || 'Not specified';
             document.getElementById('villainEthnicity').textContent = currentGame.villainEthnicity;
             document.getElementById('villainFeature').textContent = currentGame.villainDistinctiveFeature;
             document.getElementById('villainClothing').textContent = currentGame.villainClothingDescription;

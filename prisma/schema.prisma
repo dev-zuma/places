@@ -54,7 +54,8 @@ model GameV2 {
   villainTitle      String    // e.g., "The Diamond District Ghost"
   villainGender     String    // "male" or "female"
   villainAge        String    // e.g., "early 40s"
-  villainEthnicity  String    // e.g., "Anglo-American"
+  villainRace       String?   // e.g., "Black", "White", "Asian", "Hispanic/Latino"
+  villainEthnicity  String    // e.g., "Nigerian", "Mexican", "Japanese"
   villainDistinctiveFeature String // e.g., "Always wears blood-red lipstick"
   villainClothingDescription String // Detailed outfit description
   villainImageUrl   String?   // S3 URL for villain portrait

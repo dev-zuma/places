@@ -16,7 +16,8 @@ async function generateDiverseThemes(numberOfGames, baseTheme = '') {
     
     const existingThemes = existingGames.map(game => game.theme).filter(theme => theme && theme !== 'GENERATING...');
     
-    let prompt = `Generate ${numberOfGames} diverse and creative themes for a geography detective game. Each theme should connect 3 locations worldwide through a compelling criminal case.
+    // Static cacheable instructions for theme generation
+    const staticThemeInstructions = `Generate diverse and creative themes for a geography detective game. Each theme should connect 3 locations worldwide through a compelling criminal case. Return response in JSON format.
 
 REQUIREMENTS:
 - Each theme should be unique and engaging
@@ -25,22 +26,26 @@ REQUIREMENTS:
 - Themes should be appropriate for ages 10+ (educational and fun)
 - Avoid repetitive or similar themes
 
-EXISTING THEMES TO AVOID OVERLAP:
-${existingThemes.length > 0 ? existingThemes.slice(0, 20).join(', ') : 'None'}
-
 FORMAT: Return as a JSON array of strings, each being a concise theme description (2-4 words).
 
 EXAMPLES:
 ["ancient artifact smuggling", "space technology theft", "diamond heist network", "art forgery ring", "cyber espionage case", "treasure hunt mystery"]`;
 
-    if (baseTheme) {
-      prompt += `\n\nBASE THEME INSPIRATION: ${baseTheme} (create variations and related themes)`;
-    }
+    // Dynamic context for theme generation
+    const dynamicThemeContext = `
+Number of themes to generate: ${numberOfGames}
+
+EXISTING THEMES TO AVOID OVERLAP:
+${existingThemes.length > 0 ? existingThemes.slice(0, 20).join(', ') : 'None'}${baseTheme ? `
+
+BASE THEME INSPIRATION: ${baseTheme} (create variations and related themes)` : ''}`;
+
+    const fullThemePrompt = staticThemeInstructions + dynamicThemeContext;
 
     if (openai && process.env.OPENAI_API_KEY) {
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: fullThemePrompt }],
         temperature: 0.8,
         max_tokens: 500
       });
@@ -91,20 +96,8 @@ async function generateGameContentV2(context) {
     // Get most used cities for diversity guidance
     const mostUsedCities = await getMostUsedCities(20);
     
-    const prompt = `Generate a REALISTIC, MODERN-DAY geography-based detective game using the new 3+1 format where players track a villain across 3 connected locations, then use those to deduce a 4th final location.
-
-User Input:
-${context.userInput ? `Theme/Description: ${context.userInput}` : 'No specific input - choose an interesting theme'}
-${context.specificLocations ? `Specific Locations: ${context.specificLocations}` : ''}
-Difficulty: ${context.difficulty || 'medium'}
-Final Objective: ${context.finalObjective || 'WHERE_STASHED'}
-
-CITY DIVERSITY GUIDANCE:
-${mostUsedCities.length > 0 ? 
-  `The following cities have been used most frequently in recent games, so please prioritize using DIFFERENT cities to provide players with diverse geography experiences: ${mostUsedCities.join(', ')}. 
-  
-Try to choose cities that are NOT in this list, while still meeting the difficulty requirements. This helps ensure players learn about a wider variety of locations around the world.` : 
-  'No prior city usage data available - choose diverse cities from different continents.'}
+    // Static cacheable instructions (put at top for caching)
+    const staticInstructions = `Generate a REALISTIC, MODERN-DAY geography-based detective game using the new 3+1 format where players track a villain across 3 connected locations, then use those to deduce a 4th final location. Return response in JSON format.
 
 GAME STRUCTURE:
 - Turns 1-5: Players identify 3 crime scene locations
@@ -155,10 +148,18 @@ LANGUAGE REQUIREMENTS (AGES 10+):
 
 VILLAIN DIVERSITY REQUIREMENTS:
 - Ensure racial and ethnic diversity across generated villains
-- Choose from a wide range of racial backgrounds: Black, White, Asian, Hispanic/Latino, Middle Eastern, Native American, Pacific Islander, or Mixed Race
-- Select specific ethnic/cultural backgrounds that match the chosen race (e.g., Nigerian, Japanese, Mexican, Lebanese, Cherokee, etc.)
-- Represent global diversity and avoid defaulting to any single racial group
+- CRITICAL: Always randomly select from these racial backgrounds: Black, White, Asian, Hispanic/Latino, Middle Eastern, Native American, Pacific Islander, or Mixed Race
+- Then select specific ethnic/cultural backgrounds that match the chosen race:
+  * Black: Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, Haitian, etc.
+  * White: German, Irish, Russian, Italian, Norwegian, Australian, etc.
+  * Asian: Japanese, Korean, Vietnamese, Thai, Filipino, Indonesian, etc.
+  * Hispanic/Latino: Mexican, Colombian, Peruvian, Argentine, Venezuelan, etc.
+  * Middle Eastern: Lebanese, Iranian, Turkish, Egyptian, Moroccan, etc.
+  * Native American: Cherokee, Navajo, Lakota, Inuit, etc.
+  * Pacific Islander: Hawaiian, Samoan, Fijian, Tongan, etc.
+- AVOID defaulting to Mexican or any single ethnicity - actively vary the selections
 - Create inclusive representation that reflects the world's diverse population
+- Each villain should represent a different racial/ethnic combination than recent villains
 
 FINAL INTERESTING FACT REQUIREMENTS:
 - Create a surprising "aha moment" that connects all 4 locations (including the final one)
@@ -249,7 +250,7 @@ Return a complete game structure in JSON format:
     }
   ],
   "finalLocation": {
-    "objective": "${context.finalObjective || 'WHERE_STASHED'}",
+    "objective": "FINAL_OBJECTIVE_PLACEHOLDER",
     "narrative": "What the player needs to find",
     "location": {
       "name": "City/Country name",
@@ -269,16 +270,31 @@ Return a complete game structure in JSON format:
   }
 }`;
 
+    // Dynamic context (variable data that cannot be cached)
+    const dynamicContext = `
+User Input:
+${context.userInput ? `Theme/Description: ${context.userInput}` : 'No specific input - choose an interesting theme'}
+${context.specificLocations ? `Specific Locations: ${context.specificLocations}` : ''}
+Difficulty: ${context.difficulty || 'medium'}
+Final Objective: ${context.finalObjective || 'WHERE_STASHED'}
+
+CITY DIVERSITY GUIDANCE:
+${mostUsedCities.length > 0 ? 
+  `The following cities have been used most frequently in recent games, so please prioritize using DIFFERENT cities to provide players with diverse geography experiences: ${mostUsedCities.join(', ')}. 
+  
+Try to choose cities that are NOT in this list, while still meeting the difficulty requirements. This helps ensure players learn about a wider variety of locations around the world.` : 
+  'No prior city usage data available - choose diverse cities from different continents.'}
+
+Replace FINAL_OBJECTIVE_PLACEHOLDER in the JSON template with: ${context.finalObjective || 'WHERE_STASHED'}`;
+
+    const fullPrompt = staticInstructions + dynamicContext;
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
-          role: 'system',
-          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create REALISTIC, MODERN-DAY detective stories set in present-day Earth. CRITICAL: Provide ACCURATE latitude/longitude coordinates and timezone offsets for all locations - these must match real-world geographic data. NO sci-fi, fantasy, space, or supernatural elements. Use simple, clear language appropriate for elementary school students. Create lighthearted, non-violent adventure stories focused on learning and fun. Villains wear normal modern clothing and commit realistic crimes. Always return valid JSON only.'
-        },
-        {
           role: 'user',
-          content: prompt
+          content: fullPrompt
         }
       ],
       temperature: 0.8,
@@ -310,10 +326,8 @@ async function generateTurnCluesV2(gameData, calculatedDistances, calculatedTime
       calculatedTimeDiffs
     };
     
-    const prompt = `Generate turn-by-turn clues for this 3+1 detective game. Create engaging narratives and varied clue types.
-
-Game Data:
-${JSON.stringify(enhancedGameData, null, 2)}
+    // Static cacheable instructions for turn clues (put at top for caching)
+    const staticTurnInstructions = `Generate turn-by-turn clues for this 3+1 detective game. Create engaging narratives and varied clue types. Return response in JSON format.
 
 REQUIREMENTS:
 - Turn 1 MUST include: theme reveal + one clue about each country (currency, flag, geography, history, etc.)
@@ -483,16 +497,19 @@ Use the country names from the gameData.locations array to ensure accurate flag 
 - Location 3 country: gameData.locations[2].country
 When creating flag clues, internally reference the actual country name to ensure accuracy, then describe the flag without mentioning the country name.`;
 
+    // Dynamic context for turn clues (variable data that cannot be cached)
+    const dynamicTurnContext = `
+Game Data:
+${JSON.stringify(enhancedGameData, null, 2)}`;
+
+    const fullTurnPrompt = staticTurnInstructions + dynamicTurnContext;
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
-          role: 'system',
-          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create engaging turn-by-turn clues that build suspense while teaching geography. CRITICAL: Use specific geographic features (oceans, mountain ranges, climate zones) instead of generic terms. AVOID generic clues like "this city has a popular festival" that could apply to many places. BE SPECIFIC but not revealing - use distinctive features that narrow down possibilities. Examples: "this Atlantic coastal city", "this Himalayan capital", "this port on the Baltic Sea", "this city where Europe\'s longest river meets the sea". For PATTERN RECOGNITION clues in Turn 1: Create 3-4 emoji sequences that represent each city\'s most iconic features. Make patterns challenging but logical - they should require cultural knowledge and critical thinking to solve. Good patterns combine landmarks, food, culture, geography, and symbols uniquely associated with that city. Avoid overly obvious patterns that AI assistants could instantly recognize. Mix well-known and lesser-known locations for educational diversity. Calculate REAL distances using Haversine formula and REAL time differences using actual timezone offsets. NEVER mention specific location names - use geographically specific but non-revealing terms. Always return valid JSON only.'
-        },
-        {
           role: 'user',
-          content: prompt
+          content: fullTurnPrompt
         }
       ],
       temperature: 0.8,
@@ -545,6 +562,7 @@ async function generateGameV2Async(gameId, context) {
         villainTitle: gameContent.villainProfile.title,
         villainGender: gameContent.villainProfile.gender,
         villainAge: gameContent.villainProfile.age,
+        villainRace: gameContent.villainProfile.race,
         villainEthnicity: gameContent.villainProfile.ethnicity,
         villainDistinctiveFeature: gameContent.villainProfile.distinctiveFeature,
         villainClothingDescription: gameContent.villainProfile.clothingDescription,

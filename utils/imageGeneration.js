@@ -53,15 +53,18 @@ function generateImagePromptV2(location, landmark, placement, gameData) {
   // Use the pre-determined specific item from the placement
   const specificItem = placement.specificItem || getSpecificVillainElement(placement, gameData);
   
+  // Build villain description including demographic details
+  const villainDescription = `${gameData.villainProfile.race} person of ${gameData.villainProfile.ethnicity} ethnicity, ${gameData.villainProfile.gender}, ${gameData.villainProfile.age}, wearing ${gameData.villainProfile.clothingDescription}, with distinctive feature: ${gameData.villainProfile.distinctiveFeature}`;
+
   // Map villain elements to more detailed, specific prompts
   const villainIntegration = {
     'security_footage': `CRITICAL REQUIREMENT: This MUST be a security camera footage screenshot. Include:
     - Black and white or grainy color security camera view
     - Timestamp overlay in corner (e.g., "2024-01-15 14:32:17")
     - Security camera UI elements (REC indicator, camera ID)
-    - A person matching this description visible in the scene: ${gameData.villainProfile.clothingDescription}
+    - A person matching this description visible in the scene: ${villainDescription}
     - The person should be walking through or standing in ${landmark}
-    - The distinctive feature (${gameData.villainProfile.distinctiveFeature}) should be somewhat visible
+    - Ensure the person's appearance matches the demographic details: ${gameData.villainProfile.race} ethnicity ${gameData.villainProfile.ethnicity}
     - Wide-angle security camera perspective showing the location`,
     
     'belongings': `CRITICAL REQUIREMENT: Show a close-up of a dropped/forgotten ${specificItem}. Include:
@@ -70,18 +73,20 @@ function generateImagePromptV2(location, landmark, placement, gameData) {
     - Background should clearly show ${landmark} to establish location
     - Make the ${specificItem} the clear focal point of the image
     - The item should look accidentally dropped or left behind
-    - Show the exact item: ${specificItem}`,
+    - Show the exact item: ${specificItem}
+    - NOTE: This belongs to a ${villainDescription}`,
     
     'reflection': `CRITICAL REQUIREMENT: Show a clear reflection revealing the villain. Include:
     - A reflective surface (window, water, mirror, glass door) at ${landmark}
-    - In the reflection: clearly show a person wearing ${gameData.villainProfile.clothingDescription}
-    - The ${gameData.villainProfile.distinctiveFeature} should be visible in the reflection
+    - In the reflection: clearly show a person matching this description: ${villainDescription}
+    - Ensure the reflected person's appearance matches: ${gameData.villainProfile.race} ethnicity ${gameData.villainProfile.ethnicity}
     - The reflection should be the main focus while still showing the location
     - Make it look like surveillance evidence capturing the villain unknowingly`,
     
     'shadow': `CRITICAL REQUIREMENT: Show a distinctive shadow cast by the villain. Include:
     - A clear shadow on ground/wall at ${landmark}
-    - Shadow should show silhouette of person in ${gameData.villainProfile.clothingDescription}
+    - Shadow should show silhouette of person wearing ${gameData.villainProfile.clothingDescription}
+    - Shadow should suggest the build/posture of a ${gameData.villainProfile.gender} person
     - If possible, the shadow should hint at ${gameData.villainProfile.distinctiveFeature}
     - Strong lighting to create dramatic shadow
     - Location should be clearly identifiable despite focus on shadow`,
@@ -98,17 +103,11 @@ function generateImagePromptV2(location, landmark, placement, gameData) {
   const villainHint = villainIntegration[placement.villainElement] || villainIntegration['location_specific'];
   const obscurity = obscurityLevels[placement.level] || obscurityLevels['medium'];
   
-  return `Create a ${obscurity} detective evidence photograph.
-
-${villainHint}
-
-LOCATION CONTEXT:
-- Primary location: ${landmark} in ${location.name}, ${location.country}
-- This is evidence from a ${gameData.theme}-related crime investigation
-- The image should tell a story about the villain's presence at this location
+  // Static cacheable instructions for location image generation
+  const staticLocationImageInstructions = `Create a detective evidence photograph.
 
 CRITICAL COMPOSITION RULES:
-1. The villain element (${placement.villainElement}) MUST be the primary focus
+1. The villain element MUST be the primary focus
 2. The location should provide context but not overshadow the evidence
 3. Even if the location is obscured, the villain element must remain clear
 4. Style: Realistic crime scene/surveillance photography
@@ -116,6 +115,20 @@ CRITICAL COMPOSITION RULES:
 6. The image must match what will be described in clues about this evidence
 
 IMPORTANT: The villain element is MORE important than the location obscurity. Prioritize showing clear evidence of the villain's presence.`;
+
+  // Dynamic context for location image generation
+  const dynamicLocationImageContext = `
+Obscurity Level: ${obscurity}
+
+${villainHint}
+
+LOCATION CONTEXT:
+- Primary location: ${landmark} in ${location.name}, ${location.country}
+- This is evidence from a ${gameData.theme}-related crime investigation
+- The image should tell a story about the villain's presence at this location
+- Villain element focus: ${placement.villainElement}`;
+
+  return staticLocationImageInstructions + dynamicLocationImageContext;
 }
 
 async function generateVillainPortraitV2(gameData) {
@@ -126,15 +139,8 @@ async function generateVillainPortraitV2(gameData) {
   try {
     console.log('🎨 Generating V2 villain portrait...');
     
-    const prompt = `Create a clean painterly storybook-style portrait of a person with the following characteristics:
-    
-Character Details:
-- Gender: ${gameData.villainProfile.gender}
-- Age: ${gameData.villainProfile.age}
-- Race: ${gameData.villainProfile.race}
-- Ethnicity: ${gameData.villainProfile.ethnicity}
-- Distinctive Feature: ${gameData.villainProfile.distinctiveFeature}
-- Clothing: ${gameData.villainProfile.clothingDescription}
+    // Static cacheable instructions for villain portrait generation
+    const staticVillainPortraitInstructions = `Create a clean painterly storybook-style portrait of a person with the following characteristics:
 
 CRITICAL REQUIREMENTS:
 - MODERN-DAY REALISTIC CLOTHING ONLY (jeans, t-shirts, jackets, sneakers, etc.)
@@ -157,9 +163,21 @@ Style Requirements:
 
 The portrait should show only the person against a simple background with no additional elements, text, or objects.`;
 
+    // Dynamic context for villain portrait generation
+    const dynamicVillainPortraitContext = `
+Character Details:
+- Gender: ${gameData.villainProfile.gender}
+- Age: ${gameData.villainProfile.age}
+- Race: ${gameData.villainProfile.race}
+- Ethnicity: ${gameData.villainProfile.ethnicity}
+- Distinctive Feature: ${gameData.villainProfile.distinctiveFeature}
+- Clothing: ${gameData.villainProfile.clothingDescription}`;
+
+    const fullVillainPrompt = staticVillainPortraitInstructions + dynamicVillainPortraitContext;
+
     const response = await openai.images.generate({
       model: 'gpt-image-1',
-      prompt: prompt,
+      prompt: fullVillainPrompt,
       n: 1,
       size: '1024x1024',
       quality: 'medium',
@@ -174,7 +192,7 @@ The portrait should show only the person against a simple background with no add
     
     return {
       url: dataUrl,
-      prompt: prompt
+      prompt: fullVillainPrompt
     };
     
   } catch (error) {
