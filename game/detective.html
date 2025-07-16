@@ -1351,9 +1351,13 @@
                 const timeMap = {};
                 timeDiffs.forEach(t => {
                     const data = typeof t.data === 'string' ? JSON.parse(t.data) : t.data;
-                    if (data && data.between && typeof data.hours !== 'undefined') {
+                    if (data && data.between) {
                         const key = `${data.between[0]}-${data.between[1]}`;
-                        timeMap[key] = data.hours;
+                        // Extract hours from content string like "6 hours difference" or "1 hour difference"
+                        const match = t.content.match(/(\d+)\s*hours?\s*difference/i);
+                        if (match) {
+                            timeMap[key] = parseInt(match[1]);
+                        }
                     }
                 });
                 
@@ -1404,9 +1408,18 @@
                 const middlePlace = sortedLocations[1]; // Middle  
                 const eastPlace = sortedLocations[2];   // Easternmost
                 
+                // Calculate signed time differences based on timezone offsets
+                // When going west to east, positive means ahead in time
+                const getSignedTimeDiff = (fromPos, toPos) => {
+                    const fromTZ = currentCase.locationsV2.find(l => l.position === fromPos)?.timezoneOffset || 0;
+                    const toTZ = currentCase.locationsV2.find(l => l.position === toPos)?.timezoneOffset || 0;
+                    return toTZ - fromTZ;
+                };
+                
                 // Get time differences between adjacent places in west-to-east order
-                const timeWestToMiddle = getStoredTimeDiff(westPlace, middlePlace);
-                const timeMiddleToEast = getStoredTimeDiff(middlePlace, eastPlace);
+                const timeWestToMiddle = getSignedTimeDiff(westPlace, middlePlace);
+                const timeMiddleToEast = getSignedTimeDiff(middlePlace, eastPlace);
+                const timeWestToEast = getSignedTimeDiff(westPlace, eastPlace);
                 
                 // Get all distances
                 const distWestMiddle = getStoredDistance(westPlace, middlePlace);
@@ -1476,16 +1489,19 @@
                             <div style="text-align: center; padding: 10px; background: rgba(255, 255, 255, 0.9); border-radius: 6px; border-left: 4px solid #1A5B5B;">
                                 <div style="font-weight: 700; color: #1A5B5B; font-size: 14px;">Place ${westPlace} -- Place ${middlePlace}</div>
                                 <div style="font-weight: 700; color: #FF4500; font-size: 13px; margin-top: 2px;">${distWestMiddle.toLocaleString()} km / ${distWestMiddleMiles.toLocaleString()} miles</div>
+                                <div style="font-weight: 600; color: #666; font-size: 12px; margin-top: 4px;">Time difference: ${formatTimeDiff(timeWestToMiddle)}</div>
                             </div>
                             
                             <div style="text-align: center; padding: 10px; background: rgba(255, 255, 255, 0.9); border-radius: 6px; border-left: 4px solid #FF4500;">
                                 <div style="font-weight: 700; color: #1A5B5B; font-size: 14px;">Place ${middlePlace} -- Place ${eastPlace}</div>
                                 <div style="font-weight: 700; color: #FF4500; font-size: 13px; margin-top: 2px;">${distMiddleEast.toLocaleString()} km / ${distMiddleEastMiles.toLocaleString()} miles</div>
+                                <div style="font-weight: 600; color: #666; font-size: 12px; margin-top: 4px;">Time difference: ${formatTimeDiff(timeMiddleToEast)}</div>
                             </div>
                             
                             <div style="text-align: center; padding: 10px; background: rgba(255, 255, 255, 0.9); border-radius: 6px; border-left: 4px solid #1A1A1A;">
                                 <div style="font-weight: 700; color: #1A5B5B; font-size: 14px;">Place ${westPlace} -- Place ${eastPlace}</div>
                                 <div style="font-weight: 700; color: #FF4500; font-size: 13px; margin-top: 2px;">${distWestEast.toLocaleString()} km / ${distWestEastMiles.toLocaleString()} miles</div>
+                                <div style="font-weight: 600; color: #666; font-size: 12px; margin-top: 4px;">Time difference: ${formatTimeDiff(timeWestToEast)}</div>
                             </div>
                         </div>
                     </div>

@@ -258,13 +258,13 @@ The bulk generation feature allows administrators to create multiple games simul
 - Thematic connection (e.g., space exploration → Houston, Cape Canaveral, Baikonur)
 
 **Turn Progression**:
-1. **Turn 1**: Theme + pattern recognition clues (emoji sequences for each city) - NO images
-2. **Turn 2**: First image + cultural/geographic clues - NO distance/timezone data
-3. **Turn 3**: Second image + additional evidence - NO distance/timezone data
-4. **Turn 4**: ALL distance calculations + time differences between cities - NO images
-5. **Turn 5**: Country clues only (one for each country the cities are in) - NO additional clues, NO images
-6. **Turn 6**: First clues about 4th final location - NO images
-7. **Turn 7**: Decisive clues for final location - NO images
+1. **Turn 1**: Theme + pattern recognition clues (emoji sequences for each city) - NO images (4 clues total)
+2. **Turn 2**: First image + 3 location-specific clues (one for each location) - NO distance/timezone data (4 clues total)
+3. **Turn 3**: Second image + 3 location-specific clues (one for each location) - NO distance/timezone data (4 clues total)
+4. **Turn 4**: ALL distance calculations + time differences between cities - NO images (6 clues total)
+5. **Turn 5**: Country clues only (one for each country the cities are in) - NO additional clues, NO images (3 clues total)
+6. **Turn 6**: First clues about 4th final location - NO images (1 clue only)
+7. **Turn 7**: Decisive clues for final location - NO images (1 clue only)
 
 **Difficulty System**:
 - **Easy**: 2 well-known capital/major cities + 1 lesser-known city
@@ -337,6 +337,22 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### Clue Distribution & UI Enhancements (2025-01-17)
+- **Turn 2-3 Clue Distribution**: Updated game generation to ensure exactly 3 location-specific clues per turn
+  - Each turn now has 4 clues total: 1 image + 3 location clues (one per location)
+  - Ensures balanced evidence distribution across all three locations
+  - Helps players systematically identify each location with equal clue coverage
+- **Time Difference Display**: Added explicit time differences in Investigation Journal's Distances view
+  - Time differences now shown below each distance measurement (e.g., "+3h", "-2h")
+  - Fixed extraction of time data from "X hours difference" format in database
+  - Improved geographic west-to-east layout with signed time differences
+  - Enhanced visual hierarchy with gray text (#666) and proper spacing
+- **Villain Diversity Improvements**: Strengthened racial diversity requirements to prevent bias
+  - Added explicit percentage distribution: Black (25%), White (25%), Asian (20%), Hispanic/Latino (15%), Middle Eastern (10%), Native American (2.5%), Pacific Islander (2.5%)
+  - Implemented "mental dice roll" instruction for truly random selection
+  - Added warnings against defaulting to any single race, especially Hispanic/Latino
+  - Expanded ethnicity examples within each racial category for better variety
 
 ### Prompt Caching Optimization & Villain Diversity Enhancements (2025-07-16)
 - **OpenAI Prompt Caching Implementation**: Restructured all AI generation prompts for maximum cache efficiency

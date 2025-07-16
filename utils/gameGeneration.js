@@ -148,18 +148,26 @@ LANGUAGE REQUIREMENTS (AGES 10+):
 
 VILLAIN DIVERSITY REQUIREMENTS:
 - Ensure racial and ethnic diversity across generated villains
-- CRITICAL: Always randomly select from these racial backgrounds: Black, White, Asian, Hispanic/Latino, Middle Eastern, Native American, Pacific Islander, or Mixed Race
-- Then select specific ethnic/cultural backgrounds that match the chosen race:
-  * Black: Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, Haitian, etc.
-  * White: German, Irish, Russian, Italian, Norwegian, Australian, etc.
-  * Asian: Japanese, Korean, Vietnamese, Thai, Filipino, Indonesian, etc.
-  * Hispanic/Latino: Mexican, Colombian, Peruvian, Argentine, Venezuelan, etc.
-  * Middle Eastern: Lebanese, Iranian, Turkish, Egyptian, Moroccan, etc.
-  * Native American: Cherokee, Navajo, Lakota, Inuit, etc.
-  * Pacific Islander: Hawaiian, Samoan, Fijian, Tongan, etc.
-- AVOID defaulting to Mexican or any single ethnicity - actively vary the selections
-- Create inclusive representation that reflects the world's diverse population
-- Each villain should represent a different racial/ethnic combination than recent villains
+- CRITICAL: You MUST select the villain's race using a TRULY RANDOM distribution from ALL of these options:
+  * Black (25% chance)
+  * White (25% chance)
+  * Asian (20% chance)
+  * Hispanic/Latino (15% chance)
+  * Middle Eastern (10% chance)
+  * Native American (2.5% chance)
+  * Pacific Islander (2.5% chance)
+- IMPORTANT: Do NOT favor any single race. If you notice you're defaulting to Hispanic/Latino, STOP and choose a different race.
+- After selecting the race, then select specific ethnic/cultural backgrounds:
+  * Black: Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, Haitian, Somali, South African, etc.
+  * White: German, Irish, Russian, Italian, Norwegian, Australian, French, Polish, etc.
+  * Asian: Japanese, Korean, Vietnamese, Thai, Filipino, Indonesian, Indian, Pakistani, etc.
+  * Hispanic/Latino: Mexican, Colombian, Peruvian, Argentine, Venezuelan, Cuban, Puerto Rican, etc.
+  * Middle Eastern: Lebanese, Iranian, Turkish, Egyptian, Moroccan, Jordanian, Saudi, etc.
+  * Native American: Cherokee, Navajo, Lakota, Inuit, Apache, Cree, etc.
+  * Pacific Islander: Hawaiian, Samoan, Fijian, Tongan, Tahitian, etc.
+- MANDATORY: Vary the race selection. Do not generate multiple villains of the same race in a row.
+- Create inclusive representation that reflects global diversity
+- Each villain MUST represent a different racial/ethnic combination than the previous villain
 
 FINAL INTERESTING FACT REQUIREMENTS:
 - Create a surprising "aha moment" that connects all 4 locations (including the final one)
@@ -190,6 +198,14 @@ IMAGE STRATEGY REQUIREMENTS:
 - villainElement can be: security_footage, belongings, reflection, shadow
 - level can be: obscured, medium, clear
 - specificItem should be "security camera footage" for security_footage, otherwise "DETERMINE_FROM_VILLAIN_AND_THEME"
+
+BEFORE GENERATING: Roll a mental dice for villain race selection:
+- 1-25: Black villain (Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, etc.)
+- 26-50: White villain (German, Irish, Russian, Italian, Norwegian, etc.)
+- 51-70: Asian villain (Japanese, Korean, Vietnamese, Thai, Indian, etc.)
+- 71-85: Hispanic/Latino villain (Colombian, Peruvian, Argentine, Cuban, etc.)
+- 86-95: Middle Eastern villain (Lebanese, Iranian, Turkish, Egyptian, etc.)
+- 96-100: Native American or Pacific Islander villain
 
 Return a complete game structure in JSON format:
 
@@ -399,9 +415,10 @@ CLUE SPECIFICITY REQUIREMENTS:
 
 CLUE DISTRIBUTION RULES:
 - Turn 1 MUST have 4 clues: 1 theme + 3 pattern recognition clues (one for each city)
+- Turn 2 MUST have 4 clues: 1 image + 3 location-specific clues (one for each location) - NO distance/timezone clues
+- Turn 3 MUST have 4 clues: 1 image + 3 location-specific clues (one for each location) - NO distance/timezone clues
 - Turn 4 MUST have 6 clues: 3 distance clues (for each location pair) + 3 time difference clues
 - Turn 5 MUST have country clues: one clue about each country the cities are in
-- Turns 2-3: Images + other clues but NO distance/timezone clues
 - Turn 6: EXACTLY 1 clue only (regardless of difficulty)
 - Turn 7: EXACTLY 1 clue only (regardless of difficulty)
 - NO images in turns 1, 4, 5, 6, or 7
@@ -437,8 +454,8 @@ TURN 5 SPECIFIC REQUIREMENTS:
 
 TURN STRUCTURE:
 - Turn 1: Theme reveal + pattern recognition clues (3 emoji patterns, one per city) - NO images
-- Turn 2: First image (as per imageStrategy) + other clues (NO distance/timezone)
-- Turn 3: Second image (as per imageStrategy) + additional clues (NO distance/timezone)
+- Turn 2: First image (as per imageStrategy) + 3 location-specific clues (one for each location) - NO distance/timezone clues
+- Turn 3: Second image (as per imageStrategy) + 3 location-specific clues (one for each location) - NO distance/timezone clues
 - Turn 4: ALL distances between locations + ALL time differences (NO other clues, NO images)
 - Turn 5: ONLY country clues (exactly 3 clues, one for each country) - NO other clues, NO images
 - Turn 6: First clues about the 4th location - NO images
@@ -483,7 +500,8 @@ CRITICAL: Every clue MUST include a "data" field, even if it's just an empty obj
 
 Generate all 7 turns with appropriate clue distribution. Make sure to include:
 - Turn 1: Theme + 3 pattern recognition clues (emoji sequences for each city) - 4 clues total
-- Turn 2-3: Images + various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
+- Turn 2: 1 image + 3 location-specific clues (one for each location) - 4 clues total, NO distance/timezone clues
+- Turn 3: 1 image + 3 location-specific clues (one for each location) - 4 clues total, NO distance/timezone clues
 - Turn 4: ALL 3 distance calculations + ALL 3 time differences ONLY - 6 clues total
 - Turn 5: ONLY 3 country clues (exactly one for each country) - 3 clues total, no other clues
 - Turn 6: EXACTLY 1 clue about the 4th location - NO MORE THAN 1 CLUE
