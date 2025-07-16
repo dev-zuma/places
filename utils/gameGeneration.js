@@ -153,6 +153,13 @@ LANGUAGE REQUIREMENTS (AGES 10+):
 - Focus on adventure, mystery, and learning
 - Create fun, engaging villains that kids would enjoy, not fear
 
+VILLAIN DIVERSITY REQUIREMENTS:
+- Ensure racial and ethnic diversity across generated villains
+- Choose from a wide range of racial backgrounds: Black, White, Asian, Hispanic/Latino, Middle Eastern, Native American, Pacific Islander, or Mixed Race
+- Select specific ethnic/cultural backgrounds that match the chosen race (e.g., Nigerian, Japanese, Mexican, Lebanese, Cherokee, etc.)
+- Represent global diversity and avoid defaulting to any single racial group
+- Create inclusive representation that reflects the world's diverse population
+
 FINAL INTERESTING FACT REQUIREMENTS:
 - Create a surprising "aha moment" that connects all 4 locations (including the final one)
 - Go deeper than the basic theme - reveal a fascinating connection players wouldn't expect
@@ -194,7 +201,8 @@ Return a complete game structure in JSON format:
     "title": "The [Title]",
     "gender": "male/female",
     "age": "age range",
-    "ethnicity": "ethnic background",
+    "race": "racial background (Black, White, Asian, Hispanic/Latino, Middle Eastern, Native American, Pacific Islander, or Mixed Race)",
+    "ethnicity": "specific ethnic/cultural background (e.g., Nigerian, Japanese, Mexican, Lebanese, Cherokee, etc.)",
     "distinctiveFeature": "unique physical trait",
     "clothingDescription": "detailed modern everyday clothing (jeans, t-shirt, jacket, sneakers, etc. - NO costumes, uniforms, or sci-fi outfits)"
   },
@@ -376,41 +384,58 @@ CLUE SPECIFICITY REQUIREMENTS:
   * "This city has beautiful architecture" (applies to many cities)
 
 CLUE DISTRIBUTION RULES:
-- Turn 1 MUST have 4 clues: 1 theme + 3 country clues (one for each country the cities are in)
+- Turn 1 MUST have 4 clues: 1 theme + 3 pattern recognition clues (one for each city)
 - Turn 4 MUST have 6 clues: 3 distance clues (for each location pair) + 3 time difference clues
-- Turns 2-3 and 5: Distribute remaining clues (images, cultural, terrain, etc.) but NO distance/timezone clues
+- Turn 5 MUST have country clues: one clue about each country the cities are in
+- Turns 2-3: Images + other clues but NO distance/timezone clues
 - Turn 6: EXACTLY 1 clue only (regardless of difficulty)
 - Turn 7: EXACTLY 1 clue only (regardless of difficulty)
 - NO images in turns 1, 4, 5, 6, or 7
 
 TURN 1 SPECIFIC REQUIREMENTS:
 - MUST include theme clue
-- MUST include 3 country clues: one clue about each country the cities are in
-- Country clues can be about currency, flag features, geography, history, culture, language, or other well-known country facts
-- Examples: "This country uses the Euro currency", "This nation's flag features a red maple leaf", "This country is famous for its fjords"
-- DO NOT mention specific country names - use descriptive clues about the countries
-- CRITICAL: When describing flags, use the EXACT country names from the location data to ensure accuracy
+- MUST include 3 pattern recognition clues using emoji sequences
+- Each pattern uses 3-4 emojis that represent the city's most iconic features
+- Pattern clues should be challenging but solvable with logical thinking
+- Examples:
+  * "🌊🌉🎭" = Venice (water, bridges, carnival masks)
+  * "🗼🥐🎨" = Paris (Eiffel Tower, croissants, art)
+  * "🗽🍕🚕" = New York (Statue of Liberty, pizza, yellow cabs)
+  * "🌸🗾⛩️" = Tokyo (cherry blossoms, Japan island, shrine gates)
+  * "🏛️🫒🌊" = Athens (ancient temples, olives, Mediterranean)
+- Create patterns that are distinctive but require cultural knowledge
+- Avoid overly obvious patterns that AI can instantly solve
+- Format: Present as "Pattern found at location X: [emojis]"
 
 TURN 4 SPECIFIC REQUIREMENTS:
 - MUST include 3 distance clues: Location 1↔2, Location 1↔3, Location 2↔3
 - MUST include 3 time difference clues showing hours between each location pair
 - NO other clues in Turn 4 - only distances and time differences
 
+TURN 5 SPECIFIC REQUIREMENTS:
+- MUST include EXACTLY 3 country clues: one clue about each country the cities are in
+- Country clues can be about currency, flag features, geography, history, culture, language, or other well-known country facts
+- Examples: "This country uses the Euro currency", "This nation's flag features a red maple leaf", "This country is famous for its fjords"
+- DO NOT mention specific country names - use descriptive clues about the countries
+- CRITICAL: When describing flags, use the EXACT country names from the location data to ensure accuracy
+- NO additional clues in Turn 5 - only the 3 country clues
+- NO 4th location hints in Turn 5
+
 TURN STRUCTURE:
-- Turn 1: Theme reveal + country clues (one for each country the cities are in) - NO images
+- Turn 1: Theme reveal + pattern recognition clues (3 emoji patterns, one per city) - NO images
 - Turn 2: First image (as per imageStrategy) + other clues (NO distance/timezone)
 - Turn 3: Second image (as per imageStrategy) + additional clues (NO distance/timezone)
 - Turn 4: ALL distances between locations + ALL time differences (NO other clues, NO images)
-- Turn 5: Final clues for the 3 crime scenes ONLY (NO 4th location hints, NO images)
+- Turn 5: ONLY country clues (exactly 3 clues, one for each country) - NO other clues, NO images
 - Turn 6: First clues about the 4th location - NO images
 - Turn 7: Decisive clues for the final location - NO images
 
 CLUE TYPES TO USE:
-- theme, distance, timezone, time_difference, image (required)
+- theme, pattern_recognition, distance, timezone, time_difference, image (required)
 - climate, terrain, borders, language, cultural_event, physical_evidence
 - witness, comparison, elimination, location_puzzle, educational
 - triangulation, psychological_profile, intercepted_communication
-- historical_connection, final_evidence
+- historical_connection, final_evidence, country
 
 For each turn, generate:
 {
@@ -443,10 +468,10 @@ For each turn, generate:
 CRITICAL: Every clue MUST include a "data" field, even if it's just an empty object {}. Use specific geographic features for educational value.
 
 Generate all 7 turns with appropriate clue distribution. Make sure to include:
-- Turn 1: Theme + 3 country clues (one for each country the cities are in) - 4 clues total
-- Turn 2-3 and 5: Various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
+- Turn 1: Theme + 3 pattern recognition clues (emoji sequences for each city) - 4 clues total
+- Turn 2-3: Images + various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
 - Turn 4: ALL 3 distance calculations + ALL 3 time differences ONLY - 6 clues total
-- Turn 5: Focus ONLY on the 3 crime scenes - no hints about 4th location
+- Turn 5: ONLY 3 country clues (exactly one for each country) - 3 clues total, no other clues
 - Turn 6: EXACTLY 1 clue about the 4th location - NO MORE THAN 1 CLUE
 - Turn 7: EXACTLY 1 decisive clue for final location - NO MORE THAN 1 CLUE
 - Images in the turns specified by imageStrategy (turns 2 and 3 ONLY)
@@ -463,7 +488,7 @@ When creating flag clues, internally reference the actual country name to ensure
       messages: [
         {
           role: 'system',
-          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create engaging turn-by-turn clues that build suspense while teaching geography. CRITICAL: Use specific geographic features (oceans, mountain ranges, climate zones) instead of generic terms. AVOID generic clues like "this city has a popular festival" that could apply to many places. BE SPECIFIC but not revealing - use distinctive features that narrow down possibilities. Examples: "this Atlantic coastal city", "this Himalayan capital", "this port on the Baltic Sea", "this city where Europe\'s longest river meets the sea". Mix well-known and lesser-known locations for educational diversity. Calculate REAL distances using Haversine formula and REAL time differences using actual timezone offsets. NEVER mention specific location names - use geographically specific but non-revealing terms. Always return valid JSON only.'
+          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create engaging turn-by-turn clues that build suspense while teaching geography. CRITICAL: Use specific geographic features (oceans, mountain ranges, climate zones) instead of generic terms. AVOID generic clues like "this city has a popular festival" that could apply to many places. BE SPECIFIC but not revealing - use distinctive features that narrow down possibilities. Examples: "this Atlantic coastal city", "this Himalayan capital", "this port on the Baltic Sea", "this city where Europe\'s longest river meets the sea". For PATTERN RECOGNITION clues in Turn 1: Create 3-4 emoji sequences that represent each city\'s most iconic features. Make patterns challenging but logical - they should require cultural knowledge and critical thinking to solve. Good patterns combine landmarks, food, culture, geography, and symbols uniquely associated with that city. Avoid overly obvious patterns that AI assistants could instantly recognize. Mix well-known and lesser-known locations for educational diversity. Calculate REAL distances using Haversine formula and REAL time differences using actual timezone offsets. NEVER mention specific location names - use geographically specific but non-revealing terms. Always return valid JSON only.'
         },
         {
           role: 'user',

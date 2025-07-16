@@ -251,11 +251,11 @@ The bulk generation feature allows administrators to create multiple games simul
 - Thematic connection (e.g., space exploration → Houston, Cape Canaveral, Baikonur)
 
 **Turn Progression**:
-1. **Turn 1**: Theme + country clues (one for each country the cities are in) - NO images
+1. **Turn 1**: Theme + pattern recognition clues (emoji sequences for each city) - NO images
 2. **Turn 2**: First image + cultural/geographic clues - NO distance/timezone data
 3. **Turn 3**: Second image + additional evidence - NO distance/timezone data
 4. **Turn 4**: ALL distance calculations + time differences between cities - NO images
-5. **Turn 5**: Final clues for 3 crime scenes - NO images, NO 4th location hints
+5. **Turn 5**: Country clues only (one for each country the cities are in) - NO additional clues, NO images
 6. **Turn 6**: First clues about 4th final location - NO images
 7. **Turn 7**: Decisive clues for final location - NO images
 
@@ -316,6 +316,22 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### Pattern Recognition Clues & Villain Diversity (2025-01-16)
+- **Pattern Recognition Implementation**: Turn 1 now features emoji pattern clues instead of country clues
+  - Each city gets unique 3-4 emoji sequences representing iconic features (🌊🌉🎭 = Venice)
+  - Patterns require cultural knowledge and visual reasoning rather than text searches
+  - AI/Siri resistance: Much harder for assistants to solve emoji combinations instantly
+  - Large emoji display (48px) with normal-sized labels for better UX
+- **Turn Structure Reorganized**: Country clues moved from Turn 1 to Turn 5 for better flow
+  - Turn 1: Theme + 3 pattern recognition clues (emoji sequences)
+  - Turn 5: Only 3 country clues (one per country) with no additional clues
+- **Villain Diversity Enhancement**: Updated villain generation for inclusive representation
+  - Added explicit race field (Black, White, Asian, Hispanic/Latino, Middle Eastern, etc.)
+  - Enhanced ethnicity specifications (Nigerian, Japanese, Mexican, Lebanese, etc.)
+  - Prevents defaulting to single racial groups, ensures global diversity
+- **UI Improvements**: Pattern recognition clues display with special styling and hover effects
+- **Database Preservation**: Pattern descriptions saved in database but hidden from game display
 
 ### Game Generation Status Tracking Fix (2025-01-16)
 - **Issue Resolved**: Fixed UI getting stuck at "generating 2nd image" during game generation
@@ -431,10 +447,11 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - **Cities-Only Focus**: Games now exclusively use cities (no countries, regions, or landmarks)
 - **Difficulty-Based Location Selection**: Easy (all well-known cities), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
 - **Turn Structure Reorganization**: 
-  - Turn 1: Theme + country clues (NO images)
+  - Turn 1: Theme + pattern recognition clues (emoji sequences, NO images)
   - Turn 2 & 3: Images + evidence (NO distance data)
   - Turn 4: Distance & time data (NO images)
-  - Turn 5-7: Final clues (NO images)
+  - Turn 5: Country clues only (NO additional clues, NO images)
+  - Turn 6-7: Final location clues (NO images)
 - **Image Generation Rules**: Exactly 2 images per game in turns 2 and 3 only
 - **Investigation Journal Updates**: 
   - Distances dropdown hidden until Turn 4
@@ -457,6 +474,7 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - Detailed turn breakdown: Turns 1-5 (crime scenes) + Turns 6-7 (final hunt)
 - Added Detective Tools section explaining Investigation Journal and evidence analysis
 - Included geographic education examples and scoring system explanation
+- Updated for pattern recognition clues and emoji puzzle features
 
 ### Detective Interface Visual Improvements (2025-01-13)
 - Investigation Journal redesign with dropdown navigation

@@ -131,6 +131,7 @@ async function generateVillainPortraitV2(gameData) {
 Character Details:
 - Gender: ${gameData.villainProfile.gender}
 - Age: ${gameData.villainProfile.age}
+- Race: ${gameData.villainProfile.race}
 - Ethnicity: ${gameData.villainProfile.ethnicity}
 - Distinctive Feature: ${gameData.villainProfile.distinctiveFeature}
 - Clothing: ${gameData.villainProfile.clothingDescription}
@@ -274,7 +275,7 @@ async function generateLocationImagesV2Individual(gameId, gameData, locationReco
       imageNumber++;
     }
     
-    console.log(`✅ All V2 location images generated individually (${placements.length} images processed)`);
+    console.log(`✅ All V2 location images generated individually (${gameData.imageStrategy.placements.length} images processed)`);
     
   } catch (error) {
     console.error('V2 location images generation failed:', error);

@@ -10,6 +10,39 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Pattern Recognition Styling */
+        .evidence-content.pattern-recognition {
+            font-size: 16px; /* Normal font size for the container */
+            text-align: center;
+            line-height: 1.4;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 2px solid #6c757d;
+            margin: 10px 0;
+        }
+        
+        /* Pattern label with normal font size */
+        .evidence-content.pattern-recognition .pattern-label {
+            font-size: 16px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        /* Large emoji pattern within pattern recognition */
+        .evidence-content.pattern-recognition .emoji-pattern {
+            font-size: 48px;
+            line-height: 1.2;
+            margin: 10px 0;
+        }
+        
+        /* Hover effect for pattern recognition */
+        .evidence-content.pattern-recognition:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -1743,13 +1776,34 @@
                     html += `<div class="evidence-content breakthrough">${clue.content}</div>`;
                     break;
                 
+                case 'pattern_recognition':
+                    html += `<div class="evidence-type">🧩 Pattern Recognition</div>`;
+                    
+                    // Parse the content to separate label from emojis
+                    const content = clue.content || '';
+                    const colonIndex = content.indexOf(':');
+                    if (colonIndex !== -1) {
+                        const label = content.substring(0, colonIndex + 1);
+                        const emojiPattern = content.substring(colonIndex + 1).trim();
+                        html += `<div class="evidence-content pattern-recognition">
+                            <div class="pattern-label">${label}</div>
+                            <div class="emoji-pattern">${emojiPattern}</div>
+                        </div>`;
+                    } else {
+                        // Fallback if no colon found
+                        html += `<div class="evidence-content pattern-recognition">
+                            <div class="emoji-pattern">${content}</div>
+                        </div>`;
+                    }
+                    break;
+                
                 default:
                     html += `<div class="evidence-type">📝 Intelligence</div>`;
                     html += `<div class="evidence-content">${clue.content}</div>`;
             }
             
-            // Description if available
-            if (clue.description) {
+            // Description if available (but NOT for pattern_recognition clues)
+            if (clue.description && clue.type !== 'pattern_recognition') {
                 html += `<div class="evidence-description">${clue.description}</div>`;
             }
             
@@ -2511,7 +2565,7 @@
                     <h3>🎲 Investigation Process</h3>
                     <p><strong>Turns 1-5:</strong> Identify 3 crime scene locations</p>
                     <p><strong>Turns 6-7:</strong> Deduce the final hideout to capture the suspect</p>
-                    <p><strong>Available Clues:</strong> Evidence photos, geographic distances, timezone differences, thematic connections, and breakthrough discoveries. Clues vary by turn and difficulty.</p>
+                    <p><strong>Available Clues:</strong> Pattern recognition puzzles, evidence photos, geographic distances, timezone differences, thematic connections, and breakthrough discoveries. Clues vary by turn and difficulty.</p>
                 </div>
 
                 <div class="help-section">
@@ -2521,6 +2575,7 @@
                         <li><strong>Check Answers:</strong> Submit guesses and track progress</li>
                         <li><strong>Evidence Photos:</strong> Click to examine full-size</li>
                         <li><strong>Timer:</strong> 5 minutes for maximum score</li>
+                        <li><strong>Pattern Puzzles:</strong> Solve emoji sequences for location hints</li>
                         <li><strong>Geographic Clues:</strong> Look for specific features</li>
                     </ul>
                 </div>
