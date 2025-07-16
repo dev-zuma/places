@@ -314,6 +314,36 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### Game Generation Status Tracking Fix (2025-01-16)
+- **Issue Resolved**: Fixed UI getting stuck at "generating 2nd image" during game generation
+- **Root Cause**: `updateGenerationProgress` function was failing silently due to invalid `updatedAt` field usage
+- **Fix Applied**: Removed `updatedAt` field from progress updates (auto-managed by Prisma)
+- **Impact**: 
+  - ✅ **Progress bar updates correctly** during generation
+  - ✅ **Status completion tracking** works properly
+  - ✅ **UI shows completion** with "View Generated Game" button
+  - ✅ **Both single and bulk generation** now complete successfully
+- **Testing**: Verified all progress steps work correctly (content → locations → turns → villain → images → completed)
+
+### Clue Generation Quality Improvements (2025-01-16)
+- **Enhanced Clue Specificity**: Updated OpenAI prompts to avoid generic clues like "this city has a popular festival"
+- **Specific Geography Focus**: Requires distinctive features that narrow down possibilities
+- **Good Examples**: "This city sits where Europe's longest river meets the sea"
+- **Bad Examples Avoided**: "This city has beautiful architecture" (too generic)
+- **Turn 6-7 Clue Limits**: Enforced exactly 1 clue per turn for final location deduction
+- **Explicit Instructions**: Added "NO MORE THAN 1 CLUE" reinforcement in prompts
+
+### Publish/Unpublish System Restoration (2025-01-16)
+- **Issue Fixed**: Publish/Unpublish button disappearing after publishing games
+- **Root Cause**: Button visibility logic only checked for 'completed' status, not 'published'
+- **Solution**: Updated both admin pages to show button for completed AND published games
+- **Manual Game Fixes**: Updated existing games stuck in 'pending' status to 'completed'
+- **Current Workflow**: 
+  - ✅ Games generate as unpublished (safe default)
+  - ✅ Admin can publish to make available to players
+  - ✅ Admin can unpublish to remove from players
+  - ✅ Button toggles correctly between states
+
 ### Server Architecture Refactoring (2025-01-16)
 - **Modular Architecture**: Refactored 2,700+ line server-unified.js into organized modules
   - **Main Server**: Reduced to 52 lines, focusing on middleware and route mounting

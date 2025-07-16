@@ -359,14 +359,25 @@ Then your distance clue MUST use exactly these values:
 - CRITICAL: You must use the pre-determined specificItem from imageStrategy, not create your own item descriptions
 - CRITICAL: For belongings clues, describe finding the EXACT item specified in imageStrategy.placements[].specificItem
 
+CLUE SPECIFICITY REQUIREMENTS:
+- AVOID generic clues like "this city has a very popular festival" that could apply to many places
+- BE MORE SPECIFIC but without revealing the location name
+- Use distinctive geographic, cultural, or historical features that narrow down possibilities
+- Examples of GOOD specific clues:
+  * "This city sits where Europe's longest river meets the sea"
+  * "This capital was built on seven hills and houses one of the world's oldest metro systems"
+  * "This port city is famous for its centuries-old spice markets and bridges spanning a strait between two continents"
+- Examples of BAD generic clues to AVOID:
+  * "This city has a famous festival" (too many cities have festivals)
+  * "This place is known for its food" (too generic)
+  * "This city has beautiful architecture" (applies to many cities)
+
 CLUE DISTRIBUTION RULES:
 - Turn 1 MUST have 4 clues: 1 theme + 3 country clues (one for each country the cities are in)
 - Turn 4 MUST have 6 clues: 3 distance clues (for each location pair) + 3 time difference clues
 - Turns 2-3 and 5: Distribute remaining clues (images, cultural, terrain, etc.) but NO distance/timezone clues
-- Turn 6-7 clues based on difficulty:
-  - Easy: 2 clues in both turns 6 and 7
-  - Medium: 2 clues in turn 6, 1 clue in turn 7
-  - Hard: 1 clue each in turns 6 and 7
+- Turn 6: EXACTLY 1 clue only (regardless of difficulty)
+- Turn 7: EXACTLY 1 clue only (regardless of difficulty)
 - NO images in turns 1, 4, 5, 6, or 7
 
 TURN 1 SPECIFIC REQUIREMENTS:
@@ -433,8 +444,9 @@ Generate all 7 turns with appropriate clue distribution. Make sure to include:
 - Turn 2-3 and 5: Various clues but NO distance/timezone clues (use cultural, terrain, climate, etc.)
 - Turn 4: ALL 3 distance calculations + ALL 3 time differences ONLY - 6 clues total
 - Turn 5: Focus ONLY on the 3 crime scenes - no hints about 4th location
+- Turn 6: EXACTLY 1 clue about the 4th location - NO MORE THAN 1 CLUE
+- Turn 7: EXACTLY 1 decisive clue for final location - NO MORE THAN 1 CLUE
 - Images in the turns specified by imageStrategy (turns 2 and 3 ONLY)
-- Final location clues ONLY in Turns 6-7
 
 COUNTRY DATA REFERENCE:
 Use the country names from the gameData.locations array to ensure accurate flag descriptions:
@@ -448,7 +460,7 @@ When creating flag clues, internally reference the actual country name to ensure
       messages: [
         {
           role: 'system',
-          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create engaging turn-by-turn clues that build suspense while teaching geography. CRITICAL: Use specific geographic features (oceans, mountain ranges, climate zones) instead of generic terms. Examples: "this Atlantic coastal city", "this Himalayan capital", "this port on the Baltic Sea". Mix well-known and lesser-known locations for educational diversity. Calculate REAL distances using Haversine formula and REAL time differences using actual timezone offsets. NEVER mention specific location names - use geographically specific but non-revealing terms. Always return valid JSON only.'
+          content: 'You are a creative game designer specializing in educational geography games for children ages 10+. Create engaging turn-by-turn clues that build suspense while teaching geography. CRITICAL: Use specific geographic features (oceans, mountain ranges, climate zones) instead of generic terms. AVOID generic clues like "this city has a popular festival" that could apply to many places. BE SPECIFIC but not revealing - use distinctive features that narrow down possibilities. Examples: "this Atlantic coastal city", "this Himalayan capital", "this port on the Baltic Sea", "this city where Europe\'s longest river meets the sea". Mix well-known and lesser-known locations for educational diversity. Calculate REAL distances using Haversine formula and REAL time differences using actual timezone offsets. NEVER mention specific location names - use geographically specific but non-revealing terms. Always return valid JSON only.'
         },
         {
           role: 'user',
@@ -689,7 +701,12 @@ async function generateGameV2Async(gameId, context) {
     await updateGenerationProgress(gameId, 'villain_generated', 12);
     
     // Phase 4b-4d: Generate location images individually
-    await generateLocationImagesV2Individual(gameId, gameContent, locationRecords);
+    try {
+      await generateLocationImagesV2Individual(gameId, gameContent, locationRecords);
+    } catch (imageError) {
+      console.error('Image generation failed, but game content is complete:', imageError);
+      // Continue to completion even if images fail since game is playable
+    }
     
     const phase4End = new Date();
     await prisma.generationV2.updateMany({

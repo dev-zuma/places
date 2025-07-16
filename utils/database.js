@@ -3,16 +3,24 @@ const { prisma } = require('./clients');
 // Update generation progress for V2 games
 async function updateGenerationProgress(gameId, step, completedSteps) {
   try {
+    const updateData = {
+      currentStep: step,
+      completedSteps
+    };
+    
+    // Set status and completedAt when generation is complete
+    if (step === 'completed') {
+      updateData.status = 'completed';
+      updateData.completedAt = new Date();
+    }
+    
     await prisma.generationV2.upsert({
-      where: { gameId },
-      update: {
-        step,
-        completedSteps,
-        updatedAt: new Date()
-      },
+      where: { gameV2Id: gameId },
+      update: updateData,
       create: {
-        gameId,
-        step,
+        gameV2Id: gameId,
+        status: step === 'completed' ? 'completed' : 'generating',
+        currentStep: step,
         completedSteps,
         totalSteps: 20
       }

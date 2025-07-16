@@ -520,7 +520,7 @@
             const publishBtn = document.getElementById('publishBtn');
             const status = getGameStatus(currentGame);
             
-            if (status === 'completed') {
+            if (status === 'completed' || status === 'published') {
                 publishBtn.textContent = currentGame.isPublished ? 'Unpublish Game' : 'Publish Game';
                 publishBtn.classList.remove('hidden');
                 publishBtn.onclick = () => togglePublish();

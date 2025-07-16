@@ -269,10 +269,12 @@ async function generateLocationImagesV2Individual(gameId, gameData, locationReco
       // Update progress
       await updateGenerationProgress(gameId, `location_image_${imageNumber}_generated`, 12 + imageNumber * 2);
       
+      console.log(`✅ Progress updated for image ${imageNumber}: location_image_${imageNumber}_generated`);
+      
       imageNumber++;
     }
     
-    console.log('✅ All V2 location images generated individually');
+    console.log(`✅ All V2 location images generated individually (${placements.length} images processed)`);
     
   } catch (error) {
     console.error('V2 location images generation failed:', error);

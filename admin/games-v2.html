@@ -517,7 +517,7 @@
                         
                         <div class="game-actions">
                             <a href="/admin/game-details-v2.html?id=${game.id}" class="action-btn view">View Details</a>
-                            ${status === 'completed' ? `
+                            ${(status === 'completed' || status === 'published') ? `
                                 <button class="action-btn ${game.isPublished ? 'unpublish' : 'publish'}" 
                                         onclick="togglePublish('${game.id}', ${game.isPublished})">
                                     ${game.isPublished ? 'Unpublish' : 'Publish'}
