@@ -116,13 +116,16 @@ CRITICAL LOCATION RULES:
 - The 4th location should connect thematically/narratively (NOT geographically equidistant)
 
 LOCATION DIFFICULTY REQUIREMENTS:
-- EASY: All 3 locations must be well-known capital cities or major international cities (London, Paris, NYC, Tokyo, Rome, Berlin, Madrid, etc.)
-- MEDIUM: 2 locations are well-known major cities + 1 location is less well-known but still an important city
-- HARD: 1 location is well-known major city + 2 locations are less well-known but still major cities
+- EASY: 2 locations must be well-known capital cities or major international cities + 1 location is a lesser-known but still important city
+- MEDIUM: 1 location is a well-known major city + 2 locations are lesser-known but still important cities
+- HARD: All 3 locations are lesser-known but still major cities (avoid capitals and famous tourist destinations)
+- The 4th location (final location) should ALWAYS be a lesser-known city, regardless of difficulty level
 - Prioritize geographic diversity across different continents and regions when possible
 - Balance recognizable landmarks with educational discovery opportunities
-- Examples: Easy = London + Paris + Tokyo; Medium = Berlin + Singapore + Krakow; Hard = Madrid + Almaty + Montevideo
+- Examples: Easy = Paris + Tokyo + Thessaloniki; Medium = London + Krakow + Montevideo; Hard = Almaty + Medan + Porto Alegre
+- Lesser-known cities examples: Thessaloniki, Krakow, Montevideo, Almaty, Medan, Porto Alegre, Dakar, Izmir, Pune, Guayaquil, Harbin, Durban, etc.
 - Encourage learning about different cultures, climate zones, and geographic features
+- AVOID overused cities like London, Berlin, New York City, Wellington, Cape Town - use them sparingly
 
 GEOGRAPHIC ACCURACY REQUIREMENTS:
 - Provide REAL latitude/longitude coordinates for all locations (decimal degrees format as NUMBERS)

@@ -260,9 +260,10 @@ The bulk generation feature allows administrators to create multiple games simul
 7. **Turn 7**: Decisive clues for final location - NO images
 
 **Difficulty System**:
-- **Easy**: All 3 cities are well-known capital/major cities
-- **Medium**: 2 well-known cities + 1 less well-known but important city
-- **Hard**: 1 well-known city + 2 less well-known but major cities
+- **Easy**: 2 well-known capital/major cities + 1 lesser-known city
+- **Medium**: 1 well-known city + 2 lesser-known cities
+- **Hard**: All 3 lesser-known cities (avoiding capitals and tourist destinations)
+- **4th Location**: Always a lesser-known city, regardless of difficulty
 
 **Image Generation Rules**:
 - Exactly 2 images per game
@@ -285,8 +286,10 @@ The bulk generation feature allows administrators to create multiple games simul
 ### Location Selection
 - **ONLY cities** (never countries, parks, states, landmarks, regions)
 - ALL 4 locations (including final location) must be major cities
-- Follow difficulty-based selection: Easy (all well-known), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
-- Pick internationally known cities (London, Tokyo, Berlin) and important regional cities (Krakow, Almaty, Montevideo)
+- Follow difficulty-based selection: Easy (2 well-known + 1 lesser-known), Medium (1 well-known + 2 lesser-known), Hard (3 lesser-known)
+- 4th location (final) should ALWAYS be lesser-known, regardless of difficulty
+- Avoid overused cities (London, Berlin, NYC, Wellington, Cape Town) - use sparingly
+- Focus on lesser-known but important cities (Thessaloniki, Krakow, Montevideo, Almaty, Medan, Porto Alegre, Dakar, Izmir, Pune, Guayaquil)
 - Landmarks field contains attractions WITHIN each city
 
 ### Testing Protocol
