@@ -840,8 +840,8 @@
                         });
                     });
                     
-                    // Check if answer is correct
-                    if (enteredAnswer.trim() === location.name.toUpperCase()) {
+                    // Check if answer is correct (with normalization support)
+                    if (checkLocationMatch(enteredAnswer.trim(), location.name)) {
                         // Mark as correct
                         crimeSceneAnswers[`location${location.position}`] = true;
                         correctLocations[location.position - 1] = true; // Update global tracking
@@ -884,8 +884,8 @@
                 });
             });
             
-            // Check if answer is correct
-            if (enteredAnswer.trim() === currentCase.finalLocationV2.name.toUpperCase()) {
+            // Check if answer is correct (with normalization support)
+            if (checkLocationMatch(enteredAnswer.trim(), currentCase.finalLocationV2.name)) {
                 // Mark as correct
                 finalLocationAnswer = true;
                 correctLocations[3] = true; // Update global tracking (4th location)
@@ -910,12 +910,84 @@
             }
         }
 
+        // Normalize text by removing accents and special characters
+        function normalizeText(text) {
+            // Convert to lowercase and trim
+            text = text.toLowerCase().trim();
+            
+            // Remove accents and diacritical marks
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            
+            // Common character replacements
+            const replacements = {
+                'ñ': 'n',
+                'æ': 'ae',
+                'œ': 'oe',
+                'ø': 'o',
+                'ß': 'ss',
+                'đ': 'd',
+                'ð': 'd',
+                'þ': 'th',
+                'ł': 'l'
+            };
+            
+            for (const [special, normal] of Object.entries(replacements)) {
+                text = text.replace(new RegExp(special, 'g'), normal);
+            }
+            
+            // Remove any remaining non-alphanumeric characters except spaces and hyphens
+            text = text.replace(/[^a-z0-9\s-]/g, '');
+            
+            return text;
+        }
+
         function checkLocationMatch(answer, correct) {
-            const normalizedAnswer = answer.toLowerCase().trim();
-            const normalizedCorrect = correct.toLowerCase().trim();
-            return normalizedAnswer === normalizedCorrect || 
-                   normalizedAnswer.includes(normalizedCorrect) ||
-                   normalizedCorrect.includes(normalizedAnswer);
+            // Check for empty/blank answers first - these should never match
+            if (!answer || !answer.trim()) {
+                console.log('❌ Empty answer - no match');
+                return false;
+            }
+            
+            // Normalize both answer and correct name
+            const normalizedAnswer = normalizeText(answer);
+            const normalizedCorrect = normalizeText(correct);
+            
+            // Also check against the original lowercase versions for exact matches
+            const originalAnswer = answer.toLowerCase().trim();
+            const originalCorrect = correct.toLowerCase().trim();
+            
+            // Debug logging
+            console.log('🔍 City Match Debug:', {
+                answer: answer,
+                correct: correct,
+                normalizedAnswer: normalizedAnswer,
+                normalizedCorrect: normalizedCorrect,
+                originalAnswer: originalAnswer,
+                originalCorrect: originalCorrect
+            });
+            
+            // Check for exact match (normalized or original, case insensitive)
+            if (normalizedAnswer === normalizedCorrect || 
+                originalAnswer === originalCorrect ||
+                answer.toLowerCase().trim() === correct.toLowerCase().trim()) {
+                console.log('✅ Exact match found!');
+                return true;
+            }
+            
+            // Check for partial matches (both normalized and original)
+            // Only do partial matching if both strings have substantial length
+            if (normalizedAnswer.length >= 3 && normalizedCorrect.length >= 3) {
+                const partialMatch = normalizedAnswer.includes(normalizedCorrect) ||
+                       normalizedCorrect.includes(normalizedAnswer) ||
+                       originalAnswer.includes(originalCorrect) ||
+                       originalCorrect.includes(originalAnswer);
+                
+                console.log('🔍 Partial match result:', partialMatch);
+                return partialMatch;
+            }
+            
+            console.log('❌ No match found');
+            return false;
         }
 
         function showCrimeSceneFeedback(results) {

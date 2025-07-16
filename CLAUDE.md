@@ -248,6 +248,7 @@ The bulk generation feature allows administrators to create multiple games simul
 4. **Spoiler Protection**: Generic labels preserve mystery
 5. **User Profile**: Account management with username editing
 6. **Help System**: Interactive instructions with auto-show for new users
+7. **City Name Normalization**: Smart answer checking that accepts English spellings of cities with special characters
 
 ### Location Rules & Game Design
 
@@ -337,6 +338,26 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### City Name Normalization System (2025-07-16)
+- **Special Character Support**: Implemented comprehensive city name normalization for international cities
+  - **Accent Removal**: Automatically converts accented characters (á, é, í, ó, ú → a, e, i, o, u)
+  - **Special Character Mapping**: Handles common international characters:
+    - Spanish: ñ → n (e.g., "La Coruna" matches "La Coruña")
+    - German: ü, ö, ä → u, o, a (e.g., "Zurich" matches "Zürich")
+    - Scandinavian: ø → o (e.g., "Copenhagen" matches "København")
+    - Polish: ł → l, ó → o (e.g., "Krakow" matches "Kraków")
+    - Portuguese/Spanish: ã, ç, õ → a, c, o (e.g., "Sao Paulo" matches "São Paulo")
+  - **Unicode Normalization**: Uses NFD normalization to strip diacritical marks
+  - **English-Friendly Input**: Native English speakers can enter city names without special characters
+- **Smart Answer Validation**: Enhanced answer checking with multiple validation layers
+  - **Exact Match Priority**: Checks normalized, original, and case-insensitive versions
+  - **Empty Input Protection**: Prevents blank answers from being marked as correct
+  - **Minimum Length Validation**: Requires substantial input (3+ characters) for partial matching
+  - **Debug Logging**: Console output shows normalization process for troubleshooting
+- **Examples Working**: "Valparaiso" ↔ "Valparaíso", "Brasilia" ↔ "Brasília", "Malaga" ↔ "Málaga"
+- **Backward Compatibility**: Existing exact matches continue to work without changes
+- **Implementation**: Located in `game/detective.html` with `normalizeText()` and `checkLocationMatch()` functions
 
 ### Clue Distribution & UI Enhancements (2025-01-17)
 - **Turn 2-3 Clue Distribution**: Updated game generation to ensure exactly 3 location-specific clues per turn
