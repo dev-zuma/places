@@ -1124,6 +1124,19 @@
         document.getElementById('viewGeneratedGames').addEventListener('click', () => {
             window.location.href = '/admin/games-v2.html';
         });
+
+        // Additional cleanup on page unload for safety
+        window.addEventListener('beforeunload', () => {
+            if (statusInterval) {
+                clearInterval(statusInterval);
+                statusInterval = null;
+            }
+            if (bulkStatusInterval) {
+                clearInterval(bulkStatusInterval);
+                bulkStatusInterval = null;
+            }
+            console.log('🧹 Generate page cleanup completed');
+        });
     </script>
 </body>
 </html>

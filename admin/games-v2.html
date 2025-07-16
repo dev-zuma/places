@@ -400,6 +400,11 @@
                 if (allGames.length === 0) {
                     document.getElementById('emptyState').classList.remove('hidden');
                 }
+                
+                // Start auto-refresh if there are generating games
+                if (allGames.some(game => game.generationV2?.status === 'generating')) {
+                    startAutoRefresh();
+                }
             } catch (error) {
                 console.error('Error loading games:', error);
                 document.getElementById('loadingState').innerHTML = `
@@ -570,11 +575,26 @@
         }
 
         // Auto-refresh for generating games
-        setInterval(() => {
-            if (allGames.some(game => game.generationV2?.status === 'generating')) {
-                loadGames();
+        let autoRefreshInterval;
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(() => {
+                if (allGames.some(game => game.generationV2?.status === 'generating')) {
+                    loadGames();
+                } else {
+                    // Stop polling when no games are generating
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+            }, 5000);
+        }
+
+        // Clean up interval on page unload
+        window.addEventListener('beforeunload', () => {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
             }
-        }, 5000);
+        });
     </script>
 </body>
 </html>

@@ -41,13 +41,38 @@ app.listen(port, () => {
   console.log(`🔧 Admin panel: http://localhost:${port}/admin/`);
 });
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('🛑 Shutting down server...');
-  process.exit(0);
+// Graceful shutdown with proper cleanup
+async function gracefulShutdown(signal) {
+  console.log(`🛑 Received ${signal}, shutting down server...`);
+  
+  try {
+    // Import prisma client for cleanup
+    const { prisma } = require('./utils/clients');
+    
+    // Close database connections
+    await prisma.$disconnect();
+    console.log('✅ Database connections closed');
+    
+    // Additional cleanup can be added here
+    console.log('🧹 Server cleanup completed');
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error during shutdown:', error);
+    process.exit(1);
+  }
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+
+// Handle uncaught exceptions and rejections
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  gracefulShutdown('uncaughtException');
 });
 
-process.on('SIGTERM', async () => {
-  console.log('🛑 Shutting down server...');
-  process.exit(0);
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  gracefulShutdown('unhandledRejection');
 });

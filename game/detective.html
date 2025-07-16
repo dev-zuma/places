@@ -1111,10 +1111,18 @@
                 correctLocations: correctLocations
             };
             
-            // Always save to localStorage as backup
+            // Always save to localStorage as backup with size limits
             try {
+                const MAX_RESULTS = 100; // Limit to prevent memory bloat
+                
                 let savedResults = JSON.parse(localStorage.getItem('gameResultsV2') || '[]');
                 savedResults.push(gameResult);
+                
+                // Keep only the most recent results
+                if (savedResults.length > MAX_RESULTS) {
+                    savedResults = savedResults.slice(-MAX_RESULTS);
+                }
+                
                 localStorage.setItem('gameResultsV2', JSON.stringify(savedResults));
                 
                 // Save to user-specific localStorage
@@ -1133,6 +1141,12 @@
                     };
                     
                     userResults.push(userResult);
+                    
+                    // Keep only the most recent user results
+                    if (userResults.length > MAX_RESULTS) {
+                        userResults = userResults.slice(-MAX_RESULTS);
+                    }
+                    
                     localStorage.setItem(userKey, JSON.stringify(userResults));
                 }
             } catch (error) {
@@ -2142,9 +2156,16 @@
                     //     body: JSON.stringify(result)
                     // });
                     
-                    // For now, save to localStorage
+                    // For now, save to localStorage with size limits
+                    const MAX_RESULTS = 100; // Prevent memory bloat
                     const userResults = JSON.parse(localStorage.getItem(`userResults_${currentUser.id}`) || '[]');
                     userResults.push(result);
+                    
+                    // Keep only the most recent results
+                    if (userResults.length > MAX_RESULTS) {
+                        userResults.splice(0, userResults.length - MAX_RESULTS);
+                    }
+                    
                     localStorage.setItem(`userResults_${currentUser.id}`, JSON.stringify(userResults));
                     
                     sessionStorage.removeItem('pendingGameResult');
@@ -2423,6 +2444,55 @@
                     closeVillainModal();
                 }
             }
+        });
+
+        // Comprehensive cleanup system for memory leak prevention
+        let eventListeners = [];
+        
+        // Store references to event listeners for cleanup
+        function addEventListenerWithCleanup(element, event, handler, options = false) {
+            element.addEventListener(event, handler, options);
+            eventListeners.push({ element, event, handler, options });
+        }
+        
+        // Cleanup function to remove all event listeners
+        function cleanupEventListeners() {
+            eventListeners.forEach(({ element, event, handler, options }) => {
+                try {
+                    element.removeEventListener(event, handler, options);
+                } catch (e) {
+                    console.warn('Failed to remove event listener:', e);
+                }
+            });
+            eventListeners = [];
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            // Clear timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // Clear event listeners
+            cleanupEventListeners();
+            
+            // Clear global arrays
+            if (window.v2TimelineEntries) {
+                window.v2TimelineEntries = [];
+            }
+            
+            console.log('🧹 Detective game cleanup completed');
+        });
+        
+        // Alternative cleanup for navigation
+        window.addEventListener('pagehide', () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            cleanupEventListeners();
         });
     </script>
 
