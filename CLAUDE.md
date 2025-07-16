@@ -15,12 +15,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 places/
 ├── CLAUDE.md           # This file - project guidance
-├── server-unified.js   # Main production server (admin + game + API)
+├── server-unified.js   # Main production server (52 lines, loads route modules)
 ├── start-server.bat    # Windows batch file to start server
 ├── test-villain-styles.html # Villain portrait testing tool
 ├── package.json        # Node.js dependencies
 ├── package-lock.json   # Dependency lock file
 ├── .env               # Environment variables (API keys)
+├── routes/            # API route modules (refactored from server-unified.js)
+│   ├── admin.js      # Admin endpoints (/api/admin/*, /api/test-villain-portrait)
+│   ├── cases.js      # Player-facing game endpoints (/api/v2/cases)
+│   ├── config.js     # Configuration endpoints (/api/config, /api/debug/test)
+│   ├── games.js      # Game management (/api/v2/games/*)
+│   ├── leaderboard.js # Leaderboard endpoints (/api/leaderboard)
+│   ├── players.js    # Player management (/api/players/*)
+│   └── static.js     # Static file serving and root routes
+├── utils/             # Shared utilities and services
+│   ├── clients.js    # Service clients (OpenAI, S3, Prisma, CORS config)
+│   ├── database.js   # Database helpers (progress tracking, analytics)
+│   ├── gameGeneration.js # Core game generation logic (generateGameV2Async, etc.)
+│   ├── geoCalculations.js # Geographic calculations (distance, time zones)
+│   ├── imageGeneration.js # AI image generation (villains, locations)
+│   └── imageUpload.js # S3 upload functionality
 ├── prisma/            # Database ORM
 │   ├── schema.prisma  # Database schema definition
 │   ├── dev.db        # SQLite development database
@@ -35,6 +50,7 @@ places/
 │   ├── index.html    # Case gallery & browsing
 │   ├── detective.html # Detective case file interface (MAIN GAME)
 │   ├── detective-header.js # Shared header component
+│   ├── leaderboard.html # Leaderboard page with weighted scoring
 │   ├── styles.css    # Complete game styling system
 │   └── wwc-logo.png  # Worldwide Chase logo
 ├── mockups/          # UI mockup designs & prototypes (reference)
@@ -297,6 +313,29 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 ```
 
 ## Recent Updates
+
+### Server Architecture Refactoring (2025-01-16)
+- **Modular Architecture**: Refactored 2,700+ line server-unified.js into organized modules
+  - **Main Server**: Reduced to 52 lines, focusing on middleware and route mounting
+  - **Route Modules**: Created 7 route files in `/routes/` for organized API endpoints
+  - **Utility Modules**: Created 6 utility files in `/utils/` for shared functionality
+- **Improved Code Organization**:
+  - **routes/admin.js**: Admin tools and test endpoints
+  - **routes/cases.js**: Player-facing game endpoints
+  - **routes/config.js**: System configuration
+  - **routes/games.js**: Game generation and management
+  - **routes/leaderboard.js**: Weighted scoring leaderboard
+  - **routes/players.js**: Player profiles and statistics
+  - **routes/static.js**: Static file serving
+- **Shared Utilities**:
+  - **utils/clients.js**: Service clients (OpenAI, S3, Prisma)
+  - **utils/database.js**: Database helpers and analytics
+  - **utils/gameGeneration.js**: Core game generation logic
+  - **utils/geoCalculations.js**: Geographic calculations
+  - **utils/imageGeneration.js**: AI image generation
+  - **utils/imageUpload.js**: S3 upload functionality
+- **Benefits**: Improved maintainability, easier testing, better separation of concerns
+- **Testing**: All endpoints thoroughly tested and working correctly
 
 ### Complete V1 System Removal (2025-01-16)
 - **Frontend Cleanup**: Removed all V1 game references from /game/ pages
