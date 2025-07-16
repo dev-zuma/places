@@ -6,11 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Worldwide Chase** is a geography-themed detective game where players solve crime cases by identifying connected locations based on thematic clues and progressively revealed visual evidence. Each case features AI-generated villains, crime narratives, and educational geography content presented in an authentic detective case file interface. This is a production-ready web application built with modern technologies.
 
-**Game Formats**:
-- **V1 Games**: Original 3-location format (5 turns, identify 3 locations)
-- **V2 Games**: Enhanced 3+1 format (7 turns, identify 3 locations + deduce 4th final location)
+**Game Format**: Enhanced 3+1 format (7 turns, identify 3 locations + deduce 4th final location)
 
-**Status**: Production-ready with dual-format detective case file experience
+**Status**: Production-ready detective case file experience
 
 ## Project Structure
 
@@ -28,13 +26,10 @@ places/
 │   ├── dev.db        # SQLite development database
 │   └── migrations/   # Database migration files
 ├── admin/             # Admin portal UI (Content Management)
-│   ├── index.html    # Admin dashboard with V1/V2 format tabs
-│   ├── generate.html # V1 game generation page
-│   ├── generate-v2.html # V2 game generation page (3+1 format) with bulk generation
-│   ├── games.html    # V1 games management page
-│   ├── games-v2.html # V2 games management page
-│   ├── game-details.html # V1 game details view
-│   ├── game-details-v2.html # V2 game details view with performance timing
+│   ├── index.html    # Admin dashboard
+│   ├── generate-v2.html # Game generation page (3+1 format) with bulk generation
+│   ├── games-v2.html # Games management page
+│   ├── game-details-v2.html # Game details view with performance timing
 │   └── styles.css    # Admin portal styles
 ├── game/              # Frontend game system (Player Experience)
 │   ├── index.html    # Case gallery & browsing
@@ -66,7 +61,7 @@ places/
 ### Backend (Complete System - Production Ready)
 - **Runtime**: Node.js 20.x
 - **Framework**: Express.js
-- **Database**: SQLite with Prisma ORM (V1 + V2 schemas)
+- **Database**: SQLite with Prisma ORM
 - **AI Integration**: OpenAI API (GPT-4o-mini + GPT-Image-1) - fully integrated
 - **Storage**: AWS S3 for images - fully integrated
 - **Dependencies**: cors, body-parser, dotenv, @prisma/client, openai, @aws-sdk/client-s3
@@ -82,13 +77,7 @@ places/
 
 ## Core Features
 
-### V1 Games (Original Format)
-- 3-location format with 5-turn investigation system
-- Investigation Journal with Timeline and Locations views
-- Evidence modals for detailed examination
-- 5-minute countdown timer with visual feedback
-
-### V2 Games (Enhanced 3+1 Format)  
+### Game Features (3+1 Format)
 - 7-turn gameplay identifying 3 locations + 4th final location
 - Turn-by-turn clues with multiple evidence types
 - Villain integration in location images
@@ -96,13 +85,16 @@ places/
 - Performance tracking and optional form fields
 - **Bulk Generation**: Create 3, 10, 20, or 30 games at once with diverse themes
 
-### Shared Features
-- Dual format admin portal for game management
+### System Features
+- Admin portal for game management
 - AI-generated villains, crimes, and location images
 - Geographic education with real coordinates and timezones
 - Mobile-optimized detective case file interface
 - Case gallery with villain portraits and profiles
 - User profile system and help system
+- 5-minute countdown timer with visual feedback
+- Investigation Journal with Timeline and Locations views
+- Evidence modals for detailed examination
 
 ## Development Commands
 
@@ -166,27 +158,25 @@ npx prisma studio
 
 ### Admin Portal
 - **Dashboard**: http://localhost:9091/admin/
-- **V1 Generation**: http://localhost:9091/admin/generate.html
-- **V1 Games**: http://localhost:9091/admin/games.html
-- **V2 Generation**: http://localhost:9091/admin/generate-v2.html
-- **V2 Games**: http://localhost:9091/admin/games-v2.html
+- **Game Generation**: http://localhost:9091/admin/generate-v2.html
+- **Games Management**: http://localhost:9091/admin/games-v2.html
 
 ### Development
 - **Mockups**: http://localhost:9091/mockups/
 - **Database GUI**: http://localhost:5555/ (Prisma Studio)
 
 ### API Endpoints
-- **V1 Cases**: `/api/cases` | **V1 Games**: `/api/games`
-- **V2 Cases**: `/api/v2/cases` | **V2 Games**: `/api/v2/games`
-- **V2 Generation**: `/api/v2/games/generate`
-- **V2 Bulk Generation**: `/api/v2/games/bulk-generate`
-- **V2 Bulk Status**: `/api/v2/games/bulk-status`
+- **Cases**: `/api/v2/cases`
+- **Games**: `/api/v2/games`
+- **Game Generation**: `/api/v2/games/generate`
+- **Bulk Generation**: `/api/v2/games/bulk-generate`
+- **Bulk Status**: `/api/v2/games/bulk-status`
 - **Leaderboard**: `/api/leaderboard?type=overall|easy|medium|hard`
 
-## Bulk Generation System (V2)
+## Bulk Generation System
 
 ### Overview
-The bulk generation feature allows administrators to create multiple V2 games simultaneously with diverse themes to prevent repetitive content.
+The bulk generation feature allows administrators to create multiple games simultaneously with diverse themes to prevent repetitive content.
 
 ### Configuration Options
 - **Game Count**: 3, 10, 20, or 30 games (default: 10)
@@ -223,7 +213,7 @@ The bulk generation feature allows administrators to create multiple V2 games si
 
 ### Core Detective Experience
 - **Case Selection**: Browse gallery with villain portraits and summaries
-- **5-Turn Investigation**: Progressive evidence reveals (turns 1, 3, 5)
+- **7-Turn Investigation**: Progressive evidence reveals across all turns
 - **Timer System**: 5-minute countdown with visual urgency
 - **Evidence Modals**: Click images for detailed examination
 - **Authentic Interface**: Case file styling with ruled paper and typewriter font
@@ -238,13 +228,13 @@ The bulk generation feature allows administrators to create multiple V2 games si
 
 ### Location Rules & Game Design
 
-**Location Requirements (V2 Updated)**:
+**Location Requirements**:
 - **ONLY cities** (never countries, states, parks, landmarks, regions)
 - ALL 4 locations (including final location) must be major cities
 - Geographic diversity across continents when possible
 - Thematic connection (e.g., space exploration → Houston, Cape Canaveral, Baikonur)
 
-**V2 Turn Progression (Updated)**:
+**Turn Progression**:
 1. **Turn 1**: Theme + country clues (one for each country the cities are in) - NO images
 2. **Turn 2**: First image + cultural/geographic clues - NO distance/timezone data
 3. **Turn 3**: Second image + additional evidence - NO distance/timezone data
@@ -253,7 +243,7 @@ The bulk generation feature allows administrators to create multiple V2 games si
 6. **Turn 6**: First clues about 4th final location - NO images
 7. **Turn 7**: Decisive clues for final location - NO images
 
-**V2 Difficulty System**:
+**Difficulty System**:
 - **Easy**: All 3 cities are well-known capital/major cities
 - **Medium**: 2 well-known cities + 1 less well-known but important city
 - **Hard**: 1 well-known city + 2 less well-known but major cities
@@ -267,15 +257,16 @@ The bulk generation feature allows administrators to create multiple V2 games si
 ## Database Schema
 
 **Key Models**:
-- **Game/GameV2**: Case metadata, villain profiles, crime summaries
-- **Location/LocationV2**: Geographic data, coordinates, timezones, images
-- **FinalLocationV2**: V2 format 4th location for deduction
-- **GameplayTurn/Clue**: V2 format turn-by-turn clue system
-- **GenerationV2**: V2 performance tracking and status
+- **GameV2**: Case metadata, villain profiles, crime summaries
+- **LocationV2**: Geographic data, coordinates, timezones, images
+- **FinalLocationV2**: 4th location for deduction
+- **GameplayTurn/Clue**: Turn-by-turn clue system
+- **GenerationV2**: Performance tracking and status
+- **Player/PlayerCaseV2**: User profiles and game progress
 
 ## Development Rules
 
-### Location Selection (V2 Updated)
+### Location Selection
 - **ONLY cities** (never countries, parks, states, landmarks, regions)
 - ALL 4 locations (including final location) must be major cities
 - Follow difficulty-based selection: Easy (all well-known), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
@@ -307,9 +298,32 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### Complete V1 System Removal (2025-01-16)
+- **Frontend Cleanup**: Removed all V1 game references from /game/ pages
+  - Updated detective.html to use V2 APIs exclusively (`/api/v2/cases`, `/api/v2/games`)
+  - Replaced old detective.html with detective-v2.html (renamed to detective.html)
+  - Removed old backup files (index_backup_header_migration.html, index_old.html)
+- **Admin Portal Simplification**: Removed all V1 game generation and management
+  - Deleted admin/generate.html, admin/games.html, admin/game-details.html
+  - Removed format tabs, dashboard now shows only enhanced game features
+  - Updated recent games display to use V2 APIs and link to V2 game details
+- **Server-Side V1 Removal**: Completely eliminated V1 backend systems
+  - **Removed V1 API Endpoints**: `/api/games`, `/api/cases`, `/api/generate`, `/api/generate/:id/status`
+  - **Removed V1 Functions**: `generateGameAsync()`, `generateVillainPortrait()`, `generateLocationImage()`
+  - **Updated Admin Endpoints**: Debug and database cleanup now use V2 models only
+- **Codebase Streamlining**: Project now exclusively uses enhanced 3+1 format
+  - **Single Game Format**: No dual-format complexity, simplified development
+  - **V2-Only APIs**: All endpoints use `/api/v2/` namespace
+  - **Database Focus**: Only V2 models (GameV2, LocationV2, FinalLocationV2, etc.)
+- **Testing Verification**: Comprehensive testing confirms V1 removal success
+  - **V2 Generation**: Successfully tested complete game generation (105 seconds)
+  - **Game Structure**: Validated 7-turn structure with 3 locations + final location
+  - **Playability**: Confirmed generated games work perfectly in detective interface
+  - **No V1 Dependencies**: Zero references to old V1 systems remain
+
 ### Leaderboard System & Data Sync Implementation (2025-01-15)
 - **Detective Leaderboard Added**: New competitive leaderboard page accessible via user dropdown menu
-- **V2 Game Focus**: Leaderboard exclusively tracks V2 format games (3+1 gameplay) with weighted scoring
+- **Game Focus**: Leaderboard tracks 3+1 format games with weighted scoring
 - **Weighted Scoring System**: Easy (1x), Medium (1.25x), Hard (1.75x) multipliers with performance bonuses
 - **Performance Bonuses**: 75 points for solving first 3 locations in ≤5 turns, 100 points for 6th turn final location
 - **Difficulty-Based Views**: Overall Champions, Easy Champions, Medium Masters, Hard Heroes with proper filtering
@@ -330,19 +344,19 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - **Redundant Stats Removed**: Eliminated stats row showing case/theme/solved counts above tabs for cleaner interface
 - **Centered CAPTURED Overlay Removed**: Eliminated redundant center overlay on solved cases, keeping only top-right stamp
 
-### V2 Country Clue Accuracy Fix (2025-01-14)
+### Country Clue Accuracy Fix (2025-01-14)
 - **Flag Description Accuracy**: Fixed inaccurate country flag descriptions in Turn 1 clues
 - **Data Reference System**: AI now uses actual country names from location data for accurate flag descriptions
 - **Prompt Enhancement**: Added explicit instructions to reference `gameData.locations[].country` for accuracy
 - **Quality Control**: Ensures country clues (currency, flag, geography, history) are factually correct
 
-### V2 Data Management Improvements (2025-01-14)
-- **Enhanced Game Deletion**: V2 game deletion now properly removes all associated user data
+### Data Management Improvements (2025-01-14)
+- **Enhanced Game Deletion**: Game deletion now properly removes all associated user data
 - **Complete Data Cleanup**: PlayerCaseV2 records are explicitly deleted before game removal
 - **Database Integrity**: Ensures no orphaned user progress data remains after game deletion
 
-### V2 Game Mechanics & UI Overhaul (2025-01-14)
-- **Cities-Only Focus**: V2 games now exclusively use cities (no countries, regions, or landmarks)
+### Game Mechanics & UI Overhaul (2025-01-14)
+- **Cities-Only Focus**: Games now exclusively use cities (no countries, regions, or landmarks)
 - **Difficulty-Based Location Selection**: Easy (all well-known cities), Medium (2 well-known + 1 lesser-known), Hard (1 well-known + 2 lesser-known)
 - **Turn Structure Reorganization**: 
   - Turn 1: Theme + country clues (NO images)
@@ -356,7 +370,7 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
   - Error handling improvements for missing DOM elements
 - **Backend Prompt Updates**: Updated location and clue generation prompts for consistent city-only gameplay
 
-### V2 Bulk Generation System (2025-01-14)
+### Bulk Generation System (2025-01-14)
 - **Bulk Game Creation**: Generate 3, 10, 20, or 30 games simultaneously
 - **Theme Diversity Engine**: AI-powered unique theme generation using OpenAI GPT-4o-mini
 - **Smart Theme Distribution**: Analyzes existing games to prevent repetitive themes
@@ -365,24 +379,24 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 - **Status Tracking**: Visual progress indicators for each game in bulk generation
 - **API Extensions**: New endpoints for bulk generation and status monitoring
 
-### V2 Help System Update (2025-01-14)
-- Updated "How to Play" instructions for V2 gameplay (7 turns, 3+1 format)
+### Help System Update (2025-01-14)
+- Updated "How to Play" instructions for gameplay (7 turns, 3+1 format)
 - Enhanced help content accessible from both gallery and detective pages
 - Detailed turn breakdown: Turns 1-5 (crime scenes) + Turns 6-7 (final hunt)
 - Added Detective Tools section explaining Investigation Journal and evidence analysis
 - Included geographic education examples and scoring system explanation
 
-### V2 Detective Interface Visual Improvements (2025-01-13)
+### Detective Interface Visual Improvements (2025-01-13)
 - Investigation Journal redesign with dropdown navigation
 - Consistent turn indicators (dark green past, orange current)
 - Error container fix and case title header display
 - Enhanced visual polish and CSS specificity improvements
 
-### V2 Game System Implementation (2025-01-11)
+### Game System Implementation (2025-01-11)
 - 3+1 format with 7 turns (3 locations + 4th final location)
 - Turn-by-turn clues with villain integration
 - 16 final objectives and educational facts
-- Performance tracking and dual format support
+- Performance tracking and generation status monitoring
 
 ### Investigation Journal System (2025-01-09)
 - Timeline and Locations views with evidence organization

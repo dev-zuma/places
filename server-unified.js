@@ -86,262 +86,12 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// API: Get all games
-app.get('/api/games', async (req, res) => {
-  try {
-    const games = await prisma.game.findMany({
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-    
-    res.json(games);
-  } catch (error) {
-    console.error('Error fetching games:', error);
-    res.status(500).json({ error: 'Failed to fetch games' });
-  }
-});
 
-// API: Get game by ID
-app.get('/api/games/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const game = await prisma.game.findUnique({
-      where: { id },
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      }
-    });
-    
-    if (!game) {
-      return res.status(404).json({ error: 'Game not found' });
-    }
-    
-    res.json(game);
-  } catch (error) {
-    console.error('Error fetching game:', error);
-    res.status(500).json({ error: 'Failed to fetch game' });
-  }
-});
 
-// API: Get cases (alias for games, used by game interface)
-app.get('/api/cases', async (req, res) => {
-  try {
-    const games = await prisma.game.findMany({
-      where: { isPublished: true },
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-    
-    // Transform games to case format
-    const cases = games.map(game => ({
-      id: game.id,
-      caseTitle: game.caseTitle,
-      theme: game.theme,
-      difficulty: game.difficulty,
-      villainName: game.villainName,
-      villainTitle: game.villainTitle,
-      villainImageUrl: game.villainImageUrl,
-      crimeSummary: game.crimeSummary,
-      turn4Clue: game.turn4Clue,
-      interestingFact: game.interestingFact,
-      locations: game.locations.map(loc => ({
-        position: loc.position,
-        name: loc.name,
-        country: loc.country,
-        latitude: loc.latitude,
-        longitude: loc.longitude,
-        timezoneOffset: loc.timezoneOffset,
-        images: {
-          turn1: loc.image1Url,
-          turn3: loc.image2Url,
-          turn5: loc.image3Url
-        }
-      }))
-    }));
-    
-    res.json(cases);
-  } catch (error) {
-    console.error('Error fetching cases:', error);
-    res.status(500).json({ error: 'Failed to fetch cases' });
-  }
-});
 
-// API: Update game
-app.put('/api/games/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-    
-    const game = await prisma.game.update({
-      where: { id },
-      data: {
-        isPublished: updateData.isPublished,
-        theme: updateData.theme,
-        difficulty: updateData.difficulty,
-        caseTitle: updateData.caseTitle,
-        villainName: updateData.villainName,
-        villainTitle: updateData.villainTitle,
-        villainImageUrl: updateData.villainImageUrl,
-        crimeSummary: updateData.crimeSummary,
-        turn4Clue: updateData.turn4Clue,
-        interestingFact: updateData.interestingFact,
-      },
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      }
-    });
-    
-    res.json(game);
-  } catch (error) {
-    console.error('Error updating game:', error);
-    res.status(500).json({ error: 'Failed to update game' });
-  }
-});
 
-// API: Delete game
-app.delete('/api/games/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    console.log('Attempting to delete game:', id);
-    
-    // Delete associated data first (due to foreign key constraints)
-    await prisma.location.deleteMany({
-      where: { gameId: id }
-    });
-    
-    await prisma.generation.deleteMany({
-      where: { gameId: id }
-    });
-    
-    await prisma.playerCase.deleteMany({
-      where: { gameId: id }
-    });
-    
-    // Delete the game
-    await prisma.game.delete({
-      where: { id }
-    });
-    
-    console.log('Successfully deleted game:', id);
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting game:', error);
-    res.status(500).json({ error: 'Failed to delete game', details: error.message });
-  }
-});
 
-// API: Publish game
-app.post('/api/games/:id/publish', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const game = await prisma.game.update({
-      where: { id },
-      data: { isPublished: true },
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      }
-    });
-    
-    res.json(game);
-  } catch (error) {
-    console.error('Error publishing game:', error);
-    res.status(500).json({ error: 'Failed to publish game' });
-  }
-});
 
-// API: Unpublish game
-app.post('/api/games/:id/unpublish', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const game = await prisma.game.update({
-      where: { id },
-      data: { isPublished: false },
-      include: {
-        locations: {
-          orderBy: { position: 'asc' }
-        }
-      }
-    });
-    
-    res.json(game);
-  } catch (error) {
-    console.error('Error unpublishing game:', error);
-    res.status(500).json({ error: 'Failed to unpublish game' });
-  }
-});
-
-// API: Start game generation
-app.post('/api/generate', async (req, res) => {
-  try {
-    const { theme, difficulty } = req.body;
-    const userInput = req.body.userInput || theme;
-    const specificLocations = req.body.specificLocations || null;
-    const autoGenerateVillain = req.body.autoGenerateVillain !== false;
-    const kidFriendly = req.body.kidFriendly || false;
-    const crimeType = req.body.crimeType || 'theft';
-    
-    const gameId = 'game_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    
-    // Create initial game record
-    const game = await prisma.game.create({
-      data: {
-        id: gameId,
-        theme: theme || 'MYSTERY',
-        phrase: 'Investigation in progress...',
-        category: 'Geography',
-        difficulty: difficulty || 'medium',
-        caseTitle: `Operation ${theme || 'Mystery'}`,
-        villainName: 'Unknown',
-        villainTitle: 'International Criminal',
-        crimeSummary: 'Details pending...',
-        turn4Clue: 'Investigation in progress...',
-        interestingFact: 'More information coming soon...',
-        isPublished: false
-      }
-    });
-    
-    // Create generation record
-    await prisma.generation.create({
-      data: {
-        gameId: gameId,
-        status: 'in_progress',
-        currentStep: 'Initializing',
-        completedSteps: 0,
-        totalSteps: 5
-      }
-    });
-    
-    res.json({ 
-      gameId: gameId,
-      message: 'Game generation started'
-    });
-    
-    // Start async generation with OpenAI integration
-    generateGameAsync(gameId, { userInput, specificLocations, difficulty, autoGenerateVillain, kidFriendly, crimeType }).catch(error => {
-      console.error('Game generation failed:', error);
-    });
-  } catch (error) {
-    console.error('Error starting game generation:', error);
-    res.status(500).json({ error: 'Failed to start game generation' });
-  }
-});
 
 // OpenAI-powered game generation
 async function generateGameAsync(gameId, context) {
@@ -1751,156 +1501,7 @@ async function updateGenerationProgress(gameId, step, completedSteps) {
   });
 }
 
-async function generateLocationImage(location, theme, turn, difficulty) {
-  const blurLevels = {
-    1: { blur: "heavy", description: "extremely blurred and abstract, barely recognizable" },
-    3: { blur: "medium", description: "partially clear with some identifiable features" },
-    5: { blur: "clear", description: "sharp and detailed" }
-  };
 
-  const landmarkIndex = Math.floor((turn - 1) / 2);
-  const landmark = location.landmarks[landmarkIndex];
-  const { blur, description } = blurLevels[turn];
-
-  let viewType, promptAdjustment;
-  
-  if (turn === 1) {
-    const obscureViews = [
-      "extreme close-up detail of architectural texture",
-      "shadow pattern cast by building",
-      "abstract architectural detail from unusual angle",
-      "blurred motion view from moving vehicle",
-      "silhouette against sky",
-      "reflection in water or glass",
-      "architectural pattern or geometric detail"
-    ];
-    viewType = obscureViews[Math.floor(Math.random() * obscureViews.length)];
-    promptAdjustment = "Make this image very challenging to identify - avoid showing iconic or recognizable features directly. Focus on textures, patterns, shadows, or abstract elements that hint at the location without making it obvious.";
-  } else if (turn === 3) {
-    viewType = "mid-distance view showing some context";
-    promptAdjustment = "Show more context but still maintain some mystery.";
-  } else if (turn === 5) {
-    viewType = difficulty === "easy" ? "clear tourist photo" : "clear identifying view";
-    promptAdjustment = "Show clear identifying features to confirm the location.";
-  }
-
-  const prompt = `${viewType} of ${landmark} in ${location.name}, ${location.country}. Style: travel photography, ${description}. ${promptAdjustment} The image should be appropriate for a geography puzzle game.`;
-
-  // Try to use OpenAI GPT-Image-1 if available
-  if (openai && process.env.OPENAI_API_KEY) {
-    try {
-      console.log(`🖼️ ${location.name} image ${turn}/3`);
-      
-      const response = await openai.images.generate({
-        model: "gpt-image-1",
-        prompt: prompt,
-        size: "1024x1024",
-        quality: "medium",
-        output_format: "png",
-        n: 1,
-      });
-      
-      // GPT-Image-1 returns base64, convert to data URL
-      const base64Data = response.data[0].b64_json;
-      const dataUrl = `data:image/png;base64,${base64Data}`;
-      
-      return {
-        url: dataUrl,
-        prompt,
-        blurLevel: blur,
-      };
-    } catch (error) {
-      console.error('GPT-Image-1 generation failed, using placeholder:', error);
-    }
-  }
-  
-  // Fallback: Use placeholder image service
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return {
-    url: `https://picsum.photos/1024/1024?random=${Date.now()}_${location.position}_${turn}`,
-    prompt,
-    blurLevel: blur,
-  };
-}
-
-async function generateVillainPortrait(villainName, villainTitle, theme, villainDetails = {}) {
-  // Use provided details or fall back to random generation
-  const clothing = villainDetails.villainClothingDescription || `theme-related clothing inspired by ${theme}`;
-  const age = villainDetails.villainAge || 'mid-40s';
-  const ethnicity = villainDetails.villainEthnicity || 'varied ethnicity';
-  const distinctiveFeature = villainDetails.villainDistinctiveFeature || 'confident expression';
-  
-  // Use provided gender or fall back to random assignment
-  let gender = villainDetails.villainGender;
-  if (!gender) {
-    const genders = ['male', 'female'];
-    gender = genders[Math.floor(Math.random() * genders.length)];
-  }
-  
-  const prompt = `Create a digital painting of a fictional ${gender} villain, shown from the chest up in a 3/4 view. 
-
-CHARACTER DETAILS:
-- Age: ${age}
-- Ethnicity: ${ethnicity}
-- Distinctive feature: ${distinctiveFeature}
-- Expression: confident and slightly mischievous
-
-CLOTHING AND STYLE:
-${clothing}
-
-ARTISTIC STYLE:
-The illustration should use soft brushstrokes, flat but textured color areas, and a lightly textured background. The overall look should resemble storybook illustrations or character art from a children's graphic novel. Use modern day clothing and fashion style.
-
-Use a muted, elegant color palette. Make sure the portrait feels like it belongs in a vintage gallery or an illustrated villain dossier.
-
-Style keywords: painterly, oil painting, storybook portrait, warm tone, museum-style, bust portrait.
-
-Do not include any text, labels, or logos.
-
-Villain info:
-Villain is named ${villainName}, known as "${villainTitle}"
-Theme: ${theme}`;
-
-  // Try to use OpenAI GPT-Image-1 if available
-  if (openai && process.env.OPENAI_API_KEY) {
-    try {
-      // Portrait generation logged in main flow
-      
-      const imageParams = {
-        model: "gpt-image-1",
-        prompt: prompt,
-        size: "1024x1024",
-        quality: "medium",
-        output_format: "png",
-        n: 1,
-      };
-      
-      const response = await openai.images.generate(imageParams);
-      
-      // GPT-Image-1 returns base64, convert to data URL
-      const base64Data = response.data[0].b64_json;
-      const dataUrl = `data:image/png;base64,${base64Data}`;
-      
-      return {
-        url: dataUrl,
-        prompt,
-      };
-    } catch (error) {
-      console.error('DALL-E generation failed, using placeholder:', error);
-    }
-  }
-  
-  // Fallback: Use UI Avatars service
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const colors = ['7F7FD5', 'E786D7', '86E7B8', 'FFD93D', 'FF6B6B', '4ECDC4'];
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  const initials = villainName.split(' ').map(word => word[0]).join('').slice(0, 2);
-  
-  return {
-    url: `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&size=512&background=${color}&color=fff&bold=true&rounded=true`,
-    prompt,
-  };
-}
 
 async function uploadImageToS3(imageUrl, gameId, locationPosition, turn) {
   // If S3 client is available, upload to S3
@@ -1958,38 +1559,12 @@ async function uploadImageToS3(imageUrl, gameId, locationPosition, turn) {
   return imageUrl;
 }
 
-// API: Generation status
-app.get('/api/generate/:id/status', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const generation = await prisma.generation.findFirst({
-      where: { gameId: id },
-      orderBy: { startedAt: 'desc' },
-    });
-
-    if (!generation) {
-      return res.status(404).json({ error: 'Generation not found' });
-    }
-
-    res.json({
-      gameId: id,
-      status: generation.status,
-      currentStep: generation.currentStep,
-      completedSteps: generation.completedSteps,
-      totalSteps: generation.totalSteps,
-      error: generation.error,
-    });
-  } catch (error) {
-    console.error('Error fetching generation status:', error);
-    res.status(500).json({ error: 'Failed to fetch generation status' });
-  }
-});
 
 // API: Debug endpoint
 app.get('/api/debug/test', async (req, res) => {
   try {
-    const games = await prisma.game.findMany();
-    const generations = await prisma.generation.findMany();
+    const games = await prisma.gameV2.findMany();
+    const generations = await prisma.generationV2.findMany();
     res.json({
       games: games.length,
       generations: generations.length,
@@ -2084,10 +1659,15 @@ app.post('/api/admin/clear-database', async (req, res) => {
     
     console.log('ADMIN DATABASE CLEANUP INITIATED by:', adminEmail);
     
-    // Clear all database tables
-    await prisma.location.deleteMany();
-    await prisma.game.deleteMany();
-    await prisma.generation.deleteMany();
+    // Clear all database tables (V2 models only)
+    await prisma.clue.deleteMany();
+    await prisma.gameplayTurn.deleteMany();
+    await prisma.finalLocationV2.deleteMany();
+    await prisma.locationV2.deleteMany();
+    await prisma.playerCaseV2.deleteMany();
+    await prisma.gameV2.deleteMany();
+    await prisma.generationV2.deleteMany();
+    await prisma.player.deleteMany();
     
     console.log('Database cleanup completed successfully');
     
