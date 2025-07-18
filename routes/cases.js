@@ -43,6 +43,69 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get random images for splash screen
+router.get('/splash-images', async (req, res) => {
+  try {
+    // Get 3 random published games with images
+    const games = await prisma.gameV2.findMany({
+      where: { 
+        isPublished: true,
+        villainImageUrl: { not: null }
+      },
+      include: {
+        locationsV2: {
+          where: {
+            imageUrl: { not: null }
+          },
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            position: true
+          }
+        }
+      },
+      orderBy: { publishedAt: 'desc' },
+      take: 10 // Get more to ensure variety
+    });
+    
+    // Randomly select 3 games
+    const shuffled = games.sort(() => 0.5 - Math.random());
+    const selectedGames = shuffled.slice(0, 3);
+    
+    // Extract villain and location images
+    const villains = [];
+    const locations = [];
+    
+    selectedGames.forEach(game => {
+      if (game.villainImageUrl) {
+        villains.push({
+          id: game.id,
+          imageUrl: game.villainImageUrl,
+          name: game.villainName
+        });
+      }
+      
+      // Get random location from this game
+      if (game.locationsV2.length > 0) {
+        const randomLoc = game.locationsV2[Math.floor(Math.random() * game.locationsV2.length)];
+        locations.push({
+          id: randomLoc.id,
+          imageUrl: randomLoc.imageUrl,
+          cityName: randomLoc.name
+        });
+      }
+    });
+    
+    res.json({ villains, locations });
+    
+  } catch (error) {
+    console.error('Splash images fetch error:', error);
+    // Return empty arrays on error (graceful fallback)
+    res.json({ villains: [], locations: [] });
+  }
+});
+
 // Submit game result (this will be mounted at /api/v2/games/:id/submit-result)
 router.post('/:id/submit-result', async (req, res) => {
   try {

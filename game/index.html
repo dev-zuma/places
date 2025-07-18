@@ -966,9 +966,305 @@
             border-color: var(--primary-teal);
             box-shadow: 0 0 0 2px rgba(26, 91, 91, 0.1);
         }
+
+        /* Splash Screen Styles */
+        .splash-container {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .splash-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 380px;
+            height: 80%;
+            max-height: 500px;
+            background: 
+                repeating-linear-gradient(transparent 0px, transparent 40px, rgba(139, 69, 19, 0.05) 40px, rgba(139, 69, 19, 0.05) 42px),
+                linear-gradient(to bottom, #F5E6D3 0%, #E8D4B8 100%);
+            border: 3px solid var(--primary-orange);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .splash-images {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .splash-polaroid {
+            position: absolute;
+            background: white;
+            padding: 8px 8px 32px 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform-origin: center;
+            opacity: 0;
+            animation: slideInPolaroid 0.6s ease forwards;
+        }
+
+        @keyframes slideInPolaroid {
+            from {
+                opacity: 0;
+                transform: translate(var(--start-x), var(--start-y)) rotate(var(--rotation));
+            }
+            to {
+                opacity: 1;
+                transform: translate(0, 0) rotate(var(--rotation));
+            }
+        }
+
+        .splash-polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .splash-polaroid::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cc6633"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><circle cx="12" cy="12" r="5"/></svg>') center/contain no-repeat;
+        }
+
+        .splash-villain {
+            width: 120px;
+            height: 120px;
+        }
+
+        .splash-location {
+            width: 160px;
+            height: 120px;
+        }
+
+        .splash-text {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .splash-line {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-black);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 12px 0;
+            opacity: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .splash-line.typing {
+            opacity: 1;
+            animation: typewriter 1.2s steps(30) forwards;
+        }
+
+        .splash-logo {
+            position: absolute;
+            bottom: 40px;
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .splash-logo.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .splash-skip {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .splash-skip.show {
+            opacity: 1;
+        }
+
+        .splash-skip:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .splash-container {
+                width: 100%;
+                max-width: 100vw;
+                padding: 0 10px;
+            }
+
+            .splash-background {
+                width: 95%;
+                max-width: 100%;
+                height: 85%;
+            }
+
+            .splash-villain {
+                width: 70px;
+                height: 70px;
+            }
+
+            .splash-location {
+                width: 100px;
+                height: 75px;
+            }
+
+            .splash-line {
+                font-size: 16px;
+                margin: 8px 0;
+            }
+
+            .splash-logo {
+                width: 70px;
+                height: 70px;
+                bottom: 30px;
+            }
+
+            .splash-skip {
+                top: 15px;
+                right: 15px;
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .splash-container {
+                max-width: 420px;
+                padding: 0 5px;
+            }
+
+            .splash-background {
+                width: 98%;
+                height: 90%;
+            }
+
+            .splash-villain {
+                width: 60px;
+                height: 60px;
+            }
+
+            .splash-location {
+                width: 80px;
+                height: 60px;
+            }
+
+            .splash-line {
+                font-size: 14px;
+                margin: 6px 0;
+            }
+
+            .splash-logo {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+            }
+        }
+
+        /* Red string animation */
+        .splash-string {
+            position: absolute;
+            height: 2px;
+            background: #cc0000;
+            transform-origin: left center;
+            opacity: 0;
+            animation: drawString 0.3s ease forwards;
+        }
+
+        @keyframes drawString {
+            from {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            to {
+                opacity: 0.6;
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes pulseImage {
+            0%, 100% { transform: scale(1) rotate(var(--rotation)); }
+            50% { transform: scale(1.05) rotate(var(--rotation)); }
+        }
+
+        .splash-polaroid.pulse {
+            animation: pulseImage 0.5s ease;
+        }
     </style>
 </head>
 <body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-container" style="display: none;">
+        <div class="splash-background"></div>
+        <div class="splash-content">
+            <div class="splash-images" id="splashImages"></div>
+            <div class="splash-text">
+                <p class="splash-line" id="line1">Investigate Crime Scenes</p>
+                <p class="splash-line" id="line2">Track the Suspect</p>
+                <p class="splash-line" id="line3">Capture the Villain</p>
+            </div>
+            <img class="splash-logo" id="splashLogo" src="/game/wwc-logo.png" alt="Worldwide Chase">
+        </div>
+        <button class="splash-skip" id="splashSkip" onclick="skipSplash()">Skip →</button>
+    </div>
+
     <div class="gallery-container">
         <!-- Header -->
         <div class="header">
@@ -1172,20 +1468,10 @@
         let currentTab = 'unsolved'; // Track current gallery tab
         let currentDifficulty = 'all'; // Track current difficulty filter
 
-        // Load cases on page load
+        // Load cases on page load (moved to initializeApp function for splash screen integration)
         document.addEventListener('DOMContentLoaded', async () => {
-            await initializeGoogleSignIn();
-            await checkUserAuth();
-            await loadCases();
-            
-            // Initialize difficulty filter visibility and counts
-            const filterContainer = document.getElementById('difficultyFilterContainer');
-            if (filterContainer) {
-                filterContainer.style.display = currentTab === 'unsolved' ? 'flex' : 'none';
-                if (currentTab === 'unsolved') {
-                    updateDifficultyCounts();
-                }
-            }
+            // This now only handles the splash screen initialization
+            // Main app initialization moved to initializeApp function
         });
 
         // Initialize Google Sign-In
@@ -1912,6 +2198,292 @@
                 <p>${message}</p>
             `;
             emptyState.style.display = 'block';
+        }
+
+        // Splash Screen Functions
+        let splashData = null;
+        let splashTimeout = null;
+
+        async function showSplashScreen() {
+            // Check if splash was already shown in this session
+            if (sessionStorage.getItem('splashShown') === 'true') {
+                return;
+            }
+
+            try {
+                // Fetch splash images
+                const response = await fetch('/api/v2/cases/splash-images');
+                splashData = await response.json();
+                
+                // Show splash screen
+                const splashScreen = document.getElementById('splashScreen');
+                splashScreen.style.display = 'flex';
+                
+                // Animate splash sequence
+                await animateSplashSequence();
+                
+                // Mark splash as shown
+                sessionStorage.setItem('splashShown', 'true');
+                
+            } catch (error) {
+                console.error('Splash screen error:', error);
+                // Show splash without images on error
+                const splashScreen = document.getElementById('splashScreen');
+                splashScreen.style.display = 'flex';
+                await animateSplashSequence();
+                sessionStorage.setItem('splashShown', 'true');
+            }
+        }
+
+        function createPolaroid(imageData, type, position) {
+            const polaroid = document.createElement('div');
+            polaroid.className = `splash-polaroid splash-${type}`;
+            
+            // Random rotation between -3 and 3 degrees (reduced for mobile)
+            const rotation = (Math.random() - 0.5) * 6;
+            
+            // Position-based placement - adjusted for mobile width
+            let x, y;
+            switch (position) {
+                case 0: x = '25%'; y = '25%'; break;  // Top left
+                case 1: x = '75%'; y = '20%'; break;  // Top right
+                case 2: x = '20%'; y = '65%'; break;  // Bottom left
+                case 3: x = '70%'; y = '70%'; break;  // Bottom right
+                case 4: x = '50%'; y = '45%'; break;  // Center
+                case 5: x = '85%'; y = '50%'; break;  // Right center
+                default: x = '50%'; y = '50%';
+            }
+            
+            // Ensure images stay within bounds
+            const maxX = type === 'villain' ? 85 : 80; // Smaller max for locations (wider)
+            const minX = type === 'villain' ? 15 : 20;
+            const xNum = parseInt(x);
+            const finalX = Math.max(minX, Math.min(maxX, xNum));
+            
+            polaroid.style.cssText = `
+                left: ${finalX}%;
+                top: ${y};
+                transform: translate(-50%, -50%) rotate(${rotation}deg);
+                --rotation: ${rotation}deg;
+                --start-x: ${(Math.random() - 0.5) * 150}px;
+                --start-y: ${(Math.random() - 0.5) * 150}px;
+                animation-delay: ${position * 0.3}s;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageData.imageUrl;
+            img.alt = type === 'villain' ? imageData.name : imageData.cityName;
+            img.onerror = () => {
+                // Fallback for broken images
+                if (type === 'villain') {
+                    img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(imageData.name?.charAt(0) || 'V')}&size=120&background=7c2d12&color=fff&bold=true`;
+                } else {
+                    img.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(imageData.cityName?.charAt(0) || 'C')}&size=160&background=1a5b5b&color=fff&bold=true`;
+                }
+            };
+            
+            polaroid.appendChild(img);
+            return polaroid;
+        }
+
+        async function animateSplashSequence() {
+            const splashImages = document.getElementById('splashImages');
+            const skipButton = document.getElementById('splashSkip');
+            
+            // Show skip button after 1.5 seconds
+            setTimeout(() => {
+                skipButton.classList.add('show');
+            }, 1500);
+            
+            // Phase 1: Background (0-0.8s)
+            await sleep(800);
+            
+            // Phase 2: Investigation (0.8-2.3s)
+            await typewriterEffect('line1', 'Investigate Crime Scenes');
+            
+            // Add location images
+            if (splashData && splashData.locations) {
+                splashData.locations.forEach((location, index) => {
+                    const polaroid = createPolaroid(location, 'location', index);
+                    splashImages.appendChild(polaroid);
+                });
+            }
+            
+            await sleep(700);
+            
+            // Phase 3: Tracking (2.3-3.8s)
+            await typewriterEffect('line2', 'Track the Suspect');
+            
+            // Add villain images
+            if (splashData && splashData.villains) {
+                splashData.villains.forEach((villain, index) => {
+                    const polaroid = createPolaroid(villain, 'villain', index + 3);
+                    splashImages.appendChild(polaroid);
+                });
+            }
+            
+            // Brief red string animation
+            setTimeout(() => {
+                drawRedStrings();
+            }, 400);
+            
+            await sleep(700);
+            
+            // Phase 4: Capture (3.8-5.3s)
+            await typewriterEffect('line3', 'Capture the Villain');
+            
+            // Pulse all images
+            const polaroids = document.querySelectorAll('.splash-polaroid');
+            polaroids.forEach(polaroid => {
+                polaroid.classList.add('pulse');
+            });
+            
+            // Show logo
+            const logo = document.getElementById('splashLogo');
+            logo.classList.add('show');
+            
+            await sleep(700);
+            
+            // Phase 5: Exit (5.3-6s)
+            await sleep(700);
+            removeSplashScreen();
+        }
+
+        function drawRedStrings() {
+            const splashImages = document.getElementById('splashImages');
+            const polaroids = document.querySelectorAll('.splash-polaroid');
+            
+            // Connect a few random polaroids with red strings
+            for (let i = 0; i < Math.min(3, polaroids.length - 1); i++) {
+                const string = document.createElement('div');
+                string.className = 'splash-string';
+                
+                const rect1 = polaroids[i].getBoundingClientRect();
+                const rect2 = polaroids[i + 1].getBoundingClientRect();
+                const containerRect = splashImages.getBoundingClientRect();
+                
+                const x1 = rect1.left + rect1.width / 2 - containerRect.left;
+                const y1 = rect1.top + rect1.height / 2 - containerRect.top;
+                const x2 = rect2.left + rect2.width / 2 - containerRect.left;
+                const y2 = rect2.top + rect2.height / 2 - containerRect.top;
+                
+                const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                
+                string.style.cssText = `
+                    left: ${x1}px;
+                    top: ${y1}px;
+                    width: ${length}px;
+                    transform: rotate(${angle}deg);
+                    animation-delay: ${i * 0.1}s;
+                `;
+                
+                splashImages.appendChild(string);
+                
+                // Remove string after animation
+                setTimeout(() => {
+                    if (string.parentNode) {
+                        string.parentNode.removeChild(string);
+                    }
+                }, 1000);
+            }
+        }
+
+        async function typewriterEffect(elementId, text) {
+            const element = document.getElementById(elementId);
+            element.textContent = text;
+            element.classList.add('typing');
+            
+            // Wait for typewriter animation to complete
+            await sleep(1000);
+            
+            // Fade previous lines
+            const lines = document.querySelectorAll('.splash-line');
+            lines.forEach((line, index) => {
+                if (line.id !== elementId) {
+                    line.style.opacity = '0.5';
+                }
+            });
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function skipSplash() {
+            removeSplashScreen();
+        }
+
+        function removeSplashScreen() {
+            const splashScreen = document.getElementById('splashScreen');
+            if (splashScreen) {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.remove();
+                }, 500);
+            }
+            
+            // Clear timeout if set
+            if (splashTimeout) {
+                clearTimeout(splashTimeout);
+            }
+        }
+
+        // Initialize splash screen when page loads
+        window.addEventListener('load', async () => {
+            // Show splash screen first
+            await showSplashScreen();
+            
+            // Then initialize the main app
+            await initializeApp();
+        });
+
+        // Main app initialization (existing code)
+        async function initializeApp() {
+            // Initialize Google Sign-In
+            await initializeGoogleSignIn();
+            
+            // Check user auth
+            await checkUserAuth();
+            
+            // Load cases
+            await loadCases();
+            
+            // Initialize difficulty filter visibility and counts
+            const filterContainer = document.getElementById('difficultyFilterContainer');
+            if (filterContainer) {
+                filterContainer.style.display = currentTab === 'unsolved' ? 'flex' : 'none';
+                if (currentTab === 'unsolved') {
+                    updateDifficultyCounts();
+                }
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    // Handle escape key for splash screen
+                    if (document.getElementById('splashScreen')) {
+                        skipSplash();
+                    }
+                }
+            });
+            
+            // Handle reduced motion preference
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                // Disable animations for users who prefer reduced motion
+                const style = document.createElement('style');
+                style.textContent = `
+                    .splash-polaroid { animation: none !important; }
+                    .splash-line { animation: none !important; }
+                    .splash-string { animation: none !important; }
+                `;
+                document.head.appendChild(style);
+            }
         }
     </script>
 </body>
