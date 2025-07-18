@@ -179,6 +179,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
         }
 
         .game-card:hover {
@@ -186,8 +187,37 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
+        .villain-thumbnail {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            background: #f8f9fa;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .villain-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .villain-thumbnail.no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
         .game-header {
             padding: 15px;
+            padding-right: 90px; /* Make room for villain thumbnail */
             border-bottom: 1px solid #eee;
         }
 
@@ -476,6 +506,15 @@
 
             return `
                 <div class="game-card">
+                    ${game.villainImageUrl ? `
+                        <div class="villain-thumbnail">
+                            <img src="${game.villainImageUrl}" alt="${game.villainName || 'Villain'}" />
+                        </div>
+                    ` : `
+                        <div class="villain-thumbnail no-image">
+                            🦹‍♂️
+                        </div>
+                    `}
                     <div class="game-header">
                         <div class="game-title">${game.caseTitle || 'Untitled Game'}</div>
                         <div class="game-theme">${game.theme || 'Unknown Theme'}${game.phrase ? ' • ' + game.phrase : ''}</div>
