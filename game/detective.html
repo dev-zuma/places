@@ -276,6 +276,14 @@
             font-weight: bold;
         }
 
+        .phrase-letter-input.turn7-hint {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .phrase-letter-input.correct {
             background: #d4edda;
             border-color: #28a745;
@@ -732,7 +740,7 @@
                     <div class="game-area">
                         <!-- Description -->
                         <div class="tab-description" id="crimeSceneDescription">
-                            <p>Enter location names based on evidence. Check Investigation Journal for clues and photos.</p>
+                            <p>Enter city names based on evidence. Check Investigation Journal for clues and photos.</p>
                         </div>
                         
                         <!-- Final Location Instructions (hidden initially) -->
@@ -798,7 +806,7 @@
                                             </div>
                                             <div class="legend-item">
                                                 <div class="legend-color location"></div>
-                                                <span>Location Name</span>
+                                                <span>City Name</span>
                                             </div>
                                         </div>
                                         
@@ -1167,6 +1175,22 @@
             const value = input.value.toUpperCase();
             
             if (value.length === 1) {
+                // Validate that the letter is available in remaining letters
+                if (!puzzleState.remainingLetters.includes(value)) {
+                    // Invalid letter - clear the input and show feedback
+                    input.value = '';
+                    input.classList.remove('filled');
+                    
+                    // Brief red flash to indicate invalid input
+                    input.style.borderColor = '#dc3545';
+                    setTimeout(() => {
+                        input.style.borderColor = '';
+                    }, 500);
+                    
+                    console.log(`Invalid letter "${value}" - not available in remaining letters`);
+                    return;
+                }
+                
                 input.classList.add('filled');
                 input.value = value;
                 
@@ -1866,23 +1890,101 @@
                 
             } else {
                 // Wrong answer - let the main submitEvidence function handle turn progression
-                // Clear incorrect inputs (except hints)
-                const letterInputs = document.querySelectorAll('.phrase-letter-input:not(.hint-letter)');
-                letterInputs.forEach(input => {
+                // If we're in Turn 6 and about to advance to Turn 7, preserve correctly placed letters
+                if (currentTurn === 6) {
+                    preserveCorrectLettersForTurn7();
+                } else {
+                    // Turn 7 - clear all incorrect inputs (except hints)
+                    const letterInputs = document.querySelectorAll('.phrase-letter-input:not(.hint-letter)');
+                    letterInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+                    
+                    // Recalculate remaining letters to match exactly what's missing
+                    recalculateRemainingLetters();
+                }
+            }
+        }
+
+        // Recalculate remaining letters to match exactly what's missing from input boxes
+        function recalculateRemainingLetters() {
+            const allInputs = document.querySelectorAll('.phrase-letter-input');
+            const expectedPhrase = puzzleState.phrase.toUpperCase();
+            const expectedLetters = expectedPhrase.replace(/[^A-Z]/g, '').split('');
+            
+            // Calculate what letters are still needed
+            const neededLetters = [];
+            
+            allInputs.forEach((input, index) => {
+                if (index < expectedLetters.length) {
+                    const expectedLetter = expectedLetters[index];
+                    if (!input.value && expectedLetter) {
+                        neededLetters.push(expectedLetter);
+                    }
+                }
+            });
+            
+            // Update puzzle state
+            puzzleState.remainingLetters = [...neededLetters];
+            
+            // Update used letters to include only currently filled letters
+            const currentlyUsedLetters = [];
+            allInputs.forEach(input => {
+                if (input.value) {
+                    currentlyUsedLetters.push(input.value.toUpperCase());
+                }
+            });
+            
+            puzzleState.usedLetters = [...currentlyUsedLetters];
+            
+            // Shuffle remaining letters for display
+            puzzleState.remainingLetters = shuffleArray([...puzzleState.remainingLetters]);
+            
+            // Update the display
+            displayLetterCards();
+            
+            console.log('Recalculated remaining letters:', puzzleState.remainingLetters);
+            console.log('Current used letters:', puzzleState.usedLetters);
+        }
+
+        // Preserve correctly placed letters when advancing from Turn 6 to Turn 7
+        function preserveCorrectLettersForTurn7() {
+            const letterInputs = document.querySelectorAll('.phrase-letter-input');
+            const expectedPhrase = puzzleState.phrase.toUpperCase();
+            const expectedLetters = expectedPhrase.replace(/[^A-Z]/g, '').split('');
+            
+            letterInputs.forEach((input, index) => {
+                const userLetter = input.value.toUpperCase();
+                const expectedLetter = expectedLetters[index];
+                
+                if (userLetter && userLetter === expectedLetter) {
+                    // This letter is correct - keep it and mark as hint
+                    if (!input.classList.contains('hint-letter')) {
+                        input.classList.add('hint-letter');
+                        input.classList.add('turn7-hint'); // Special class for Turn 7 hints
+                        input.readOnly = true;
+                        
+                        // Add to hint letters if not already there
+                        if (!puzzleState.hintLetters.includes(userLetter)) {
+                            puzzleState.hintLetters.push(userLetter);
+                        }
+                        
+                        console.log(`Preserving correct letter "${userLetter}" at position ${index}`);
+                    }
+                } else if (userLetter) {
+                    // This letter is incorrect - clear it
                     input.value = '';
                     input.classList.remove('filled');
-                });
-                
-                // Reset letter cards to available state but keep hint letters as used
-                const nonHintUsedLetters = puzzleState.usedLetters.filter(letter => 
-                    !puzzleState.hintLetters.includes(letter)
-                );
-                nonHintUsedLetters.forEach(letter => {
-                    puzzleState.remainingLetters.push(letter);
-                });
-                puzzleState.usedLetters = [...puzzleState.hintLetters]; // Keep hint letters as used
-                displayLetterCards();
-            }
+                    
+                    console.log(`Clearing incorrect letter "${userLetter}" at position ${index}, expected "${expectedLetter}"`);
+                }
+            });
+            
+            // Recalculate remaining letters to match exactly what's missing
+            recalculateRemainingLetters();
+            
+            console.log(`Turn 7 hint: Preserved ${puzzleState.hintLetters.length} correct letters`);
         }
 
 
@@ -2133,6 +2235,9 @@
                 
                 // Add category hint to Final Challenge box if it exists
                 addCategoryHintToFinalChallenge();
+                
+                // Recalculate remaining letters to match exactly what's missing
+                recalculateRemainingLetters();
                 
                 // Show flag colors hint in Turn 6
                 const flagColorsHint = document.getElementById('flagColorsHint');
