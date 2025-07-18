@@ -387,6 +387,41 @@
             line-height: 1.5;
             opacity: 0.95;
         }
+
+        .category-hint-display {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .category-hint-header {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+
+        .category-hint-value {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .category-hint-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
         
         /* Flag Colors Styling */
         .evidence-content.flag-colors {
@@ -1616,13 +1651,6 @@
                         updateV2TurnDisplay();
                         updateActionButton();
                         
-                        // Show category hint
-                        const categoryHint = document.getElementById('categoryHint');
-                        if (categoryHint && currentCase.finalLocationV2.categoryHint) {
-                            categoryHint.innerHTML = `<strong>Hint:</strong> ${currentCase.finalLocationV2.categoryHint}`;
-                            categoryHint.style.display = 'block';
-                        }
-                        
                         // Show flag colors hint
                         const flagColorsHint = document.getElementById('flagColorsHint');
                         if (flagColorsHint && currentCase.finalLocationV2.flagColors) {
@@ -1764,17 +1792,6 @@
             }
         }
 
-        // Show category hint for Turn 7
-        function showCategoryHint() {
-            if (!currentCase.finalLocationV2.categoryHint) return;
-            
-            const categoryHint = document.getElementById('categoryHint');
-            categoryHint.innerHTML = `<strong>💡 Hint:</strong> ${currentCase.finalLocationV2.categoryHint}`;
-            categoryHint.style.display = 'block';
-            
-            // Also show flag colors hint in Turn 7
-            showFlagColorsHint();
-        }
 
         // Show flag colors hint in Turn 7
         function showFlagColorsHint() {
@@ -1917,6 +1934,38 @@
             });
         }
 
+        // Helper function to add category hint to Final Challenge box
+        function addCategoryHintToFinalChallenge() {
+            const puzzleInstructions = document.querySelector('.puzzle-instructions');
+            console.log('Debug: addCategoryHintToFinalChallenge called, currentTurn:', currentTurn);
+            console.log('Debug: puzzleInstructions found:', !!puzzleInstructions);
+            console.log('Debug: finalLocationV2 exists:', !!currentCase.finalLocationV2);
+            console.log('Debug: categoryHint exists:', currentCase.finalLocationV2 ? !!currentCase.finalLocationV2.categoryHint : false);
+            console.log('Debug: categoryHint value:', currentCase.finalLocationV2 ? currentCase.finalLocationV2.categoryHint : 'none');
+            
+            if (puzzleInstructions && currentTurn >= 6 && currentCase.finalLocationV2 && currentCase.finalLocationV2.categoryHint) {
+                // Check if category hint already exists to avoid duplicates
+                if (!puzzleInstructions.querySelector('.category-hint-display')) {
+                    console.log('Debug: Adding category hint to Final Challenge box');
+                    const categoryHintDiv = document.createElement('div');
+                    categoryHintDiv.className = 'category-hint-display';
+                    categoryHintDiv.innerHTML = `
+                        <div class="category-hint-header">💡 Hint:</div>
+                        <div class="category-hint-value">${currentCase.finalLocationV2.categoryHint}</div>
+                        <div class="category-hint-description">This hint reveals what the phrase is about.</div>
+                    `;
+                    puzzleInstructions.appendChild(categoryHintDiv);
+                    return true;
+                } else {
+                    console.log('Debug: Category hint already exists, skipping');
+                    return false;
+                }
+            } else {
+                console.log('Debug: Category hint not added - conditions not met');
+                return false;
+            }
+        }
+
         function unlockFinalLocationPhase() {
             gameState = 'crimes_solved';
             
@@ -1946,6 +1995,9 @@
             // Hide crime scene description and show final location instructions
             document.getElementById('crimeSceneDescription').classList.add('hidden');
             document.getElementById('finalLocationInstructions').classList.remove('hidden');
+            
+            // Add category hint to Final Challenge box if we're in Turn 6 or later
+            addCategoryHintToFinalChallenge();
             
             // Generate final location letter boxes
             generateFinalLocationInput();
@@ -1992,6 +2044,9 @@
                 // Just update the turn display and action button
                 updateV2TurnDisplay();
                 updateActionButton();
+                
+                // Add category hint to Final Challenge box if it exists
+                addCategoryHintToFinalChallenge();
             }, 1000);
         }
 
@@ -3665,33 +3720,28 @@
             <div class="help-content">
                 <div class="help-section">
                     <h3>🔍 Your Mission</h3>
-                    <p>Track a criminal across the globe using detective skills and geographic clues. This enhanced case format requires identifying <strong>3 crime scene locations + 1 final hideout location</strong> where the suspect was captured.</p>
+                    <p>Track a criminal across the globe. Identify <strong>3 crime scene locations + 1 final hideout</strong> to capture the suspect.</p>
                 </div>
 
                 <div class="help-section">
-                    <h3>🎲 Investigation Process</h3>
-                    <p><strong>Turns 1-5:</strong> Identify 3 crime scene locations</p>
-                    <p><strong>Turns 6-7:</strong> Deduce the final hideout to capture the suspect</p>
-                    <p><strong>Available Clues:</strong> Pattern recognition puzzles, evidence photos, geographic distances, timezone differences, thematic connections, and breakthrough discoveries. Clues vary by turn and difficulty.</p>
+                    <h3>🎲 How It Works</h3>
+                    <p><strong>Turns 1-5:</strong> Use clues, photos, and geographic data to identify the 3 crime scene locations</p>
+                    <p><strong>Turns 6-7:</strong> Deduce the final hideout location to capture the suspect</p>
                 </div>
 
                 <div class="help-section">
-                    <h3>🕵️ Detective Tools & Tips</h3>
+                    <h3>🕵️ Detective Tools</h3>
                     <ul>
-                        <li><strong>Investigation Journal:</strong> Timeline & Locations views</li>
+                        <li><strong>Investigation Journal:</strong> Organize evidence by timeline or location</li>
+                        <li><strong>Evidence Photos:</strong> Click images for full-size examination</li>
                         <li><strong>Check Answers:</strong> Submit guesses and track progress</li>
-                        <li><strong>Evidence Photos:</strong> Click to examine full-size</li>
-                        <li><strong>Timer:</strong> 5 minutes for maximum score</li>
-                        <li><strong>Pattern Puzzles:</strong> Solve emoji sequences for location hints</li>
-                        <li><strong>Geographic Clues:</strong> Look for specific features</li>
                     </ul>
                 </div>
 
                 <div class="help-section">
-                    <h3>📊 Scoring & Leaderboard</h3>
-                    <p><strong>Weighted Scoring:</strong> Easy (1x), Medium (1.25x), Hard (1.75x) multipliers reward challenge level.</p>
-                    <p><strong>Performance Bonuses:</strong> +75 points for solving first 3 locations in ≤5 turns, +100 points for 6th turn final location.</p>
-                    <p><strong>Leaderboard:</strong> Compete across difficulty levels - Overall Champions, Easy Champions, Medium Masters, and Hard Heroes. Access via user menu when signed in.</p>
+                    <h3>🏆 Leaderboard</h3>
+                    <p>Compete across difficulty levels. Score based on locations identified, difficulty, and time.</p>
+                    <p>Sign in to access rankings and track your detective record.</p>
                 </div>
             </div>
         </div>

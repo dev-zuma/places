@@ -167,9 +167,10 @@ REQUIREMENTS:
 1. Educational phrase (4-5 words) that includes the city name
    - Must be educational, memorable, and factually accurate
    - Should highlight a distinctive feature, event, or characteristic of the city
-   - Examples: "Cherry blossoms bloom in Kyoto", "Running bulls through Pamplona", "Northern lights dance in Tromsø"
+   - Examples: "Cherry blossoms in Kyoto" (22 chars), "Bulls run through Pamplona" (25 chars), "Northern lights in Tromsø" (24 chars)
    - City name should be prominent and naturally integrated
    - Avoid generic phrases - use specific, distinctive features
+   - CRITICAL: Total phrase must be 25 characters or less (including spaces)
 
 2. Category hint (2-3 words maximum)
    - Broad category that helps identify the type of activity/feature
@@ -189,6 +190,7 @@ PHRASE REQUIREMENTS:
 - Should be specific enough that it couldn't apply to many other cities
 - Use proper grammar and natural phrasing
 - Appropriate for ages 10+ (elementary school level)
+- CRITICAL: Total phrase must be 25 characters or less (including spaces)
 
 Return JSON format:
 {
