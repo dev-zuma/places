@@ -5337,6 +5337,24 @@ body {
     margin: 10px 0;
 }
 
+/* Enhanced emoji pattern with descriptions */
+.evidence-content.pattern-recognition .emoji-pattern.enhanced {
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    padding-left: 20px;
+}
+
+/* Each emoji line in enhanced pattern */
+.evidence-content.pattern-recognition .emoji-pattern.enhanced .emoji-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+}
+
 /* Hover effect for pattern recognition */
 .evidence-content.pattern-recognition:hover {
     transform: scale(1.05);

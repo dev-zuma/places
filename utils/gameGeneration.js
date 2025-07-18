@@ -576,7 +576,7 @@ async function generateTurnCluesV2(gameData, calculatedDistances, calculatedTime
     const staticTurnInstructions = `Generate turn-by-turn clues for this 3+1 detective game. Create engaging narratives and varied clue types. Return response in JSON format.
 
 REQUIREMENTS:
-- Turn 1 MUST include: theme reveal + one clue about each country (currency, flag, geography, history, etc.)
+- Turn 1 MUST include: theme reveal + one pattern recognition clue for each city (using emoji sequences)
 - Turn 4 MUST include: ALL distance calculations between all 3 locations + ALL time differences between all 3 locations
 - Turns 2-3 and 5 MUST NOT include any distance or timezone/time difference clues
 - Turn 5 MUST focus exclusively on the 3 crime scene locations - NO hints about a 4th location
@@ -659,18 +659,20 @@ CLUE DISTRIBUTION RULES:
 
 TURN 1 SPECIFIC REQUIREMENTS:
 - MUST include theme clue
-- MUST include 3 pattern recognition clues using emoji sequences
-- Each pattern uses 3-4 emojis that represent the city's most iconic features
-- Pattern clues should be challenging but solvable with logical thinking
+- MUST include 3 pattern recognition clues using emoji sequences with descriptive terms
+- Each pattern uses EXACTLY 2 emojis that represent the city's lesser-known cultural features
+- One emoji MUST be a specific local food, the other MUST be a unique cultural symbol
+- Each emoji MUST have 1-2 word description after it
+- Pattern clues should be challenging but solvable with cultural knowledge
 - Examples:
-  * "🌊🌉🎭" = Venice (water, bridges, carnival masks)
-  * "🗼🥐🎨" = Paris (Eiffel Tower, croissants, art)
-  * "🗽🍕🚕" = New York (Statue of Liberty, pizza, yellow cabs)
-  * "🌸🗾⛩️" = Tokyo (cherry blossoms, Japan island, shrine gates)
-  * "🏛️🫒🌊" = Athens (ancient temples, olives, Mediterranean)
-- Create patterns that are distinctive but require cultural knowledge
-- Avoid overly obvious patterns that AI can instantly solve
-- Format: Present as "Pattern found at location X: [emojis]"
+  * "🐉 Wawel Dragon 🥟 Pierogi" = Krakow (dragon legend + Polish dumplings)
+  * "🛺 Tuk-tuk 🍜 Tom Yum" = Bangkok (iconic transport + Thai soup)
+  * "⚪ White Tower 🥙 Gyros" = Thessaloniki (Byzantine tower + Greek food)
+  * "🏺 Azulejos 🍷 Port Wine" = Porto (ceramic tiles + fortified wine)
+  * "🏁 Paris-Dakar 🍛 Thieboudienne" = Dakar (rally finish + Senegalese dish)
+- Focus on lesser-known cultural symbols specific to that city
+- Avoid generic symbols (🏢 for buildings, 🌊 for any coastal city)
+- Format: Present ONLY the pattern without any prefix, just "[emoji] [description] [emoji] [description]"
 
 TURN 4 SPECIFIC REQUIREMENTS:
 - MUST include 3 distance clues: Location 1↔2, Location 1↔3, Location 2↔3

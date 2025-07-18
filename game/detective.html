@@ -2605,10 +2605,12 @@
                 case 'pattern_recognition':
                     html += `<div class="evidence-type">🧩 Pattern Recognition</div>`;
                     
-                    // Parse the content to separate label from emojis
+                    // Parse the content - check for old format with colon or new enhanced format
                     const content = clue.content || '';
                     const colonIndex = content.indexOf(':');
+                    
                     if (colonIndex !== -1) {
+                        // Old format: "Pattern found at location X: 🌊🌉🎭"
                         const label = content.substring(0, colonIndex + 1);
                         const emojiPattern = content.substring(colonIndex + 1).trim();
                         html += `<div class="evidence-content pattern-recognition">
@@ -2616,10 +2618,36 @@
                             <div class="emoji-pattern">${emojiPattern}</div>
                         </div>`;
                     } else {
-                        // Fallback if no colon found
-                        html += `<div class="evidence-content pattern-recognition">
-                            <div class="emoji-pattern">${content}</div>
-                        </div>`;
+                        // New enhanced format: "🐉 Wawel Dragon 🥟 Pierogi"
+                        // Split into two lines for better readability
+                        const parts = content.split(' ');
+                        if (parts.length >= 4) {
+                            // Find the midpoint - after the first emoji and its description
+                            let midpoint = 2;
+                            // Look for the second emoji (it will be after at least 2 parts)
+                            for (let i = 2; i < parts.length; i++) {
+                                // Check if this part starts with an emoji
+                                if (/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(parts[i])) {
+                                    midpoint = i;
+                                    break;
+                                }
+                            }
+                            
+                            const line1 = parts.slice(0, midpoint).join(' ');
+                            const line2 = parts.slice(midpoint).join(' ');
+                            
+                            html += `<div class="evidence-content pattern-recognition">
+                                <div class="emoji-pattern enhanced">
+                                    <div class="emoji-line">${line1}</div>
+                                    <div class="emoji-line">${line2}</div>
+                                </div>
+                            </div>`;
+                        } else {
+                            // Fallback for unexpected format
+                            html += `<div class="evidence-content pattern-recognition">
+                                <div class="emoji-pattern enhanced">${content}</div>
+                            </div>`;
+                        }
                     }
                     break;
                 
