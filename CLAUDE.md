@@ -339,6 +339,46 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_key
 
 ## Recent Updates
 
+### New Scoring System Implementation (2025-07-18)
+- **Complete Scoring Overhaul**: Replaced turn-based scoring with fixed achievement-based system
+  - **6 turns completion**: 2000 points base score
+  - **7 turns completion**: 1500 points base score
+  - **3 locations only**: 1000 points base score
+  - **2 locations**: 500 points base score
+  - **1 location**: 250 points base score
+- **Difficulty Bonuses**: Additional points based on game difficulty
+  - **Easy**: No bonus
+  - **Medium**: +250 points
+  - **Hard**: +500 points
+- **Time Bonus**: +250 points for completing under 5 minutes
+- **Score Display**: Detailed breakdown showing base score, difficulty bonus, and time bonus
+- **Leaderboard Update**: Simplified to use frontend-calculated scores directly
+- **Modal UI Improvements**: More compact display with smaller fonts for score breakdown
+
+### Enhanced Villain Diversity System (2025-07-18)
+- **Unix Timestamp-Based Race Selection**: Replaced AI random selection with deterministic timestamp approach
+  - Uses `Date.now() % 10` to map last digit to racial groups
+  - Ensures true randomness across 8 racial categories
+  - Eliminates AI bias toward first-listed options
+- **Pre-Selected Race System**: Race now determined before OpenAI call
+  - Server selects race using timestamp
+  - OpenAI receives pre-selected race and chooses appropriate ethnicity
+  - Prevents AI from defaulting to any single racial group
+- **Balanced Distribution**: Each racial group has ~12.5% probability
+  - 0: White, 1: Asian, 2: Hispanic/Latino, 3: Native American
+  - 4: Pacific Islander, 5: Mixed Race, 6: White, 7: Black
+  - 8: Middle Eastern, 9: Mixed Race
+- **Console Logging**: Shows timestamp, digit, and selected race for debugging
+
+### Bug Fixes (2025-07-18)
+- **Turn 6 Access Control**: Fixed JavaScript syntax error in `checkCrimeSceneAnswers()`
+  - Removed duplicate `else` statement causing function failure
+  - Now properly requires ALL 3 crime scenes correct before Turn 6 access
+  - Added comprehensive debugging for location checking
+- **Modal Improvements**: "Start New Case" button moved inside endgame modal
+  - Removed separate actions section for cleaner UI
+  - Maintains single-button simplicity
+
 ### City Name Normalization System (2025-07-16)
 - **Special Character Support**: Implemented comprehensive city name normalization for international cities
   - **Accent Removal**: Automatically converts accented characters (á, é, í, ó, ú → a, e, i, o, u)

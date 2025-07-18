@@ -43,6 +43,407 @@
             transition: transform 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
+        /* 4th Location Puzzle Styling */
+        .puzzle-interface {
+            background: #f9f7f1;
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .available-letters-section {
+            margin-bottom: 25px;
+        }
+
+        .letters-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border-radius: 8px;
+        }
+
+        .letters-section-header h4 {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .remaining-letters-container, .used-letters-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .used-letters-container {
+            background: #f1f3f4;
+            border-color: #ced4da;
+        }
+
+        .section-label {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            min-height: 40px;
+            padding: 6px;
+        }
+
+        .letter-card {
+            background: #ffffff;
+            border: 2px solid #6c757d;
+            border-radius: 5px;
+            padding: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            color: #2c2c2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-align: center;
+            min-height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+        }
+
+        .letter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-color: #495057;
+        }
+
+        .letter-card.used {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-color: #ced4da;
+        }
+
+        .letter-card.hint-letter {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+            font-weight: extra-bold;
+        }
+
+        .letter-card.used {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .letter-card.used.location-letter {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .shuffle-letters-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shuffle-letters-btn:hover {
+            background: #495057;
+            transform: rotate(180deg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .letter-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #495057;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid;
+        }
+
+        .legend-color.used {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .legend-color.location {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+        }
+
+        .phrase-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .phrase-word-group {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .phrase-letter-input {
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .phrase-letter-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+        }
+
+        .phrase-letter-input.filled {
+            background: #e8f4fd;
+            border-color: #4a90e2;
+        }
+
+        .phrase-letter-input.hint-letter {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .phrase-letter-input.location-letter {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+            font-weight: bold;
+        }
+
+        .phrase-letter-input.hint-letter:not(.location-letter) {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .phrase-letter-input.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .category-hint {
+            background: #fff9e6;
+            border: 2px solid #f5a623;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            color: #d68910;
+            font-weight: bold;
+        }
+
+        .category-hint strong {
+            color: #b8860b;
+        }
+
+        .flag-colors-hint {
+            background: #f0f8ff;
+            border: 2px solid #4a90e2;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            color: #2c5282;
+            font-size: 14px;
+        }
+
+        .flag-colors-hint strong {
+            color: #1a365d;
+        }
+
+        .flag-colors-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .flag-color-swatch {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .flag-color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        /* Final Location Instructions Styling */
+        .final-location-instructions {
+            margin-bottom: 20px;
+        }
+
+        .congratulations-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .congratulations-header h2 {
+            margin: 0 0 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .congratulations-header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .puzzle-instructions {
+            background: linear-gradient(135deg, #6f42c1 0%, #495057 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.3);
+        }
+
+        .puzzle-instructions h3 {
+            margin: 0 0 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .puzzle-instructions p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+        
+        /* Flag Colors Styling */
+        .evidence-content.flag-colors {
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.4;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 2px solid #6c757d;
+            margin: 10px 0;
+        }
+        
+        .flag-colors-label {
+            font-size: 16px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            color: #495057;
+            font-weight: 500;
+        }
+        
+        .flag-colors-display {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .flag-color-swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .flag-color-swatch:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .flag-colors-description {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        /* Hover effect for flag colors */
+        .evidence-content.flag-colors:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -155,7 +556,6 @@
                                     <option value="location1">🏙️ City 1</option>
                                     <option value="location2">🏙️ City 2</option>
                                     <option value="location3">🏙️ City 3</option>
-                                    <option value="final" id="finalOption" style="display: none;">🎯 Final Location</option>
                                 </select>
                             </div>
                         </div>
@@ -185,12 +585,6 @@
                                 <!-- City 3 clues will be populated here -->
                             </div>
                         </div>
-                        
-                        <div class="evidence-view hidden" id="finalView">
-                            <div class="final-evidence" id="finalEvidence">
-                                <!-- Final location clues will be populated here -->
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -198,8 +592,20 @@
                 <div class="tab-panel" id="answersPanel">
                     <div class="game-area">
                         <!-- Description -->
-                        <div class="tab-description">
+                        <div class="tab-description" id="crimeSceneDescription">
                             <p>Enter location names based on evidence. Check Investigation Journal for clues and photos.</p>
+                        </div>
+                        
+                        <!-- Final Location Instructions (hidden initially) -->
+                        <div class="final-location-instructions hidden" id="finalLocationInstructions">
+                            <div class="congratulations-header">
+                                <h2>🎉 Excellent Detective Work!</h2>
+                                <p>You've successfully identified all three crime scene locations. The suspect is cornered!</p>
+                            </div>
+                            <div class="puzzle-instructions">
+                                <h3>🧩 Final Challenge</h3>
+                                <p>Unscramble the letters below to reveal an educational phrase about the suspect's final location. Use the available letters to fill in the blanks and capture the criminal!</p>
+                            </div>
                         </div>
                         
                         <!-- Crime Scene Phase -->
@@ -211,12 +617,58 @@
 
                         <!-- Final Location Phase (hidden initially) -->
                         <div class="answer-phase hidden" id="finalLocationPhase">
-                            <div class="phase-unlock-message">
-                                <h3>🎯 Capture the Suspect!</h3>
-                                <p id="finalObjectiveDescription">The suspect's final location has been revealed. Check Investigation Journal for new clues.</p>
-                            </div>
                             <div class="final-location-container" id="finalLocationContainer">
-                                <!-- Final location letter boxes will be generated dynamically -->
+                                <div class="puzzle-interface">
+                                    <!-- Available Letters Section -->
+                                    <div class="available-letters-section">
+                                        <!-- Remaining Letters -->
+                                        <div class="remaining-letters-container">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                                <div class="section-label">Remaining Letters:</div>
+                                                <button class="shuffle-letters-btn" onclick="shuffleRemainingLetters()" title="Shuffle letters">🔄</button>
+                                            </div>
+                                            <div class="letters-grid" id="remainingLettersContainer">
+                                                <!-- Remaining letter cards will be generated here -->
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Used Letters -->
+                                        <div class="used-letters-container">
+                                            <div class="section-label">Used Letters:</div>
+                                            <div class="letters-grid" id="usedLettersContainer">
+                                                <!-- Used letter cards will be shown here -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Phrase Input Interface -->
+                                    <div class="phrase-input-section">
+                                        <p style="text-align: center; font-family: 'Courier New', monospace; color: #495057; margin: 15px 0 10px 0;">Complete the phrase below:</p>
+                                        <div class="phrase-input-container" id="phraseInputs">
+                                            <!-- Word-grouped input boxes will be generated here -->
+                                        </div>
+                                        <div class="letter-legend">
+                                            <div class="legend-item">
+                                                <div class="legend-color used"></div>
+                                                <span>Used Letters</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="legend-color location"></div>
+                                                <span>Location Name</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Turn 7 Category Hint -->
+                                        <div class="category-hint" id="categoryHint" style="display: none;">
+                                            <!-- Category hint will be shown here in Turn 7 -->
+                                        </div>
+                                        
+                                        <!-- Turn 7 Flag Colors Hint -->
+                                        <div class="flag-colors-hint" id="flagColorsHint" style="display: none;">
+                                            <!-- Flag colors will be shown here in Turn 7 -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -260,7 +712,7 @@
         let gameData = null;
         let currentTurn = 1;
         let activeTab = 'caseDetails';
-        let gameStartTime = null;
+        let gameStartTime = null; // Track when game started for time bonus
         let gameTimer = 0;
         let timerInterval = null;
         let cluesViewMode = 'timeline';
@@ -302,6 +754,14 @@
                     showError('V2 Game not found');
                     return;
                 }
+                
+                console.log('Loaded case data:');
+                console.log('  Locations:', currentCase.locationsV2.map(loc => ({
+                    position: loc.position,
+                    name: loc.name,
+                    id: loc.id
+                })));
+                console.log('  Final location:', currentCase.finalLocationV2?.name);
                 
                 initializeV2Game();
                 
@@ -391,36 +851,373 @@
             setupInputHandlers();
         }
 
+        // Enhanced puzzle state management
+        let puzzleState = {
+            phrase: '',
+            letterCounts: {}, // Track count of each letter type
+            remainingLetters: [], // Letters still available to use
+            usedLetters: [], // Letters that have been used
+            hintLetters: [], // Letters that are hints
+            locationLetters: [], // Letters that spell the location name
+            locationNameLetters: [], // Letters specifically used for location name
+            currentAttempt: 1
+        };
+
         function generateFinalLocationInput() {
-            const container = document.getElementById('finalLocationContainer');
-            container.innerHTML = '';
-            
             if (!currentCase.finalLocationV2) return;
             
             const finalLocation = currentCase.finalLocationV2;
-            const locationDiv = document.createElement('div');
-            locationDiv.className = 'simple-location-input';
-            locationDiv.id = 'finalPlace';
             
-            // Create letter boxes for the final location name
-            const words = finalLocation.name.split(' ');
-            const inputBoxesHTML = words.map(word => {
-                const boxes = word.split('').map(() => 
-                    '<input type="text" class="letter-box" value="" maxlength="1">'
-                ).join('');
-                return `<div class="word-group">${boxes}</div>`;
-            }).join('');
+            // Initialize puzzle with educational phrase
+            puzzleState.phrase = finalLocation.educationalPhrase || finalLocation.name;
             
-            locationDiv.innerHTML = `
-                <div class="input-container">
-                    ${inputBoxesHTML}
-                </div>
-            `;
+            // Count letters in the phrase
+            initializeLetterCounts();
             
-            container.appendChild(locationDiv);
+            // Create remaining letters based on letter counts
+            generateAvailableLetters();
             
-            // Add input event listeners for final location
-            setupInputHandlers();
+            // Identify location name letters for special coloring
+            identifyLocationLetters();
+            
+            // Create word-grouped input boxes for the phrase
+            createPhraseInputs();
+            
+            // Show initial hints based on difficulty
+            showDifficultyBasedHints();
+            
+            // Display the letter cards
+            displayLetterCards();
+        }
+
+        function initializeLetterCounts() {
+            puzzleState.letterCounts = {};
+            puzzleState.remainingLetters = [];
+            puzzleState.usedLetters = [];
+            puzzleState.hintLetters = [];
+            puzzleState.locationNameLetters = [];
+            
+            // Count each letter in the phrase
+            const letters = puzzleState.phrase.toUpperCase().replace(/[^A-Z]/g, '').split('');
+            letters.forEach(letter => {
+                puzzleState.letterCounts[letter] = (puzzleState.letterCounts[letter] || 0) + 1;
+            });
+        }
+
+        function generateAvailableLetters() {
+            // Generate exactly the letters needed for the phrase
+            puzzleState.remainingLetters = [];
+            Object.keys(puzzleState.letterCounts).forEach(letter => {
+                const count = puzzleState.letterCounts[letter];
+                for (let i = 0; i < count; i++) {
+                    puzzleState.remainingLetters.push(letter);
+                }
+            });
+            
+            // Shuffle the remaining letters
+            puzzleState.remainingLetters = shuffleArray([...puzzleState.remainingLetters]);
+        }
+
+        function identifyLocationLetters() {
+            const locationName = currentCase.finalLocationV2.name.toUpperCase();
+            puzzleState.locationLetters = [];
+            
+            // Find which input boxes correspond to the location name
+            const phraseUpper = puzzleState.phrase.toUpperCase();
+            const cityIndex = phraseUpper.indexOf(locationName);
+            
+            if (cityIndex !== -1) {
+                // Calculate letter positions for the city name
+                const beforeCity = puzzleState.phrase.substring(0, cityIndex);
+                const letterStartPos = beforeCity.replace(/[^A-Za-z]/g, '').length;
+                
+                for (let i = 0; i < locationName.length; i++) {
+                    puzzleState.locationLetters.push(letterStartPos + i);
+                }
+            }
+        }
+
+
+        // Display letter cards in separate containers
+        function displayLetterCards() {
+            displayRemainingLetters();
+            displayUsedLetters();
+        }
+
+        function displayRemainingLetters() {
+            const container = document.getElementById('remainingLettersContainer');
+            container.innerHTML = '';
+            
+            puzzleState.remainingLetters.forEach((letter, index) => {
+                const letterCard = createLetterCard(letter, index, false);
+                letterCard.addEventListener('click', () => useLetterInInput(letter, letterCard));
+                container.appendChild(letterCard);
+            });
+        }
+
+        function displayUsedLetters() {
+            const container = document.getElementById('usedLettersContainer');
+            container.innerHTML = '';
+            
+            puzzleState.usedLetters.forEach((letter, index) => {
+                const letterCard = createLetterCard(letter, index, true);
+                container.appendChild(letterCard);
+            });
+        }
+
+        function createLetterCard(letter, index, isUsed) {
+            const letterCard = document.createElement('div');
+            letterCard.className = 'letter-card';
+            letterCard.textContent = letter;
+            letterCard.dataset.letter = letter;
+            letterCard.dataset.index = index;
+            
+            if (isUsed) {
+                letterCard.classList.add('used');
+                // Don't add location-letter class to used letter tiles
+                // All used letters should be yellow in the used letters section
+                // Only input boxes should have the blue color for location letters
+            }
+            
+            return letterCard;
+        }
+
+        // Create input boxes for phrase (word-grouped layout)
+        function createPhraseInputs() {
+            const words = puzzleState.phrase.split(' ');
+            const container = document.getElementById('phraseInputs');
+            container.innerHTML = '';
+            let globalLetterIndex = 0;
+            
+            words.forEach((word, wordIndex) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'phrase-word-group';
+                
+                word.split('').forEach((letter, letterIndex) => {
+                    if (letter.match(/[A-Za-z]/)) {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.className = 'phrase-letter-input';
+                        input.dataset.wordIndex = wordIndex;
+                        input.dataset.letterIndex = letterIndex;
+                        input.dataset.globalIndex = globalLetterIndex;
+                        input.dataset.expectedLetter = letter.toUpperCase();
+                        
+                        // Color location name inputs differently
+                        if (puzzleState.locationLetters.includes(globalLetterIndex)) {
+                            input.classList.add('location-letter');
+                        }
+                        
+                        // Auto-advance and validation
+                        input.addEventListener('input', handlePhraseInput);
+                        input.addEventListener('keydown', handlePhraseKeydown);
+                        
+                        wordDiv.appendChild(input);
+                        globalLetterIndex++;
+                    }
+                });
+                
+                container.appendChild(wordDiv);
+            });
+        }
+
+        // Handle phrase input and auto-advance
+        function handlePhraseInput(event) {
+            const input = event.target;
+            const value = input.value.toUpperCase();
+            
+            if (value.length === 1) {
+                input.classList.add('filled');
+                input.value = value;
+                
+                // Move letter from remaining to used
+                moveLetterToUsed(value);
+                
+                // Move to next input
+                const nextInput = getNextPhraseInput(input);
+                if (nextInput && !nextInput.value) {
+                    nextInput.focus();
+                }
+            } else {
+                input.classList.remove('filled');
+            }
+        }
+
+        function handlePhraseKeydown(event) {
+            if (event.key === 'Backspace' && !event.target.value) {
+                const prevInput = getPrevPhraseInput(event.target);
+                if (prevInput && !prevInput.readOnly) {
+                    // Move letter back from used to remaining
+                    const prevValue = prevInput.value;
+                    if (prevValue) {
+                        moveLetterToRemaining(prevValue);
+                    }
+                    
+                    prevInput.focus();
+                    prevInput.value = '';
+                    prevInput.classList.remove('filled');
+                }
+            }
+        }
+
+        // Move letter from remaining to used
+        function moveLetterToUsed(letter) {
+            const index = puzzleState.remainingLetters.indexOf(letter);
+            if (index !== -1) {
+                puzzleState.remainingLetters.splice(index, 1);
+                puzzleState.usedLetters.push(letter);
+                displayLetterCards();
+            }
+        }
+
+        // Move letter from used back to remaining
+        function moveLetterToRemaining(letter) {
+            const index = puzzleState.usedLetters.indexOf(letter);
+            if (index !== -1) {
+                puzzleState.usedLetters.splice(index, 1);
+                puzzleState.remainingLetters.push(letter);
+                displayLetterCards();
+            }
+        }
+
+        function getNextPhraseInput(currentInput) {
+            const inputs = Array.from(document.querySelectorAll('.phrase-letter-input'));
+            const currentIndex = inputs.indexOf(currentInput);
+            return inputs[currentIndex + 1] || null;
+        }
+
+        function getPrevPhraseInput(currentInput) {
+            const inputs = Array.from(document.querySelectorAll('.phrase-letter-input'));
+            const currentIndex = inputs.indexOf(currentInput);
+            return inputs[currentIndex - 1] || null;
+        }
+
+        // Use letter from card in input
+        function useLetterInInput(letter, letterCard) {
+            if (letterCard.classList.contains('used')) return;
+            
+            // Find first empty input that's not a hint
+            const inputs = document.querySelectorAll('.phrase-letter-input:not(.hint-letter)');
+            for (let input of inputs) {
+                if (!input.value) {
+                    input.value = letter;
+                    input.classList.add('filled');
+                    
+                    // Move letter from remaining to used
+                    moveLetterToUsed(letter);
+                    
+                    // Move to next input
+                    const nextInput = getNextPhraseInput(input);
+                    if (nextInput && !nextInput.value) {
+                        nextInput.focus();
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Show hints based on difficulty level
+        function showDifficultyBasedHints() {
+            const difficulty = currentCase.difficulty || 'medium';
+            const cityName = currentCase.finalLocationV2.name.toUpperCase();
+            const inputs = document.querySelectorAll('.phrase-letter-input');
+            
+            // Always reveal first letter of city name
+            const phraseUpper = puzzleState.phrase.toUpperCase();
+            const cityIndex = phraseUpper.indexOf(cityName);
+            
+            if (cityIndex !== -1) {
+                const beforeCity = puzzleState.phrase.substring(0, cityIndex);
+                const letterPosition = beforeCity.replace(/[^A-Za-z]/g, '').length;
+                
+                if (inputs[letterPosition]) {
+                    const firstLetter = cityName[0];
+                    fillHintLetter(inputs[letterPosition], firstLetter);
+                }
+            }
+            
+            // Apply difficulty-specific hints
+            if (difficulty === 'easy') {
+                // Easy: Show all instances of the most common letter
+                const mostCommonLetter = findMostCommonLetter();
+                if (mostCommonLetter) {
+                    inputs.forEach(input => {
+                        if (input.dataset.expectedLetter === mostCommonLetter && !input.classList.contains('hint-letter')) {
+                            fillHintLetter(input, mostCommonLetter);
+                        }
+                    });
+                }
+            } else if (difficulty === 'medium') {
+                // Medium: Show 2 more random letters
+                showRandomHints(2);
+            } else if (difficulty === 'hard') {
+                // Hard: Show 1 more random letter
+                showRandomHints(1);
+            }
+        }
+
+        function findMostCommonLetter() {
+            let maxCount = 0;
+            let mostCommon = '';
+            
+            Object.keys(puzzleState.letterCounts).forEach(letter => {
+                if (puzzleState.letterCounts[letter] > maxCount) {
+                    maxCount = puzzleState.letterCounts[letter];
+                    mostCommon = letter;
+                }
+            });
+            
+            return mostCommon;
+        }
+
+        function showRandomHints(count) {
+            const nonHintInputs = Array.from(document.querySelectorAll('.phrase-letter-input:not(.hint-letter)'));
+            
+            for (let i = 0; i < count && nonHintInputs.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * nonHintInputs.length);
+                const randomInput = nonHintInputs[randomIndex];
+                const correctLetter = randomInput.dataset.expectedLetter;
+                
+                fillHintLetter(randomInput, correctLetter);
+                
+                // Remove from available list
+                nonHintInputs.splice(randomIndex, 1);
+            }
+        }
+
+        function fillHintLetter(input, letter) {
+            input.value = letter;
+            input.readOnly = true;
+            input.classList.add('hint-letter');
+            
+            // Check if this is a location name letter for special coloring
+            const inputIndex = Array.from(document.querySelectorAll('.phrase-letter-input')).indexOf(input);
+            if (puzzleState.locationLetters.includes(inputIndex)) {
+                input.classList.add('location-letter');
+                puzzleState.locationNameLetters.push(letter);
+            }
+            
+            // Mark this letter as hint and remove from remaining
+            puzzleState.hintLetters.push(letter);
+            moveLetterToUsed(letter);
+        }
+
+
+        // Shuffle only the remaining letters
+        function shuffleRemainingLetters() {
+            puzzleState.remainingLetters = shuffleArray([...puzzleState.remainingLetters]);
+            displayLetterCards();
+        }
+
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
         }
 
         function setupInputHandlers() {
@@ -759,12 +1556,15 @@
                 // Check if all correct
                 const allCrimeLocationsCorrect = crimeSceneAnswers.location1 && crimeSceneAnswers.location2 && crimeSceneAnswers.location3;
                 
+                console.log('submitEvidence - Crime scene check results:');
+                console.log('  location1:', crimeSceneAnswers.location1);
+                console.log('  location2:', crimeSceneAnswers.location2);
+                console.log('  location3:', crimeSceneAnswers.location3);
+                console.log('  allCrimeLocationsCorrect:', allCrimeLocationsCorrect);
+                console.log('  currentTurn:', currentTurn);
+                
                 if (allCrimeLocationsCorrect) {
-                    // Calculate bonus for early completion
-                    if (currentTurn < 5) {
-                        const bonusPoints = (5 - currentTurn) * 50;
-                        gameScore += bonusPoints;
-                    }
+                    // Score will be calculated at the end of the game
                     
                     // Unlock final location phase
                     unlockFinalLocationPhase();
@@ -797,37 +1597,74 @@
                 checkFinalLocationAnswer();
                 
                 if (finalLocationAnswer) {
-                    // Calculate bonus for turn 6
-                    if (currentTurn === 6) {
-                        gameScore += 100; // Bonus for solving in turn 6
-                    }
+                    // Score will be calculated at the end of the game
                     
                     setTimeout(() => {
                         endGameV2('captured');
                     }, 1000);
-                } else {
-                    // Progress final location turns or end if turn 7
-                    if (currentTurn < 7) {
-                        setTimeout(() => {
-                            currentTurn++;
-                            displayV2Turn(currentTurn);
-                            updateV2TurnDisplay();
-                            updateActionButton();
-                        }, 1000);
-                    } else {
-                        // Turn 7 reached without solving final location - suspect escapes
-                        setTimeout(() => {
-                            endGameV2('escaped_final');
-                        }, 1000);
-                    }
+                } else if (currentTurn === 7) {
+                    // Turn 7 and still wrong - now the game ends
+                    setTimeout(() => {
+                        endGameV2('escaped_final');
+                    }, 1000);
+                } else if (currentTurn === 6) {
+                    // Turn 6 failed - advance to Turn 7 with hints
+                    setTimeout(() => {
+                        currentTurn = 7;
+                        // Don't call displayV2Turn(7) as Turn 7 doesn't exist in database
+                        // Just update the turn display and action button
+                        updateV2TurnDisplay();
+                        updateActionButton();
+                        
+                        // Show category hint
+                        const categoryHint = document.getElementById('categoryHint');
+                        if (categoryHint && currentCase.finalLocationV2.categoryHint) {
+                            categoryHint.innerHTML = `<strong>Hint:</strong> ${currentCase.finalLocationV2.categoryHint}`;
+                            categoryHint.style.display = 'block';
+                        }
+                        
+                        // Show flag colors hint
+                        const flagColorsHint = document.getElementById('flagColorsHint');
+                        if (flagColorsHint && currentCase.finalLocationV2.flagColors) {
+                            try {
+                                const flagColors = JSON.parse(currentCase.finalLocationV2.flagColors);
+                                let flagHtml = '<strong>Country Flag Colors:</strong><div class="flag-colors-display">';
+                                flagColors.forEach(color => {
+                                    flagHtml += `<div class="flag-color-swatch" style="background-color: ${color}" title="${color}"></div>`;
+                                });
+                                flagHtml += '</div>';
+                                flagColorsHint.innerHTML = flagHtml;
+                                flagColorsHint.style.display = 'block';
+                            } catch (e) {
+                                console.error('Error parsing flag colors:', e);
+                            }
+                        }
+                    }, 1000);
                 }
             }
         }
 
         function checkCrimeSceneAnswers() {
+            console.log('=== checkCrimeSceneAnswers DEBUG START ===');
+            console.log('Current crimeSceneAnswers state:', JSON.parse(JSON.stringify(crimeSceneAnswers)));
+            console.log('Locations being checked:', currentCase.locationsV2.map(loc => ({
+                position: loc.position,
+                name: loc.name,
+                alreadyCorrect: crimeSceneAnswers[`location${loc.position}`]
+            })));
+            
             currentCase.locationsV2.forEach((location, index) => {
+                console.log(`\nChecking location at position ${location.position}: ${location.name}`);
+                
                 if (!crimeSceneAnswers[`location${location.position}`]) { // Only check if not already correct
                     const inputContainers = document.querySelectorAll(`#place${location.position} .input-container`);
+                    console.log(`Found ${inputContainers.length} input containers for #place${location.position}`);
+                    
+                    if (inputContainers.length === 0) {
+                        console.error(`No input container found for location position ${location.position}!`);
+                        return;
+                    }
+                    
                     const wordGroups = inputContainers[0].querySelectorAll('.word-group');
                     
                     // Reconstruct the entered answer
@@ -841,14 +1678,16 @@
                     });
                     
                     // Check if answer is correct (with normalization support)
+                    console.log(`Entered answer: "${enteredAnswer.trim()}" vs Expected: "${location.name}"`);
+                    
                     if (checkLocationMatch(enteredAnswer.trim(), location.name)) {
+                        console.log(`CORRECT! Marking location${location.position} as correct`);
+                        
                         // Mark as correct
                         crimeSceneAnswers[`location${location.position}`] = true;
                         correctLocations[location.position - 1] = true; // Update global tracking
                         
-                        // Calculate score based on turn (more points for earlier guesses)
-                        const turnScore = (6 - currentTurn) * 100;
-                        gameScore += turnScore;
+                        // Score will be calculated at the end of the game
                         
                         // Lock the inputs and style them as correct
                         const letterBoxes = inputContainers[0].querySelectorAll('.letter-box');
@@ -863,51 +1702,125 @@
                             box.value = '';
                             box.classList.remove('filled');
                         });
+                        console.log('Incorrect answer');
                     }
+                } else {
+                    console.log(`Skipping location${location.position} - already marked as correct`);
                 }
             });
+            
+            console.log('Final crimeSceneAnswers state:', JSON.parse(JSON.stringify(crimeSceneAnswers)));
+            console.log('=== checkCrimeSceneAnswers DEBUG END ===');
         }
 
         function checkFinalLocationAnswer() {
             if (!currentCase.finalLocationV2) return;
             
-            const inputContainers = document.querySelectorAll('#finalPlace .input-container');
-            const wordGroups = inputContainers[0].querySelectorAll('.word-group');
+            // Get user input from phrase inputs
+            const userInput = getUserPhraseInput();
+            const expectedPhrase = puzzleState.phrase || currentCase.finalLocationV2.educationalPhrase || currentCase.finalLocationV2.name;
             
-            // Reconstruct the entered answer
-            let enteredAnswer = '';
-            wordGroups.forEach((group, groupIndex) => {
-                if (groupIndex > 0) enteredAnswer += ' '; // Add space between words
-                const letterBoxes = group.querySelectorAll('.letter-box');
-                letterBoxes.forEach(box => {
-                    enteredAnswer += box.value.toUpperCase();
-                });
-            });
+            console.log('Checking puzzle answer:', userInput, 'vs', expectedPhrase);
             
             // Check if answer is correct (with normalization support)
-            if (checkLocationMatch(enteredAnswer.trim(), currentCase.finalLocationV2.name)) {
+            if (checkLocationMatch(userInput.trim(), expectedPhrase)) {
                 // Mark as correct
                 finalLocationAnswer = true;
                 correctLocations[3] = true; // Update global tracking (4th location)
                 
-                // Calculate score based on turn (more points for turn 6)
-                const turnScore = (8 - currentTurn) * 100;
-                gameScore += turnScore;
+                // Score will be calculated at the end of the game
                 
                 // Lock the inputs and style them as correct
-                const letterBoxes = inputContainers[0].querySelectorAll('.letter-box');
-                letterBoxes.forEach(box => {
-                    box.classList.add('correct');
-                    box.disabled = true;
+                const letterInputs = document.querySelectorAll('.phrase-letter-input');
+                letterInputs.forEach(input => {
+                    input.classList.add('correct');
+                    input.disabled = true;
                 });
+                
+                // Hide torn paper letters
+                document.getElementById('lettersContainer').style.display = 'none';
+                document.querySelector('.shuffle-letters-btn').style.display = 'none';
+                
+                // Show success and trigger game completion
+                
             } else {
-                // Clear incorrect inputs
-                const letterBoxes = inputContainers[0].querySelectorAll('.letter-box');
-                letterBoxes.forEach(box => {
-                    box.value = '';
-                    box.classList.remove('filled');
+                // Wrong answer - let the main submitEvidence function handle turn progression
+                // Clear incorrect inputs (except hints)
+                const letterInputs = document.querySelectorAll('.phrase-letter-input:not(.hint-letter)');
+                letterInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
                 });
+                
+                // Reset letter cards to available state but keep hint letters as used
+                const nonHintUsedLetters = puzzleState.usedLetters.filter(letter => 
+                    !puzzleState.hintLetters.includes(letter)
+                );
+                nonHintUsedLetters.forEach(letter => {
+                    puzzleState.remainingLetters.push(letter);
+                });
+                puzzleState.usedLetters = [...puzzleState.hintLetters]; // Keep hint letters as used
+                displayLetterCards();
             }
+        }
+
+        // Show category hint for Turn 7
+        function showCategoryHint() {
+            if (!currentCase.finalLocationV2.categoryHint) return;
+            
+            const categoryHint = document.getElementById('categoryHint');
+            categoryHint.innerHTML = `<strong>💡 Hint:</strong> ${currentCase.finalLocationV2.categoryHint}`;
+            categoryHint.style.display = 'block';
+            
+            // Also show flag colors hint in Turn 7
+            showFlagColorsHint();
+        }
+
+        // Show flag colors hint in Turn 7
+        function showFlagColorsHint() {
+            if (!currentCase.finalLocationV2.flagColors) return;
+            
+            const flagColorsHint = document.getElementById('flagColorsHint');
+            const flagColors = JSON.parse(currentCase.finalLocationV2.flagColors);
+            
+            const swatchesHTML = flagColors.map(color => 
+                `<div class="flag-color-swatch" style="background-color: ${color};" title="${color}"></div>`
+            ).join('');
+            
+            flagColorsHint.innerHTML = `
+                <strong>🏳️ National Flag Colors:</strong><br>
+                <div class="flag-colors-display">
+                    ${swatchesHTML}
+                </div>
+                <small>These are the primary colors of the final location's national flag</small>
+            `;
+            flagColorsHint.style.display = 'block';
+        }
+
+        // Helper function to get user input from phrase inputs
+        function getUserPhraseInput() {
+            const inputs = document.querySelectorAll('.phrase-letter-input');
+            let phrase = '';
+            let currentWord = '';
+            let lastWordIndex = -1;
+            
+            inputs.forEach((input, index) => {
+                const wordIndex = parseInt(input.dataset.wordIndex);
+                
+                // If we're on a new word, add the previous word and a space
+                if (wordIndex !== lastWordIndex && lastWordIndex !== -1) {
+                    phrase += currentWord + ' ';
+                    currentWord = '';
+                }
+                
+                currentWord += input.value || '';
+                lastWordIndex = wordIndex;
+            });
+            
+            // Add the last word
+            phrase += currentWord;
+            
+            return phrase.trim();
         }
 
         // Normalize text by removing accents and special characters
@@ -970,8 +1883,7 @@
             if (normalizedAnswer === normalizedCorrect || 
                 originalAnswer === originalCorrect ||
                 answer.toLowerCase().trim() === correct.toLowerCase().trim()) {
-                console.log('✅ Exact match found!');
-                return true;
+                    return true;
             }
             
             // Check for partial matches (both normalized and original)
@@ -1026,16 +1938,20 @@
             };
             
             const description = objectiveMap[currentCase.finalLocationObjective] || 'where is the final location?';
-            document.getElementById('finalObjectiveDescription').textContent = `Based on the evidence, ${description} Check Investigation Journal for new clues.`;
+            // Removed finalObjectiveDescription update as element was combined with Final Challenge header
+            
+            // Hide crime scene phase when final location is unlocked (focus on final location puzzle)
+            document.getElementById('crimeScenePhase').classList.add('hidden');
+            
+            // Hide crime scene description and show final location instructions
+            document.getElementById('crimeSceneDescription').classList.add('hidden');
+            document.getElementById('finalLocationInstructions').classList.remove('hidden');
             
             // Generate final location letter boxes
             generateFinalLocationInput();
             
             // Show final location phase
             document.getElementById('finalLocationPhase').classList.remove('hidden');
-            
-            // Show Final Location option in dropdown
-            document.getElementById('finalOption').style.display = 'block';
         }
 
         function updateActionButton() {
@@ -1072,7 +1988,8 @@
             // Start with turn 6
             setTimeout(() => {
                 currentTurn = 6;
-                displayV2Turn(6);
+                // Don't call displayV2Turn(6) as Turn 6 doesn't exist in database
+                // Just update the turn display and action button
                 updateV2TurnDisplay();
                 updateActionButton();
             }, 1000);
@@ -1106,6 +2023,50 @@
             }
         }
 
+        function calculateFinalScore() {
+            const allCrimeLocationsCorrect = correctLocations[0] && correctLocations[1] && correctLocations[2];
+            const finalLocationCorrect = correctLocations[3];
+            const correctCrimeLocationsCount = correctLocations.slice(0, 3).filter(correct => correct).length;
+            
+            const timeTaken = gameTimer;
+            const difficulty = currentCase.difficulty || 'medium';
+            
+            let baseScore = 0;
+            
+            // Base scoring according to new system
+            if (finalLocationCorrect && allCrimeLocationsCorrect) {
+                // Finished the game completely
+                if (currentTurn === 6) {
+                    baseScore = 2000; // Finished in 6 turns
+                } else if (currentTurn === 7) {
+                    baseScore = 1500; // Finished in 7 turns
+                }
+            } else if (allCrimeLocationsCorrect) {
+                // Got 3 locations but not the 4th
+                baseScore = 1000;
+            } else if (correctCrimeLocationsCount === 2) {
+                // Got 2 initial locations right
+                baseScore = 500;
+            } else if (correctCrimeLocationsCount === 1) {
+                // Got only 1 initial location right
+                baseScore = 250;
+            }
+            
+            // Apply difficulty bonus
+            if (difficulty === 'medium') {
+                baseScore += 250;
+            } else if (difficulty === 'hard') {
+                baseScore += 500;
+            }
+            
+            // Apply time bonus (under 5 minutes = 300 seconds)
+            if (timeTaken < 300 && baseScore > 0) {
+                baseScore += 250;
+            }
+            
+            return baseScore;
+        }
+
         function endGameV2(result) {
             // Stop timer
             stopTimer();
@@ -1117,6 +2078,14 @@
             const timeTaken = gameTimer;
             const minutes = Math.floor(timeTaken / 60);
             const seconds = timeTaken % 60;
+            
+            // Calculate final score using new system
+            gameScore = calculateFinalScore();
+            
+            console.log(`Final score calculated: ${gameScore} points`);
+            console.log(`Game completed in ${minutes}:${seconds.toString().padStart(2, '0')}`);
+            console.log(`Difficulty: ${currentCase.difficulty || 'medium'}`);
+            console.log(`Correct locations: ${correctLocations.slice(0, 3).filter(correct => correct).length}/3 crime scenes, ${correctLocations[3] ? '1' : '0'}/1 final location`);
             
             let modalContent = '';
             let headerText = '';
@@ -1168,15 +2137,49 @@
                     </div>`;
             }
             
-            modalContent += `
-                    <div class="stat-row">
-                        <span class="stat-label">Score:</span>
+            // Show detailed score breakdown
+            const correctCrimeLocationsCount = correctLocations.slice(0, 3).filter(correct => correct).length;
+            const difficulty = currentCase.difficulty || 'medium';
+            let scoreBreakdown = '';
+            
+            // Base score
+            if (finalLocationCorrect && allCrimeLocationsCorrect) {
+                if (currentTurn === 6) {
+                    scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (6 turns):</span><span class="stat-value">2000 points</span></div>`;
+                } else if (currentTurn === 7) {
+                    scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (7 turns):</span><span class="stat-value">1500 points</span></div>`;
+                }
+            } else if (allCrimeLocationsCorrect) {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (3 locations):</span><span class="stat-value">1000 points</span></div>`;
+            } else if (correctCrimeLocationsCount === 2) {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (2 locations):</span><span class="stat-value">500 points</span></div>`;
+            } else if (correctCrimeLocationsCount === 1) {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (1 location):</span><span class="stat-value">250 points</span></div>`;
+            }
+            
+            // Difficulty bonus
+            if (difficulty === 'medium') {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Difficulty Bonus (Medium):</span><span class="stat-value">+250 points</span></div>`;
+            } else if (difficulty === 'hard') {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Difficulty Bonus (Hard):</span><span class="stat-value">+500 points</span></div>`;
+            }
+            
+            // Time bonus
+            if (timeTaken < 300 && gameScore > 0) {
+                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Time Bonus (< 5 min):</span><span class="stat-value">+250 points</span></div>`;
+            }
+            
+            modalContent += scoreBreakdown + `
+                    <div class="stat-row score-total">
+                        <span class="stat-label">Total Score:</span>
                         <span class="stat-value">${gameScore} points</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Time:</span>
                         <span class="stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
-                    </div>
+                    </div>`;
+            
+            modalContent += `
                     <div class="stat-row">
                         <span class="stat-label">Turns Used:</span>
                         <span class="stat-value">${currentTurn} / 7</span>
@@ -1185,8 +2188,18 @@
             `;
             
             if (result === 'captured') {
-                modalContent += `<p class="interesting-fact">${currentCase.finalInterestingFact}</p>`;
+                const interestingFact = currentCase.finalLocationV2?.interestingFact || currentCase.finalInterestingFact || 'Amazing detective work!';
+                modalContent += `<p class="interesting-fact">${interestingFact}</p>`;
             }
+            
+            // Add the Start New Case button to the modal content
+            modalContent += `
+                <div class="end-game-actions">
+                    <button class="action-button end-game-button" onclick="playAgain()">
+                        Start New Case
+                    </button>
+                </div>
+            `;
             
             // Update modal
             document.getElementById('endGameHeader').textContent = headerText;
@@ -1198,13 +2211,6 @@
         }
 
         async function saveGameResultV2(success, timeTaken, score, turnsUsed, finalLocationCorrect) {
-            console.log('💾 SAVING GAME RESULT:', {
-                success,
-                score,
-                turnsUsed,
-                finalLocationCorrect,
-                currentUser: currentUser ? currentUser.username : 'NOT SIGNED IN'
-            });
             
             const gameResult = {
                 caseId: currentCase.id,
@@ -1260,16 +2266,6 @@
             
             // Save to database if user is logged in
             if (currentUser && currentCase) {
-                console.log('🚀 SUBMITTING TO DATABASE:', {
-                    playerId: currentUser.id,
-                    playerEmail: currentUser.email,
-                    playerUsername: currentUser.username || currentUser.name,
-                    solvedLocations: correctLocations.filter(Boolean).length >= 3,
-                    solvedFinal: finalLocationCorrect || false,
-                    pointsEarned: score || 0,
-                    turnsUsed: turnsUsed || 0,
-                    gameId: currentCase.id
-                });
                 
                 try {
                     const response = await fetch(`/api/v2/games/${currentCase.id}/submit-result`, {
@@ -1291,17 +2287,13 @@
                     
                     if (response.ok) {
                         const result = await response.json();
-                        console.log('✅ Game result saved to database:', result.message);
-                        
-                        if (result.newRecord) {
-                            console.log('🎉 New personal record achieved!');
-                        }
+                        // Game result saved successfully
                     } else {
                         const errorData = await response.json();
-                        console.error('❌ Failed to save to database:', errorData.error);
+                        console.error('Failed to save to database:', errorData.error);
                     }
                 } catch (error) {
-                    console.error('❌ Network error saving to database:', error);
+                    console.error('Network error saving to database:', error);
                     
                     // Save to session storage for retry later
                     try {
@@ -1378,7 +2370,8 @@
             
             // Set completion message
             document.getElementById('completionMessage').textContent = currentCase.gameCompletionMessage;
-            document.getElementById('finalFact').textContent = currentCase.finalInterestingFact;
+            const interestingFact = currentCase.finalLocationV2?.interestingFact || currentCase.finalInterestingFact || 'Amazing detective work!';
+            document.getElementById('finalFact').textContent = interestingFact;
             
             // Show time
             const minutes = Math.floor(gameTimer / 60);
@@ -1577,6 +2570,22 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Time Differences Explanation -->
+                    <div style="background: rgba(255, 69, 0, 0.1); border: 2px solid #FF4500; border-radius: 12px; padding: 16px; margin-top: 16px;">
+                        <h4 style="font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; color: #FF4500; margin: 0 0 12px 0; text-align: center; text-transform: uppercase;">
+                            🕐 Time Zone Analysis
+                        </h4>
+                        
+                        <div style="font-family: 'Courier New', monospace; font-size: 12px; color: #333; text-align: center; line-height: 1.6;">
+                            <p style="margin: 0 0 8px 0;">
+                                <strong>Time differences show how many hours ahead (+) or behind (-) each location is relative to the other.</strong>
+                            </p>
+                            <p style="margin: 0; font-size: 11px; color: #666;">
+                                Example: +3h means 3 hours ahead in time zone, -2h means 2 hours behind. This helps determine the geographic east-west positioning of cities.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             `;
             } catch (error) {
@@ -1666,9 +2675,6 @@
                     break;
                 case 'location3':
                     updateLocationEvidence(3);
-                    break;
-                case 'final':
-                    updateFinalEvidence();
                     break;
             }
         }
@@ -1784,47 +2790,6 @@
             container.innerHTML = html;
         }
 
-        function updateFinalEvidence() {
-            const container = document.getElementById('finalEvidence');
-            if (!currentCase || !window.v2TimelineEntries) {
-                container.innerHTML = '<div class="no-evidence">Final location evidence will appear after solving the crime scenes.</div>';
-                return;
-            }
-            
-            let html = '';
-            const finalClues = [];
-            
-            // Find final location clues (turns 6-7)
-            window.v2TimelineEntries.forEach(turn => {
-                if (turn.turn <= currentTurn && turn.isFinalLocation) {
-                    turn.clues.forEach(clue => {
-                        finalClues.push({
-                            ...clue,
-                            turnNumber: turn.turn,
-                            narrative: turn.narrative
-                        });
-                    });
-                }
-            });
-            
-            if (finalClues.length > 0) {
-                html += `<div class="location-header">
-                    <h4>Final Location Investigation</h4>
-                    <p class="location-subtitle">Critical evidence for determining the final location</p>
-                </div>`;
-                
-                finalClues.forEach(clue => {
-                    html += renderLocationClue(clue);
-                });
-            } else {
-                html = `<div class="no-evidence">
-                    <h4>Final Location</h4>
-                    <p>Complete the crime scene investigation to unlock final location evidence.</p>
-                </div>`;
-            }
-            
-            container.innerHTML = html;
-        }
 
         function renderLocationClue(clue) {
             let html = `<div class="evidence-card">`;
@@ -1885,6 +2850,37 @@
                     }
                     break;
                 
+                case 'flag_colors':
+                    html += `<div class="evidence-type">🏳️ National Colors</div>`;
+                    
+                    // Get flag colors from final location data  
+                    if (currentCase && currentCase.finalLocationV2 && currentCase.finalLocationV2.flagColors) {
+                        try {
+                            const flagColors = JSON.parse(currentCase.finalLocationV2.flagColors);
+                            if (Array.isArray(flagColors) && flagColors.length > 0) {
+                                html += `<div class="evidence-content flag-colors">
+                                    <div class="flag-colors-label">Colors found in national flag:</div>
+                                    <div class="flag-colors-display">`;
+                                
+                                flagColors.forEach(color => {
+                                    html += `<div class="flag-color-swatch" style="background-color: ${color}" title="${color}"></div>`;
+                                });
+                                
+                                html += `</div>
+                                    <div class="flag-colors-description">These are the primary colors of the final location's national flag</div>
+                                </div>`;
+                            } else {
+                                html += `<div class="evidence-content">Flag color data not available</div>`;
+                            }
+                        } catch (e) {
+                            console.error('Error parsing flag colors:', e);
+                            html += `<div class="evidence-content">Flag color data not available</div>`;
+                        }
+                    } else {
+                        html += `<div class="evidence-content">Flag color data not available</div>`;
+                    }
+                    break;
+                
                 default:
                     html += `<div class="evidence-type">📝 Intelligence</div>`;
                     html += `<div class="evidence-content">${clue.content}</div>`;
@@ -1930,8 +2926,31 @@
                 return;
             }
             
-            // Add turn to timeline
-            addV2TimelineEntry(turn);
+            // Special handling for Turn 7: Add flag colors clue
+            if (turnNumber === 7 && currentCase.finalLocationV2 && currentCase.finalLocationV2.flagColors) {
+                console.log('Turn 7 reached, adding flag colors clue');
+                
+                // Create a modified turn with flag colors clue
+                const modifiedTurn = {
+                    ...turn,
+                    clues: [
+                        ...turn.clues,
+                        {
+                            type: 'flag_colors',
+                            content: 'Flag Colors Evidence',
+                            description: 'National flag colors revealed through investigation',
+                            data: {},
+                            locationPositions: null
+                        }
+                    ]
+                };
+                
+                // Add the modified turn to timeline
+                addV2TimelineEntry(modifiedTurn);
+            } else {
+                // Add turn to timeline normally
+                addV2TimelineEntry(turn);
+            }
             
             // Show distances option when Turn 4 is reached
             if (turnNumber === 4) {
@@ -2741,11 +3760,6 @@
             <div class="modal-header" id="endGameHeader">CASE CLOSED</div>
             <div id="endGameContent" class="end-game-content">
                 <!-- Content will be populated dynamically -->
-            </div>
-            <div class="end-game-actions">
-                <button class="action-button end-game-button" onclick="playAgain()">
-                    Start New Case
-                </button>
             </div>
         </div>
     </div>

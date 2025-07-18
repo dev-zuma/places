@@ -64,7 +64,7 @@ function generateImagePromptV2(location, landmark, placement, gameData) {
     - Security camera UI elements (REC indicator, camera ID)
     - A person matching this description visible in the scene: ${villainDescription}
     - The person should be walking through or standing in ${landmark}
-    - Ensure the person's appearance matches the demographic details: ${gameData.villainProfile.race} ethnicity ${gameData.villainProfile.ethnicity}
+    - DEMOGRAPHIC ACCURACY: Ensure the person's appearance accurately represents ${gameData.villainProfile.race} race and ${gameData.villainProfile.ethnicity} ethnicity with authentic facial features, skin tone, and physical characteristics
     - Wide-angle security camera perspective showing the location`,
     
     'belongings': `CRITICAL REQUIREMENT: Show a close-up of a dropped/forgotten ${specificItem}. Include:
@@ -79,7 +79,7 @@ function generateImagePromptV2(location, landmark, placement, gameData) {
     'reflection': `CRITICAL REQUIREMENT: Show a clear reflection revealing the villain. Include:
     - A reflective surface (window, water, mirror, glass door) at ${landmark}
     - In the reflection: clearly show a person matching this description: ${villainDescription}
-    - Ensure the reflected person's appearance matches: ${gameData.villainProfile.race} ethnicity ${gameData.villainProfile.ethnicity}
+    - DEMOGRAPHIC ACCURACY: Ensure the reflected person's appearance accurately represents ${gameData.villainProfile.race} race and ${gameData.villainProfile.ethnicity} ethnicity with authentic facial features, skin tone, and physical characteristics
     - The reflection should be the main focus while still showing the location
     - Make it look like surveillance evidence capturing the villain unknowingly`,
     
@@ -150,6 +150,14 @@ CRITICAL REQUIREMENTS:
 - NO text, labels, signs, or written words anywhere in the image
 - NO other objects, props, or items beyond the person themselves
 - CLEAN portrait with minimal background elements
+
+DEMOGRAPHIC ACCURACY REQUIREMENTS:
+- ACCURATELY represent the specified racial and ethnic background without bias
+- Pay careful attention to authentic facial features, skin tone, and physical characteristics
+- Ensure the representation is respectful, accurate, and true to the specified demographics
+- Do not default to any particular racial appearance - follow the specified race and ethnicity exactly
+- Represent all racial and ethnic backgrounds with equal quality and care
+- Create authentic, dignified representations that avoid stereotypes or caricatures
 
 Style Requirements:
 - Painterly storybook illustration style

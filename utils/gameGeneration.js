@@ -4,6 +4,230 @@ const { calculateLocationDistances, calculateTimeDifferences } = require('./geoC
 const { generateVillainPortraitV2, generateLocationImagesV2Individual, getSpecificVillainElement } = require('./imageGeneration');
 const { uploadImageToS3 } = require('./imageUpload');
 
+function getFlagColors(country) {
+  // Static flag colors database - comprehensive list for all countries
+  const flagColors = {
+    // Africa
+    'Algeria': ['#006633', '#FFFFFF', '#D21034'], // Green, White, Red
+    'Angola': ['#D22630', '#000000', '#FFCD00'], // Red, Black, Yellow
+    'Benin': ['#008751', '#FFD900', '#D21034'], // Green, Yellow, Red
+    'Botswana': ['#6DA9D2', '#FFFFFF', '#000000'], // Blue, White, Black
+    'Burkina Faso': ['#D21034', '#008751'], // Red, Green
+    'Cameroon': ['#008751', '#D21034', '#FFD900'], // Green, Red, Yellow
+    'Cape Verde': ['#003893', '#FFFFFF', '#CF002B', '#FFD900'], // Blue, White, Red, Yellow
+    'Chad': ['#002664', '#FFD900', '#D21034'], // Blue, Yellow, Red
+    'Côte d\'Ivoire': ['#FF9A00', '#FFFFFF', '#008751'], // Orange, White, Green
+    'Egypt': ['#D21034', '#FFFFFF', '#000000'], // Red, White, Black
+    'Ethiopia': ['#008751', '#FFD900', '#D21034'], // Green, Yellow, Red
+    'Ghana': ['#D21034', '#FFD900', '#008751', '#000000'], // Red, Gold, Green, Black star
+    'Kenya': ['#000000', '#D21034', '#008751', '#FFFFFF'], // Black, Red, Green, White
+    'Libya': ['#D21034', '#000000', '#008751'], // Red, Black, Green
+    'Morocco': ['#D21034', '#008751'], // Red, Green
+    'Nigeria': ['#008751', '#FFFFFF'], // Green, White
+    'Senegal': ['#008751', '#FFD900', '#D21034'], // Green, Yellow, Red
+    'South Africa': ['#000000', '#FFD700', '#008751', '#FFFFFF', '#D21034', '#002395'], // Black, Gold, Green, White, Red, Blue
+    'Tanzania': ['#1EB53A', '#FFD900', '#009639', '#000000'], // Green, Yellow, Blue, Black
+    'Tunisia': ['#D21034', '#FFFFFF'], // Red, White
+    'Uganda': ['#000000', '#FFD900', '#D21034'], // Black, Yellow, Red
+    'Zimbabwe': ['#008751', '#FFD900', '#D21034', '#000000', '#FFFFFF'], // Green, Yellow, Red, Black, White
+
+    // Asia
+    'Afghanistan': ['#000000', '#D21034', '#008751'], // Black, Red, Green
+    'Bangladesh': ['#008751', '#D21034'], // Green, Red
+    'China': ['#D21034', '#FFD700'], // Red, Yellow
+    'India': ['#FF9933', '#FFFFFF', '#138808', '#000080'], // Saffron, White, Green, Navy
+    'Indonesia': ['#D21034', '#FFFFFF'], // Red, White
+    'Iran': ['#008751', '#FFFFFF', '#D21034'], // Green, White, Red
+    'Iraq': ['#D21034', '#FFFFFF', '#000000'], // Red, White, Black
+    'Japan': ['#FFFFFF', '#BC002D'], // White, Red
+    'Jordan': ['#000000', '#FFFFFF', '#008751', '#D21034'], // Black, White, Green, Red
+    'Kazakhstan': ['#00AFCA', '#FFD700'], // Blue, Yellow
+    'Malaysia': ['#D21034', '#FFFFFF', '#002395', '#FFD700'], // Red, White, Blue, Yellow
+    'Pakistan': ['#008751', '#FFFFFF'], // Green, White
+    'Philippines': ['#0038A8', '#D21034', '#FFFFFF', '#FFD700'], // Blue, Red, White, Yellow
+    'Saudi Arabia': ['#008751', '#FFFFFF'], // Green, White
+    'Singapore': ['#D21034', '#FFFFFF'], // Red, White
+    'South Korea': ['#FFFFFF', '#D21034', '#0047A0'], // White, Red, Blue
+    'Sri Lanka': ['#FF7900', '#8A4117', '#FFD700', '#008751'], // Orange, Maroon, Yellow, Green
+    'Thailand': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Turkey': ['#D21034', '#FFFFFF'], // Red, White
+    'United Arab Emirates': ['#D21034', '#008751', '#FFFFFF', '#000000'], // Red, Green, White, Black
+    'Vietnam': ['#D21034', '#FFD700'], // Red, Yellow
+
+    // Europe
+    'Austria': ['#D21034', '#FFFFFF'], // Red, White
+    'Belgium': ['#000000', '#FFD700', '#D21034'], // Black, Yellow, Red
+    'Bulgaria': ['#FFFFFF', '#008751', '#D21034'], // White, Green, Red
+    'Croatia': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Czech Republic': ['#FFFFFF', '#D21034', '#002395'], // White, Red, Blue
+    'Denmark': ['#D21034', '#FFFFFF'], // Red, White
+    'Estonia': ['#002395', '#000000', '#FFFFFF'], // Blue, Black, White
+    'Finland': ['#002395', '#FFFFFF'], // Blue, White
+    'France': ['#002395', '#FFFFFF', '#D21034'], // Blue, White, Red
+    'Germany': ['#000000', '#D21034', '#FFD700'], // Black, Red, Gold
+    'Greece': ['#002395', '#FFFFFF'], // Blue, White
+    'Hungary': ['#D21034', '#FFFFFF', '#008751'], // Red, White, Green
+    'Iceland': ['#002395', '#FFFFFF', '#D21034'], // Blue, White, Red
+    'Ireland': ['#008751', '#FFFFFF', '#FF7900'], // Green, White, Orange
+    'Italy': ['#008751', '#FFFFFF', '#D21034'], // Green, White, Red
+    'Latvia': ['#8B0000', '#FFFFFF'], // Maroon, White
+    'Lithuania': ['#FFD700', '#008751', '#D21034'], // Yellow, Green, Red
+    'Netherlands': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Norway': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Poland': ['#FFFFFF', '#D21034'], // White, Red
+    'Portugal': ['#008751', '#D21034', '#FFD700'], // Green, Red, Yellow
+    'Romania': ['#002395', '#FFD700', '#D21034'], // Blue, Yellow, Red
+    'Russia': ['#FFFFFF', '#002395', '#D21034'], // White, Blue, Red
+    'Spain': ['#D21034', '#FFD700'], // Red, Yellow
+    'Sweden': ['#002395', '#FFD700'], // Blue, Yellow
+    'Switzerland': ['#D21034', '#FFFFFF'], // Red, White
+    'Ukraine': ['#002395', '#FFD700'], // Blue, Yellow
+    'United Kingdom': ['#002395', '#FFFFFF', '#D21034'], // Blue, White, Red
+
+    // North America
+    'Canada': ['#D21034', '#FFFFFF'], // Red, White
+    'Costa Rica': ['#002395', '#FFFFFF', '#D21034'], // Blue, White, Red
+    'Cuba': ['#002395', '#FFFFFF', '#D21034'], // Blue, White, Red
+    'Guatemala': ['#002395', '#FFFFFF'], // Blue, White
+    'Mexico': ['#008751', '#FFFFFF', '#D21034'], // Green, White, Red
+    'Panama': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'United States': ['#B22234', '#FFFFFF', '#3C3B6E'], // Red, White, Blue
+
+    // South America
+    'Argentina': ['#74ACDF', '#FFFFFF', '#FFD700'], // Blue, White, Yellow
+    'Bolivia': ['#D21034', '#FFD700', '#008751'], // Red, Yellow, Green
+    'Brazil': ['#008751', '#FFD700', '#002395', '#FFFFFF'], // Green, Yellow, Blue, White
+    'Chile': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Colombia': ['#FFD700', '#002395', '#D21034'], // Yellow, Blue, Red
+    'Ecuador': ['#FFD700', '#002395', '#D21034'], // Yellow, Blue, Red
+    'Paraguay': ['#D21034', '#FFFFFF', '#002395'], // Red, White, Blue
+    'Peru': ['#D21034', '#FFFFFF'], // Red, White
+    'Uruguay': ['#FFFFFF', '#002395', '#FFD700'], // White, Blue, Yellow
+    'Venezuela': ['#FFD700', '#002395', '#D21034'], // Yellow, Blue, Red
+
+    // Oceania
+    'Australia': ['#002395', '#D21034', '#FFFFFF'], // Blue, Red, White
+    'Fiji': ['#002395', '#FFFFFF'], // Blue, White
+    'New Zealand': ['#002395', '#D21034', '#FFFFFF'], // Blue, Red, White
+    'Papua New Guinea': ['#000000', '#D21034', '#FFD700'], // Black, Red, Yellow
+  };
+
+  const colors = flagColors[country];
+  if (colors) {
+    console.log(`🎨 Using static flag colors for ${country}:`, colors);
+    return JSON.stringify(colors);
+  }
+
+  // Fallback for unknown countries
+  console.log(`⚠️ No flag colors found for ${country}, using fallback`);
+  const fallbackColors = ['#D21034', '#FFFFFF', '#002395']; // Red, White, Blue
+  return JSON.stringify(fallbackColors);
+}
+
+async function generateFinalLocationPuzzle(finalLocation, theme, locations) {
+  if (!openai || !process.env.OPENAI_API_KEY) {
+    throw new Error('OpenAI is not configured. Please check your API key settings.');
+  }
+
+  try {
+    console.log('🧩 Generating final location puzzle content...');
+
+    // Generate flag colors and puzzle content in parallel
+    const [flagColorsResult, puzzleResult] = await Promise.all([
+      Promise.resolve(getFlagColors(finalLocation.country)),
+      generatePuzzleContent(finalLocation, theme, locations)
+    ]);
+
+    const puzzleData = {
+      ...puzzleResult,
+      flagColors: flagColorsResult
+    };
+
+    console.log('✅ Final location puzzle and flag colors generated successfully');
+    return puzzleData;
+
+  } catch (error) {
+    console.error('Final location puzzle generation failed:', error);
+    // Fallback puzzle data with basic flag colors
+    const fallbackColors = JSON.stringify(['#FF0000', '#FFFFFF', '#0000FF']);
+    return {
+      educationalPhrase: `Exploring beautiful ${finalLocation.name}`,
+      categoryHint: "Travel Destination",
+      interestingFact: `${finalLocation.name} is a fascinating city with rich cultural heritage and unique geographic features that make it an important destination.`,
+      flagColors: fallbackColors
+    };
+  }
+}
+
+async function generatePuzzleContent(finalLocation, theme, locations) {
+  // Static cacheable instructions for puzzle generation
+  const staticPuzzleInstructions = `Generate puzzle content for the 4th final location in a geography detective game. The puzzle uses an educational phrase about the location that players must solve by assembling scrambled letters. Return response in JSON format.
+
+REQUIREMENTS:
+1. Educational phrase (4-5 words) that includes the city name
+   - Must be educational, memorable, and factually accurate
+   - Should highlight a distinctive feature, event, or characteristic of the city
+   - Examples: "Cherry blossoms bloom in Kyoto", "Running bulls through Pamplona", "Northern lights dance in Tromsø"
+   - City name should be prominent and naturally integrated
+   - Avoid generic phrases - use specific, distinctive features
+
+2. Category hint (2-3 words maximum)
+   - Broad category that helps identify the type of activity/feature
+   - Examples: "Cultural Festival", "Historical Landmark", "Natural Wonder", "Religious Site", "Architectural Marvel"
+   - Should help players understand what they're looking for without giving away the answer
+
+3. Interesting fact (2-3 sentences)
+   - Educational detail about the phrase topic that will be shown when suspect is captured
+   - Should be engaging, informative, and age-appropriate for elementary students
+   - Connect the specific feature to broader geographic or cultural knowledge
+   - Make players say "Wow, I never knew that!"
+
+PHRASE REQUIREMENTS:
+- Must be exactly 4-5 words
+- Must include the city name
+- Must be factually accurate about the location
+- Should be specific enough that it couldn't apply to many other cities
+- Use proper grammar and natural phrasing
+- Appropriate for ages 10+ (elementary school level)
+
+Return JSON format:
+{
+  "educationalPhrase": "phrase here",
+  "categoryHint": "category here", 
+  "interestingFact": "detailed fact here"
+}`;
+
+  // Dynamic context for puzzle generation
+  const dynamicPuzzleContext = `
+Final Location Details:
+- City: ${finalLocation.name}
+- Country: ${finalLocation.country}
+- Game Theme: ${theme}
+- Connected Locations: ${locations.map(l => l.name).join(', ')}
+
+Create a puzzle that:
+1. Highlights what makes ${finalLocation.name} distinctive and educational
+2. Connects thematically to the overall game theme: ${theme}
+3. Provides geographic or cultural learning opportunities
+4. Is appropriate for elementary school students`;
+
+  const fullPuzzlePrompt = staticPuzzleInstructions + dynamicPuzzleContext;
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'user',
+        content: fullPuzzlePrompt
+      }
+    ],
+    temperature: 0.7,
+    response_format: { type: "json_object" }
+  });
+
+  return JSON.parse(response.choices[0].message.content);
+}
+
 async function generateDiverseThemes(numberOfGames, baseTheme = '') {
   try {
     // Get existing themes from published games to avoid overlap
@@ -93,6 +317,27 @@ async function generateGameContentV2(context) {
   try {
     console.log('🎯 Generating V2 game content with OpenAI...');
     
+    // True random race selection using Unix timestamp
+    const timestamp = Date.now();
+    const lastDigit = timestamp % 10;
+    
+    // Map last digit to race
+    const raceMapping = {
+      0: 'White',
+      1: 'Asian',
+      2: 'Hispanic/Latino',
+      3: 'Native American',
+      4: 'Pacific Islander',
+      5: 'Mixed Race',
+      6: 'White',  // Double White to balance distribution
+      7: 'Black',
+      8: 'Middle Eastern',
+      9: 'Mixed Race'  // Double Mixed Race
+    };
+    
+    const selectedRace = raceMapping[lastDigit];
+    console.log(`🎲 Timestamp: ${timestamp}, Last digit: ${lastDigit}, Selected race: ${selectedRace}`);
+    
     // Get most used cities for diversity guidance
     const mostUsedCities = await getMostUsedCities(20);
     
@@ -146,35 +391,25 @@ LANGUAGE REQUIREMENTS (AGES 10+):
 - Focus on adventure, mystery, and learning
 - Create fun, engaging villains that kids would enjoy, not fear
 
-VILLAIN DIVERSITY REQUIREMENTS:
-- Ensure racial and ethnic diversity across generated villains
-- CRITICAL: You MUST select the villain's race using a TRULY RANDOM distribution from ALL of these options:
-  * Black (25% chance)
-  * White (25% chance)
-  * Asian (20% chance)
-  * Hispanic/Latino (15% chance)
-  * Middle Eastern (10% chance)
-  * Native American (2.5% chance)
-  * Pacific Islander (2.5% chance)
-- IMPORTANT: Do NOT favor any single race. If you notice you're defaulting to Hispanic/Latino, STOP and choose a different race.
-- After selecting the race, then select specific ethnic/cultural backgrounds:
-  * Black: Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, Haitian, Somali, South African, etc.
-  * White: German, Irish, Russian, Italian, Norwegian, Australian, French, Polish, etc.
-  * Asian: Japanese, Korean, Vietnamese, Thai, Filipino, Indonesian, Indian, Pakistani, etc.
-  * Hispanic/Latino: Mexican, Colombian, Peruvian, Argentine, Venezuelan, Cuban, Puerto Rican, etc.
-  * Middle Eastern: Lebanese, Iranian, Turkish, Egyptian, Moroccan, Jordanian, Saudi, etc.
-  * Native American: Cherokee, Navajo, Lakota, Inuit, Apache, Cree, etc.
-  * Pacific Islander: Hawaiian, Samoan, Fijian, Tongan, Tahitian, etc.
-- MANDATORY: Vary the race selection. Do not generate multiple villains of the same race in a row.
-- Create inclusive representation that reflects global diversity
-- Each villain MUST represent a different racial/ethnic combination than the previous villain
+VILLAIN RACE REQUIREMENT:
+- The villain's race has been pre-selected as: {RACE_PLACEHOLDER}
+- You MUST use this exact race for the villain. Do not change or select a different race.
+- Based on this race, select an appropriate ethnicity/cultural background:
+  * Black: Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, Haitian, Somali, South African, Zimbabwean, etc.
+  * White: German, Irish, Russian, Italian, Norwegian, Australian, French, Polish, Swedish, Canadian, etc.
+  * Asian: Japanese, Korean, Vietnamese, Thai, Filipino, Indonesian, Indian, Pakistani, Chinese, etc.
+  * Hispanic/Latino: Mexican, Colombian, Brazilian, Argentinian, Venezuelan, Peruvian, Cuban, etc.
+  * Middle Eastern: Lebanese, Iranian, Turkish, Egyptian, Moroccan, Jordanian, Saudi, Iraqi, etc.
+  * Native American: Cherokee, Navajo, Lakota, Inuit, Apache, Cree, Quechua, Maya, etc.
+  * Pacific Islander: Hawaiian, Samoan, Fijian, Tongan, Tahitian, Maori, Marshallese, etc.
+  * Mixed Race: Choose a thoughtful combination (e.g., Korean-Irish, Nigerian-German, Mexican-Japanese, etc.)
+- Create an authentic, respectful character representation based on the selected race and ethnicity
 
-FINAL INTERESTING FACT REQUIREMENTS:
-- Create a surprising "aha moment" that connects all 4 locations (including the final one)
-- Go deeper than the basic theme - reveal a fascinating connection players wouldn't expect
-- Make it educational and age-appropriate for elementary school students
-- Examples: geological formations, historical events, cultural traditions, scientific discoveries
-- Should make players say "Wow, I never knew that!" and feel smart for solving the case
+GAME COMPLETION MESSAGE REQUIREMENTS:
+- Create a congratulatory message that ties the villain's story to the geographic/thematic connections
+- Should celebrate the player's detective work and highlight what they learned
+- Keep it brief and encouraging
+- Age-appropriate for elementary school students
 
 FINAL LOCATION OBJECTIVES:
 - WHERE_STASHED: Where villain hid stolen goods
@@ -199,13 +434,6 @@ IMAGE STRATEGY REQUIREMENTS:
 - level can be: obscured, medium, clear
 - specificItem should be "security camera footage" for security_footage, otherwise "DETERMINE_FROM_VILLAIN_AND_THEME"
 
-BEFORE GENERATING: Roll a mental dice for villain race selection:
-- 1-25: Black villain (Nigerian, Kenyan, Ethiopian, Ghanaian, Jamaican, etc.)
-- 26-50: White villain (German, Irish, Russian, Italian, Norwegian, etc.)
-- 51-70: Asian villain (Japanese, Korean, Vietnamese, Thai, Indian, etc.)
-- 71-85: Hispanic/Latino villain (Colombian, Peruvian, Argentine, Cuban, etc.)
-- 86-95: Middle Eastern villain (Lebanese, Iranian, Turkish, Egyptian, etc.)
-- 96-100: Native American or Pacific Islander villain
 
 Return a complete game structure in JSON format:
 
@@ -226,8 +454,6 @@ Return a complete game structure in JSON format:
   "caseDetails": {
     "title": "Case title (max 6 words)",
     "summary": "Kid-friendly crime story (3-4 sentences) using simple language appropriate for ages 10+. Focus on puzzles, treasure hunts, or harmless pranks rather than serious crimes.",
-    "interestingFact": "Educational fact about the 3 locations",
-    "finalInterestingFact": "Ultimate 'aha moment' fact revealed after solving the entire case - a deeper, more surprising connection between all 4 locations (including the final one) that provides educational value and a satisfying conclusion",
     "gameCompletionMessage": "Congratulatory message that ties the villain's story to the geographic/thematic connections"
   },
   "locations": [
@@ -303,7 +529,9 @@ Try to choose cities that are NOT in this list, while still meeting the difficul
 
 Replace FINAL_OBJECTIVE_PLACEHOLDER in the JSON template with: ${context.finalObjective || 'WHERE_STASHED'}`;
 
-    const fullPrompt = staticInstructions + dynamicContext;
+    // Replace race placeholder with the selected race
+    const staticInstructionsWithRace = staticInstructions.replace('{RACE_PLACEHOLDER}', selectedRace);
+    const fullPrompt = staticInstructionsWithRace + dynamicContext;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -415,12 +643,16 @@ CLUE SPECIFICITY REQUIREMENTS:
 
 CLUE DISTRIBUTION RULES:
 - Turn 1 MUST have 4 clues: 1 theme + 3 pattern recognition clues (one for each city)
-- Turn 2 MUST have 4 clues: 1 image + 3 location-specific clues (one for each location) - NO distance/timezone clues
-- Turn 3 MUST have 4 clues: 1 image + 3 location-specific clues (one for each location) - NO distance/timezone clues
+- Turn 2 MUST have 4 clues: 1 image + 3 location-specific clues 
+  🚨 CRITICAL: EXACTLY 1 clue for location 1, EXACTLY 1 clue for location 2, EXACTLY 1 clue for location 3
+  🚨 NEVER generate multiple clues for the same location in Turn 2
+- Turn 3 MUST have 4 clues: 1 image + 3 location-specific clues
+  🚨 CRITICAL: EXACTLY 1 clue for location 1, EXACTLY 1 clue for location 2, EXACTLY 1 clue for location 3  
+  🚨 NEVER generate multiple clues for the same location in Turn 3
 - Turn 4 MUST have 6 clues: 3 distance clues (for each location pair) + 3 time difference clues
 - Turn 5 MUST have country clues: one clue about each country the cities are in
-- Turn 6: EXACTLY 1 clue only (regardless of difficulty)
-- Turn 7: EXACTLY 1 clue only (regardless of difficulty)
+- Turn 6: NO CLUES GENERATED (puzzle interface handles this)
+- Turn 7: NO CLUES GENERATED (puzzle interface handles this)
 - NO images in turns 1, 4, 5, 6, or 7
 
 TURN 1 SPECIFIC REQUIREMENTS:
@@ -441,6 +673,14 @@ TURN 1 SPECIFIC REQUIREMENTS:
 TURN 4 SPECIFIC REQUIREMENTS:
 - MUST include 3 distance clues: Location 1↔2, Location 1↔3, Location 2↔3
 - MUST include 3 time difference clues showing hours between each location pair
+- TIME DIFFERENCE CLUE FORMAT: 
+  * CONTENT field: Use the hour number as content (e.g., "6 hours")
+  * DESCRIPTION field: MUST include readable format "Location X is Y hours ahead/behind Location Z"
+  * Examples: 
+    - content: "6 hours", description: "Location 1 is 6 hours ahead of Location 2"
+    - content: "3 hours", description: "Location 3 is 3 hours behind Location 1"
+  * Use "Location 1", "Location 2", "Location 3" in descriptions, not actual city names
+  * CRITICAL: Every time_difference clue MUST have both content AND description fields populated
 - NO other clues in Turn 4 - only distances and time differences
 
 TURN 5 SPECIFIC REQUIREMENTS:
@@ -454,12 +694,12 @@ TURN 5 SPECIFIC REQUIREMENTS:
 
 TURN STRUCTURE:
 - Turn 1: Theme reveal + pattern recognition clues (3 emoji patterns, one per city) - NO images
-- Turn 2: First image (as per imageStrategy) + 3 location-specific clues (one for each location) - NO distance/timezone clues
-- Turn 3: Second image (as per imageStrategy) + 3 location-specific clues (one for each location) - NO distance/timezone clues
+- Turn 2: First image (as per imageStrategy) + 3 location-specific clues (EXACTLY 1 clue for location 1, EXACTLY 1 clue for location 2, EXACTLY 1 clue for location 3) - NO distance/timezone clues
+- Turn 3: Second image (as per imageStrategy) + 3 location-specific clues (EXACTLY 1 clue for location 1, EXACTLY 1 clue for location 2, EXACTLY 1 clue for location 3) - NO distance/timezone clues
 - Turn 4: ALL distances between locations + ALL time differences (NO other clues, NO images)
 - Turn 5: ONLY country clues (exactly 3 clues, one for each country) - NO other clues, NO images
-- Turn 6: First clues about the 4th location - NO images
-- Turn 7: Decisive clues for the final location - NO images
+- Turn 6: NO CLUES - handled by puzzle interface
+- Turn 7: NO CLUES - handled by puzzle interface
 
 CLUE TYPES TO USE:
 - theme, pattern_recognition, distance, timezone, time_difference, image (required)
@@ -496,17 +736,96 @@ For each turn, generate:
   ]
 }
 
+EXAMPLE TIME_DIFFERENCE CLUE:
+{
+  "type": "time_difference",
+  "content": "6 hours",
+  "description": "Location 1 is 6 hours ahead of Location 2",
+  "locationPositions": null,
+  "data": {
+    "between": [1, 2],
+    "hours": 6
+  }
+}
+
+MANDATORY TURN 2 STRUCTURE EXAMPLE:
+{
+  "turn": 2,
+  "narrative": "Turn 2 narrative",
+  "clues": [
+    {
+      "type": "image",
+      "content": "Image description",
+      "description": "Security footage shows...",
+      "locationPositions": [1],
+      "data": {"imageLevel": "obscured", "villainElement": "security_footage"}
+    },
+    {
+      "type": "climate",
+      "content": "Climate clue content",
+      "description": "This location has...",
+      "locationPositions": [1],
+      "data": {}
+    },
+    {
+      "type": "terrain",
+      "content": "Terrain clue content", 
+      "description": "This place features...",
+      "locationPositions": [2],
+      "data": {}
+    },
+    {
+      "type": "cultural_event",
+      "content": "Cultural clue content",
+      "description": "This city hosts...",
+      "locationPositions": [3],
+      "data": {}
+    }
+  ]
+}
+
+NOTE: In this example, Location 1 gets the image + climate clue, Location 2 gets terrain clue, Location 3 gets cultural clue. ALL THREE LOCATIONS ARE COVERED.
+
 CRITICAL: Every clue MUST include a "data" field, even if it's just an empty object {}. Use specific geographic features for educational value.
 
-Generate all 7 turns with appropriate clue distribution. Make sure to include:
+Generate ONLY 5 turns (NOT 7). Do not generate turns 6 and 7. Make sure to include:
 - Turn 1: Theme + 3 pattern recognition clues (emoji sequences for each city) - 4 clues total
-- Turn 2: 1 image + 3 location-specific clues (one for each location) - 4 clues total, NO distance/timezone clues
-- Turn 3: 1 image + 3 location-specific clues (one for each location) - 4 clues total, NO distance/timezone clues
+- Turn 2: 1 image + 3 location-specific clues - 4 clues total, NO distance/timezone clues
+  🚨 MANDATORY: One clue each for Location 1, Location 2, Location 3 (including the image clue)
+- Turn 3: 1 image + 3 location-specific clues - 4 clues total, NO distance/timezone clues  
+  🚨 MANDATORY: One clue each for Location 1, Location 2, Location 3 (including the image clue)
 - Turn 4: ALL 3 distance calculations + ALL 3 time differences ONLY - 6 clues total
 - Turn 5: ONLY 3 country clues (exactly one for each country) - 3 clues total, no other clues
-- Turn 6: EXACTLY 1 clue about the 4th location - NO MORE THAN 1 CLUE
-- Turn 7: EXACTLY 1 decisive clue for final location - NO MORE THAN 1 CLUE
+- DO NOT GENERATE TURN 6 OR TURN 7
 - Images in the turns specified by imageStrategy (turns 2 and 3 ONLY)
+
+🚨 FINAL VERIFICATION: Before submitting your response, double-check Turn 2 and Turn 3:
+- Are there clues with locationPositions [1], [2], AND [3] in each turn?
+- Is no location getting more than one clue (excluding the image) per turn?
+- If you see multiple clues for the same location, you MUST fix this before responding.
+
+ABSOLUTE MANDATORY CLUE DISTRIBUTION FOR TURNS 2 AND 3:
+🚨 CRITICAL ERROR PREVENTION: You have been generating ALL clues for the same location. This is WRONG.
+
+STRICT ENFORCEMENT RULE:
+- Turn 2 MUST have: 1 image + 1 clue about Location 1 + 1 clue about Location 2 + 1 clue about Location 3
+- Turn 3 MUST have: 1 image + 1 clue about Location 1 + 1 clue about Location 2 + 1 clue about Location 3
+
+WRONG EXAMPLE (DO NOT DO THIS):
+Turn 2: [image about Location 1, climate about Location 1, terrain about Location 1, cultural_event about Location 1] ❌
+
+CORRECT EXAMPLE (DO THIS):
+Turn 2: [image about Location 1, climate about Location 1, terrain about Location 2, cultural_event about Location 3] ✅
+
+VERIFICATION CHECKLIST FOR EACH TURN:
+Before finalizing Turn 2 and Turn 3, verify:
+- ✓ Does clue 1 relate to the image location?
+- ✓ Does clue 2 have locationPositions: [1]?
+- ✓ Does clue 3 have locationPositions: [2]?
+- ✓ Does clue 4 have locationPositions: [3]?
+- ✓ Are all three locations covered by separate clues?
+
+If ANY clue has the same locationPositions as another clue in the same turn, you have FAILED this requirement.
 
 COUNTRY DATA REFERENCE:
 Use the country names from the gameData.locations array to ensure accurate flag descriptions:
@@ -586,10 +905,10 @@ async function generateGameV2Async(gameId, context) {
         villainClothingDescription: gameContent.villainProfile.clothingDescription,
         caseTitle: gameContent.caseDetails.title,
         crimeSummary: gameContent.caseDetails.summary,
-        interestingFact: gameContent.caseDetails.interestingFact,
+        interestingFact: '', // Remove redundant field - use finalLocationV2.interestingFact instead
         finalLocationObjective: gameContent.finalLocation.objective,
         finalLocationNarrative: gameContent.finalLocation.narrative,
-        finalInterestingFact: gameContent.caseDetails.finalInterestingFact,
+        finalInterestingFact: '', // Remove redundant field - use finalLocationV2.interestingFact instead
         gameCompletionMessage: gameContent.caseDetails.gameCompletionMessage
       }
     });
@@ -644,7 +963,14 @@ async function generateGameV2Async(gameId, context) {
       })
     );
     
-    // Create final location
+    // Generate puzzle content for final location
+    const puzzleData = await generateFinalLocationPuzzle(
+      gameContent.finalLocation.location,
+      gameContent.theme,
+      gameContent.locations
+    );
+    
+    // Create final location with puzzle fields
     await prisma.finalLocationV2.create({
       data: {
         gameV2Id: gameId,
@@ -652,6 +978,10 @@ async function generateGameV2Async(gameId, context) {
         country: gameContent.finalLocation.location.country,
         latitude: parseFloat(gameContent.finalLocation.location.latitude) || 0.0,
         longitude: parseFloat(gameContent.finalLocation.location.longitude) || 0.0,
+        educationalPhrase: puzzleData.educationalPhrase,
+        categoryHint: puzzleData.categoryHint,
+        interestingFact: puzzleData.interestingFact,
+        flagColors: puzzleData.flagColors,
         reason: gameContent.finalLocation.location.reason,
         clueConnections: JSON.stringify(gameContent.finalLocation.location.connections)
       }
@@ -686,11 +1016,38 @@ async function generateGameV2Async(gameId, context) {
     
     // Create gameplay turns and clues
     for (const turnData of turnClues.turns) {
+      // Provide fallback narrative if OpenAI didn't generate one
+      let narrative = turnData.narrative;
+      if (!narrative) {
+        switch (turnData.turn) {
+          case 1:
+            narrative = "The case begins. Your first clues reveal the villain's crime pattern and locations of interest.";
+            break;
+          case 2:
+            narrative = "Evidence emerges from the first crime scene. Visual clues and location details start forming a pattern.";
+            break;
+          case 3:
+            narrative = "More evidence surfaces from the second crime scene. The villain's trail becomes clearer.";
+            break;
+          case 4:
+            narrative = "Geographic analysis reveals the distances and time differences between all locations. These measurements are crucial for tracking the villain's movements.";
+            break;
+          case 5:
+            narrative = "Final evidence from the crime scenes reveals important details about the countries involved.";
+            break;
+          default:
+            narrative = `Turn ${turnData.turn}: Continue following the evidence trail.`;
+        }
+        console.log(`⚠️ Using fallback narrative for turn ${turnData.turn}: ${narrative}`);
+      }
+      
       const gameplayTurn = await prisma.gameplayTurn.create({
         data: {
-          gameV2Id: gameId,
+          gameV2: {
+            connect: { id: gameId }
+          },
           turn: turnData.turn,
-          narrative: turnData.narrative,
+          narrative: narrative,
           isFinalLocation: turnData.turn > 5
         }
       });

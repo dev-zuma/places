@@ -23,6 +23,10 @@ router.get('/', async (req, res) => {
       }
     });
 
+    // Determine target difficulty for filtering
+    const targetDifficulty = type !== 'overall' ? type : null;
+    console.log('🎯 Leaderboard request - Type:', type, 'Target Difficulty:', targetDifficulty);
+    
     // Calculate leaderboard data for each player (V2 games only)
     const leaderboardData = players.map(player => {
       let totalScore = 0;
@@ -31,37 +35,21 @@ router.get('/', async (req, res) => {
       
       // Process V2 cases only
       player.solvedCasesV2.forEach(playerCase => {
+        // If filtering by difficulty, only count games of that difficulty
+        if (targetDifficulty && playerCase.gameV2.difficulty !== targetDifficulty) {
+          return; // Skip this game
+        }
+        
         totalPlayed++;
         
         if (playerCase.solvedFinal) {
           solvedCount++;
           
-          let baseScore = playerCase.pointsEarned || 150; // Default 150 for V2
-          let difficultyMultiplier = 1.0;
+          // Use the score calculated by the frontend (new scoring system)
+          // The frontend now calculates the complete score including all bonuses
+          let finalScore = playerCase.pointsEarned || 0;
           
-          switch (playerCase.gameV2.difficulty) {
-            case 'easy':
-              difficultyMultiplier = 1.0;
-              break;
-            case 'medium':
-              difficultyMultiplier = 1.25;
-              break;
-            case 'hard':
-              difficultyMultiplier = 1.75;
-              break;
-          }
-          
-          // Bonus for solving locations quickly (under 5 turns)
-          if (playerCase.turnsUsed && playerCase.turnsUsed <= 5) {
-            baseScore += 75; // Quick location solve bonus
-          }
-          
-          // Bonus for finding 4th location on 6th turn
-          if (playerCase.turnsUsed && playerCase.turnsUsed === 6) {
-            baseScore += 100; // Perfect final location bonus
-          }
-          
-          totalScore += Math.round(baseScore * difficultyMultiplier);
+          totalScore += finalScore;
         }
       });
       
@@ -78,24 +66,8 @@ router.get('/', async (req, res) => {
       };
     });
     
-    // Filter by difficulty type if specified
-    let filteredData = leaderboardData;
-    if (type !== 'overall') {
-      const targetDifficulty = type.replace('Champions', '').replace('Masters', '').replace('Heroes', '').toLowerCase();
-      
-      // Filter players who have played the target difficulty
-      const filteredPlayers = [];
-      for (const player of leaderboardData) {
-        const hasPlayed = await hasPlayedDifficulty(player.playerId, targetDifficulty);
-        if (hasPlayed) {
-          filteredPlayers.push(player);
-        }
-      }
-      filteredData = filteredPlayers;
-    }
-    
-    // Filter out players with no games played
-    filteredData = filteredData.filter(player => player.totalPlayed > 0);
+    // Filter out players with no games played (important for difficulty-specific views)
+    let filteredData = leaderboardData.filter(player => player.totalPlayed > 0);
     
     // Sort by total score descending, then by solve rate descending
     filteredData.sort((a, b) => {
