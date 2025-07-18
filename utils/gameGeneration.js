@@ -788,6 +788,37 @@ MANDATORY TURN 2 STRUCTURE EXAMPLE:
 
 NOTE: In this example, Location 1 gets the image + climate clue, Location 2 gets terrain clue, Location 3 gets cultural clue. ALL THREE LOCATIONS ARE COVERED.
 
+MANDATORY TURN 5 STRUCTURE EXAMPLE:
+{
+  "turn": 5,
+  "narrative": "Turn 5 narrative",
+  "clues": [
+    {
+      "type": "country",
+      "content": "Country clue about location 1's country",
+      "description": "This country uses the Euro currency",
+      "locationPositions": [1],
+      "data": {}
+    },
+    {
+      "type": "country",
+      "content": "Country clue about location 2's country", 
+      "description": "This nation's flag features a red maple leaf",
+      "locationPositions": [2],
+      "data": {}
+    },
+    {
+      "type": "country",
+      "content": "Country clue about location 3's country",
+      "description": "This country is famous for its fjords",
+      "locationPositions": [3],
+      "data": {}
+    }
+  ]
+}
+
+NOTE: In this example, Location 1 gets a country clue, Location 2 gets a country clue, Location 3 gets a country clue. Each clue is about the SPECIFIC COUNTRY where that location is situated.
+
 CRITICAL: Every clue MUST include a "data" field, even if it's just an empty object {}. Use specific geographic features for educational value.
 
 Generate ONLY 5 turns (NOT 7). Do not generate turns 6 and 7. Make sure to include:
@@ -801,9 +832,10 @@ Generate ONLY 5 turns (NOT 7). Do not generate turns 6 and 7. Make sure to inclu
 - DO NOT GENERATE TURN 6 OR TURN 7
 - Images in the turns specified by imageStrategy (turns 2 and 3 ONLY)
 
-🚨 FINAL VERIFICATION: Before submitting your response, double-check Turn 2 and Turn 3:
+🚨 FINAL VERIFICATION: Before submitting your response, double-check Turn 2, Turn 3, and Turn 5:
 - Are there clues with locationPositions [1], [2], AND [3] in each turn?
 - Is no location getting more than one clue (excluding the image) per turn?
+- Does Turn 5 have exactly 3 country clues with locationPositions [1], [2], and [3]?
 - If you see multiple clues for the same location, you MUST fix this before responding.
 
 ABSOLUTE MANDATORY CLUE DISTRIBUTION FOR TURNS 2 AND 3:
@@ -827,6 +859,12 @@ Before finalizing Turn 2 and Turn 3, verify:
 - ✓ Does clue 4 have locationPositions: [3]?
 - ✓ Are all three locations covered by separate clues?
 
+Before finalizing Turn 5, verify:
+- ✓ Does clue 1 have locationPositions: [1]?
+- ✓ Does clue 2 have locationPositions: [2]?
+- ✓ Does clue 3 have locationPositions: [3]?
+- ✓ Are all three countries covered by separate clues?
+
 If ANY clue has the same locationPositions as another clue in the same turn, you have FAILED this requirement.
 
 COUNTRY DATA REFERENCE:
@@ -834,7 +872,13 @@ Use the country names from the gameData.locations array to ensure accurate flag 
 - Location 1 country: gameData.locations[0].country
 - Location 2 country: gameData.locations[1].country  
 - Location 3 country: gameData.locations[2].country
-When creating flag clues, internally reference the actual country name to ensure accuracy, then describe the flag without mentioning the country name.`;
+
+🚨 CRITICAL FLAG ACCURACY WARNING:
+When creating flag clues, you MUST use factually correct flag descriptions. DO NOT invent or guess flag features.
+- South Africa: Y-shaped design with six colors (no eagles, no golden sun)
+- Only describe flags you are 100% certain about
+- If uncertain about flag details, use other country features (currency, geography, culture, language)
+- Examples of safe country clues: "uses the Euro currency", "home to the Great Wall", "famous for its maple syrup"`;
 
     // Dynamic context for turn clues (variable data that cannot be cached)
     const dynamicTurnContext = `
