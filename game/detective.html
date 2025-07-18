@@ -1299,8 +1299,8 @@
             const userInput = getUserPhraseInput();
             const expectedPhrase = puzzleState.phrase || currentCase.finalLocationV2.educationalPhrase || currentCase.finalLocationV2.name;
             
-            // Check if answer is correct (with normalization support)
-            if (checkLocationMatch(userInput.trim(), expectedPhrase)) {
+            // Check if answer is correct - EXACT match required for final location puzzle
+            if (checkExactPhraseMatch(userInput.trim(), expectedPhrase)) {
                 // Mark as correct
                 finalLocationAnswer = true;
                 correctLocations[3] = true; // Update global tracking (4th location)
@@ -1503,6 +1503,40 @@
             text = text.replace(/[^a-z0-9\s-]/g, '');
             
             return text;
+        }
+
+        function checkExactPhraseMatch(answer, correct) {
+            // Check for empty/blank answers first - these should never match
+            if (!answer || !answer.trim()) {
+                console.log('❌ Final location: Empty answer - no match');
+                return false;
+            }
+            
+            // Normalize both answer and correct phrase (handles international characters)
+            const normalizedAnswer = normalizeText(answer);
+            const normalizedCorrect = normalizeText(correct);
+            
+            // Also check against the original lowercase versions for exact matches
+            const originalAnswer = answer.toLowerCase().trim();
+            const originalCorrect = correct.toLowerCase().trim();
+            
+            // Debug logging for final location
+            console.log('🔍 Final Location Exact Match Debug:', {
+                answer: answer,
+                correct: correct,
+                normalizedAnswer: normalizedAnswer,
+                normalizedCorrect: normalizedCorrect,
+                originalAnswer: originalAnswer,
+                originalCorrect: originalCorrect
+            });
+            
+            // Check for EXACT match only (no partial matching for final location puzzle)
+            const exactMatch = normalizedAnswer === normalizedCorrect || 
+                              originalAnswer === originalCorrect ||
+                              answer.toLowerCase().trim() === correct.toLowerCase().trim();
+            
+            console.log('🔍 Final location exact match result:', exactMatch);
+            return exactMatch;
         }
 
         function checkLocationMatch(answer, correct) {
