@@ -577,6 +577,7 @@
                         // Auto-advance and validation
                         input.addEventListener('input', handlePhraseInput);
                         input.addEventListener('keydown', handlePhraseKeydown);
+                        input.addEventListener('click', handlePhraseInputClick);
                         
                         wordDiv.appendChild(input);
                         globalLetterIndex++;
@@ -639,6 +640,25 @@
                     prevInput.value = '';
                     prevInput.classList.remove('filled');
                 }
+            }
+        }
+
+        // Handle clicking on input boxes to remove letters
+        function handlePhraseInputClick(event) {
+            const input = event.target;
+            const currentValue = input.value;
+            
+            // Only allow removal if the input has a value and is not disabled/readonly
+            if (currentValue && !input.disabled && !input.readOnly) {
+                // Move letter back from used to remaining
+                moveLetterToRemaining(currentValue);
+                
+                // Clear the input and remove filled styling
+                input.value = '';
+                input.classList.remove('filled');
+                
+                // Focus the input for potential new input
+                input.focus();
             }
         }
 
