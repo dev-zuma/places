@@ -745,6 +745,11 @@
                                 <h3>🧩 Final Challenge</h3>
                                 <p>Unscramble the letters below to reveal an educational phrase about the suspect's final location. Use the available letters to fill in the blanks and capture the criminal!</p>
                             </div>
+                            
+                            <!-- Turn 6 Flag Colors Hint -->
+                            <div class="flag-colors-hint" id="flagColorsHint" style="display: none;">
+                                <!-- Flag colors will be shown here in Turn 6 -->
+                            </div>
                         </div>
                         
                         <!-- Crime Scene Phase -->
@@ -800,11 +805,6 @@
                                         <!-- Turn 7 Category Hint -->
                                         <div class="category-hint" id="categoryHint" style="display: none;">
                                             <!-- Category hint will be shown here in Turn 7 -->
-                                        </div>
-                                        
-                                        <!-- Turn 7 Flag Colors Hint -->
-                                        <div class="flag-colors-hint" id="flagColorsHint" style="display: none;">
-                                            <!-- Flag colors will be shown here in Turn 7 -->
                                         </div>
                                     </div>
                                 </div>
@@ -1755,22 +1755,7 @@
                         updateV2TurnDisplay();
                         updateActionButton();
                         
-                        // Show flag colors hint
-                        const flagColorsHint = document.getElementById('flagColorsHint');
-                        if (flagColorsHint && currentCase.finalLocationV2.flagColors) {
-                            try {
-                                const flagColors = JSON.parse(currentCase.finalLocationV2.flagColors);
-                                let flagHtml = '<strong>Country Flag Colors:</strong><div class="flag-colors-display">';
-                                flagColors.forEach(color => {
-                                    flagHtml += `<div class="flag-color-swatch" style="background-color: ${color}" title="${color}"></div>`;
-                                });
-                                flagHtml += '</div>';
-                                flagColorsHint.innerHTML = flagHtml;
-                                flagColorsHint.style.display = 'block';
-                            } catch (e) {
-                                console.error('Error parsing flag colors:', e);
-                            }
-                        }
+                        // Flag colors are already shown in Turn 6, no need to show again
                     }, 1000);
                 }
             }
@@ -2148,6 +2133,23 @@
                 
                 // Add category hint to Final Challenge box if it exists
                 addCategoryHintToFinalChallenge();
+                
+                // Show flag colors hint in Turn 6
+                const flagColorsHint = document.getElementById('flagColorsHint');
+                if (flagColorsHint && currentCase.finalLocationV2.flagColors) {
+                    try {
+                        const flagColors = JSON.parse(currentCase.finalLocationV2.flagColors);
+                        let flagHtml = '<strong>🏳️ National Flag Colors:</strong><div class="flag-colors-display">';
+                        flagColors.forEach(color => {
+                            flagHtml += `<div class="flag-color-swatch" style="background-color: ${color}" title="${color}"></div>`;
+                        });
+                        flagHtml += '</div><small>These are the primary colors of the final location\'s national flag</small>';
+                        flagColorsHint.innerHTML = flagHtml;
+                        flagColorsHint.style.display = 'block';
+                    } catch (e) {
+                        console.error('Error parsing flag colors:', e);
+                    }
+                }
             }, 1000);
         }
 
