@@ -479,6 +479,110 @@
             transition: transform 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+        
+        /* Compact Stats Section */
+        .game-stats-compact {
+            background: rgba(26, 91, 91, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .game-stats-compact .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(26, 91, 91, 0.1);
+        }
+        
+        .game-stats-compact .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .game-stats-compact .stat-label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .game-stats-compact .stat-value {
+            font-size: 14px;
+            color: #1A5B5B;
+            font-weight: bold;
+        }
+        
+        .game-stats-compact .stat-row.score-total {
+            border-bottom: 2px solid #1A5B5B;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
+        }
+        
+        .game-stats-compact .stat-row.score-total .stat-value {
+            color: #FF4500;
+            font-size: 16px;
+        }
+        
+        /* Enhanced Interesting Fact Section */
+        .interesting-fact-section {
+            padding: 0;
+            margin: 10px 0;
+        }
+        
+        .interesting-fact-title {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1A5B5B;
+            margin: 0 0 8px 0;
+            text-align: center;
+        }
+        
+        .interesting-fact {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            text-align: left;
+            font-style: italic;
+        }
+        
+        /* Mobile responsiveness for compact stats */
+        @media (max-width: 420px) {
+            .game-stats-compact {
+                padding: 10px;
+                margin: 8px 0;
+            }
+            
+            .game-stats-compact .stat-row {
+                padding: 4px 0;
+            }
+            
+            .game-stats-compact .stat-label,
+            .game-stats-compact .stat-value {
+                font-size: 13px;
+            }
+            
+            .game-stats-compact .stat-row.score-total .stat-value {
+                font-size: 15px;
+            }
+            
+            .interesting-fact-section {
+                padding: 0;
+                margin: 8px 0;
+            }
+            
+            .interesting-fact-title {
+                font-size: 15px;
+                margin-bottom: 6px;
+            }
+            
+            .interesting-fact {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1748,8 +1852,6 @@
             const userInput = getUserPhraseInput();
             const expectedPhrase = puzzleState.phrase || currentCase.finalLocationV2.educationalPhrase || currentCase.finalLocationV2.name;
             
-            console.log('Checking puzzle answer:', userInput, 'vs', expectedPhrase);
-            
             // Check if answer is correct (with normalization support)
             if (checkLocationMatch(userInput.trim(), expectedPhrase)) {
                 // Mark as correct
@@ -1766,8 +1868,14 @@
                 });
                 
                 // Hide torn paper letters
-                document.getElementById('lettersContainer').style.display = 'none';
-                document.querySelector('.shuffle-letters-btn').style.display = 'none';
+                const lettersContainer = document.getElementById('lettersContainer');
+                if (lettersContainer) {
+                    lettersContainer.style.display = 'none';
+                }
+                const shuffleBtn = document.querySelector('.shuffle-letters-btn');
+                if (shuffleBtn) {
+                    shuffleBtn.style.display = 'none';
+                }
                 
                 // Show success and trigger game completion
                 
@@ -1817,6 +1925,7 @@
         // Helper function to get user input from phrase inputs
         function getUserPhraseInput() {
             const inputs = document.querySelectorAll('.phrase-letter-input');
+            
             let phrase = '';
             let currentWord = '';
             let lastWordIndex = -1;
@@ -1937,16 +2046,10 @@
         // Helper function to add category hint to Final Challenge box
         function addCategoryHintToFinalChallenge() {
             const puzzleInstructions = document.querySelector('.puzzle-instructions');
-            console.log('Debug: addCategoryHintToFinalChallenge called, currentTurn:', currentTurn);
-            console.log('Debug: puzzleInstructions found:', !!puzzleInstructions);
-            console.log('Debug: finalLocationV2 exists:', !!currentCase.finalLocationV2);
-            console.log('Debug: categoryHint exists:', currentCase.finalLocationV2 ? !!currentCase.finalLocationV2.categoryHint : false);
-            console.log('Debug: categoryHint value:', currentCase.finalLocationV2 ? currentCase.finalLocationV2.categoryHint : 'none');
             
             if (puzzleInstructions && currentTurn >= 6 && currentCase.finalLocationV2 && currentCase.finalLocationV2.categoryHint) {
                 // Check if category hint already exists to avoid duplicates
                 if (!puzzleInstructions.querySelector('.category-hint-display')) {
-                    console.log('Debug: Adding category hint to Final Challenge box');
                     const categoryHintDiv = document.createElement('div');
                     categoryHintDiv.className = 'category-hint-display';
                     categoryHintDiv.innerHTML = `
@@ -1957,11 +2060,9 @@
                     puzzleInstructions.appendChild(categoryHintDiv);
                     return true;
                 } else {
-                    console.log('Debug: Category hint already exists, skipping');
                     return false;
                 }
             } else {
-                console.log('Debug: Category hint not added - conditions not met');
                 return false;
             }
         }
@@ -2178,73 +2279,26 @@
             
             // Add statistics
             modalContent += `
-                <div class="game-stats">
-                    <div class="stat-row">
-                        <span class="stat-label">Crime Locations Found:</span>
-                        <span class="stat-value">${correctLocations.slice(0,3).filter(loc => loc).length} / 3</span>
-                    </div>`;
-            
-            if (allCrimeLocationsCorrect) {
-                modalContent += `
-                    <div class="stat-row">
-                        <span class="stat-label">Final Location Found:</span>
-                        <span class="stat-value">${finalLocationCorrect ? 'Yes' : 'No'}</span>
-                    </div>`;
-            }
-            
-            // Show detailed score breakdown
-            const correctCrimeLocationsCount = correctLocations.slice(0, 3).filter(correct => correct).length;
-            const difficulty = currentCase.difficulty || 'medium';
-            let scoreBreakdown = '';
-            
-            // Base score
-            if (finalLocationCorrect && allCrimeLocationsCorrect) {
-                if (currentTurn === 6) {
-                    scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (6 turns):</span><span class="stat-value">2000 points</span></div>`;
-                } else if (currentTurn === 7) {
-                    scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (7 turns):</span><span class="stat-value">1500 points</span></div>`;
-                }
-            } else if (allCrimeLocationsCorrect) {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (3 locations):</span><span class="stat-value">1000 points</span></div>`;
-            } else if (correctCrimeLocationsCount === 2) {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (2 locations):</span><span class="stat-value">500 points</span></div>`;
-            } else if (correctCrimeLocationsCount === 1) {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Base Score (1 location):</span><span class="stat-value">250 points</span></div>`;
-            }
-            
-            // Difficulty bonus
-            if (difficulty === 'medium') {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Difficulty Bonus (Medium):</span><span class="stat-value">+250 points</span></div>`;
-            } else if (difficulty === 'hard') {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Difficulty Bonus (Hard):</span><span class="stat-value">+500 points</span></div>`;
-            }
-            
-            // Time bonus
-            if (timeTaken < 300 && gameScore > 0) {
-                scoreBreakdown += `<div class="stat-row"><span class="stat-label">Time Bonus (< 5 min):</span><span class="stat-value">+250 points</span></div>`;
-            }
-            
-            modalContent += scoreBreakdown + `
+                <div class="game-stats-compact">
                     <div class="stat-row score-total">
-                        <span class="stat-label">Total Score:</span>
+                        <span class="stat-label">Score:</span>
                         <span class="stat-value">${gameScore} points</span>
                     </div>
                     <div class="stat-row">
                         <span class="stat-label">Time:</span>
                         <span class="stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
-                    </div>`;
-            
-            modalContent += `
-                    <div class="stat-row">
-                        <span class="stat-label">Turns Used:</span>
-                        <span class="stat-value">${currentTurn} / 7</span>
                     </div>
                 </div>
             `;
             
             if (result === 'captured') {
                 const interestingFact = currentCase.finalLocationV2?.interestingFact || currentCase.finalInterestingFact || 'Amazing detective work!';
-                modalContent += `<p class="interesting-fact">${interestingFact}</p>`;
+                modalContent += `
+                    <div class="interesting-fact-section">
+                        <h3 class="interesting-fact-title">🧭 Did You Know?</h3>
+                        <p class="interesting-fact">${interestingFact}</p>
+                    </div>
+                `;
             }
             
             // Add the Start New Case button to the modal content
