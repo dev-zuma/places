@@ -99,14 +99,6 @@
                     </div>
                     <div class="interesting-facts">
                         <div class="fact-item">
-                            <strong>Interesting Fact:</strong>
-                            <p id="interestingFact"></p>
-                        </div>
-                        <div class="fact-item">
-                            <strong>Final Interesting Fact:</strong>
-                            <p id="finalInterestingFact"></p>
-                        </div>
-                        <div class="fact-item">
                             <strong>Completion Message:</strong>
                             <p id="completionMessage"></p>
                         </div>
@@ -116,7 +108,7 @@
                 <!-- Locations -->
                 <div class="details-section">
                     <h2>🌍 Locations</h2>
-                    <div class="locations-grid">
+                    <div class="locations-container">
                         <div class="crime-locations">
                             <h3>Crime Scene Locations</h3>
                             <div id="crimeLocations"></div>
@@ -220,8 +212,6 @@
             
             // Case Details
             document.getElementById('crimeSummary').textContent = currentGame.crimeSummary;
-            document.getElementById('interestingFact').textContent = currentGame.interestingFact;
-            document.getElementById('finalInterestingFact').textContent = currentGame.finalInterestingFact;
             document.getElementById('completionMessage').textContent = currentGame.gameCompletionMessage;
             
             // Locations
@@ -292,6 +282,24 @@
                         <div class="final-reason">
                             <strong>Reason:</strong> ${currentGame.finalLocationV2.reason}
                         </div>
+                        <div class="puzzle-section">
+                            <h4>🧩 Puzzle Data</h4>
+                            <div class="puzzle-detail">
+                                <strong>Educational Phrase:</strong> "${currentGame.finalLocationV2.educationalPhrase}"
+                            </div>
+                            <div class="puzzle-detail">
+                                <strong>Category Hint:</strong> ${currentGame.finalLocationV2.categoryHint}
+                            </div>
+                            <div class="puzzle-detail">
+                                <strong>Flag Colors:</strong>
+                                <div class="flag-colors-preview">
+                                    ${renderFlagColors(currentGame.finalLocationV2.flagColors)}
+                                </div>
+                            </div>
+                            <div class="puzzle-detail">
+                                <strong>Interesting Fact:</strong> ${currentGame.finalLocationV2.interestingFact}
+                            </div>
+                        </div>
                         ${connections.length > 0 ? `
                             <div class="final-reason">
                                 <strong>Connections:</strong>
@@ -302,6 +310,21 @@
                         ` : ''}
                     </div>
                 `;
+            }
+        }
+
+        function renderFlagColors(flagColorsJson) {
+            try {
+                const colors = JSON.parse(flagColorsJson || '[]');
+                if (!colors || colors.length === 0) {
+                    return '<span class="no-colors">No flag colors available</span>';
+                }
+                
+                return colors.map(color => 
+                    `<div class="flag-color-swatch" style="background-color: ${color};" title="${color}"></div>`
+                ).join('');
+            } catch (error) {
+                return '<span class="no-colors">Invalid flag colors data</span>';
             }
         }
 

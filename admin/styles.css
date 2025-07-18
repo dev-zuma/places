@@ -61,6 +61,33 @@ body {
     text-transform: uppercase;
 }
 
+/* Flag Colors Display */
+.flag-colors-preview {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.flag-color-swatch {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.flag-color-swatch:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+.no-colors {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 14px;
+}
+
 /* Generation Details Font Improvements */
 .generation-grid,
 .timing-grid {
@@ -857,6 +884,22 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
     margin-bottom: 32px;
+}
+
+/* New vertical layout for locations */
+.locations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.locations-container .crime-locations {
+    width: 100%;
+}
+
+.locations-container .final-location-section {
+    width: 100%;
 }
 
 .location-card {
@@ -2024,6 +2067,30 @@ textarea:focus {
 .status-completed { background: #d4edda; color: #155724; }
 .status-published { background: #e7f3ff; color: #0056b3; }
 .status-failed { background: #f8d7da; color: #721c24; }
+
+/* Puzzle section styling */
+.puzzle-section {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.puzzle-section h4 {
+    margin: 0 0 12px 0;
+    color: #ffd700;
+    font-size: 1rem;
+}
+
+.puzzle-detail {
+    margin-bottom: 8px;
+    padding: 4px 0;
+}
+
+.puzzle-detail strong {
+    color: #87ceeb;
+}
 
 /* Responsive design for game details */
 @media (max-width: 768px) {

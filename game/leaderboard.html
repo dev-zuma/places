@@ -388,6 +388,7 @@
                 
                 const data = await response.json();
                 console.log('📈 Leaderboard data received:', data.length, 'players');
+                console.log('📋 Data sample:', data.slice(0, 3)); // Log first 3 entries
                 displayLeaderboard(data);
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
@@ -396,13 +397,17 @@
         }
 
         function displayLeaderboard(data) {
-            const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
-
             if (data.length === 0) {
                 showCustomEmptyState();
                 return;
             }
+
+            // First ensure the table structure exists
+            showLeaderboardTable();
+            
+            // Then populate it
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
 
             data.forEach((player, index) => {
                 const row = document.createElement('tr');
@@ -425,8 +430,6 @@
                 
                 tbody.appendChild(row);
             });
-
-            showLeaderboardTable();
         }
 
         function getRankDisplay(rank) {
