@@ -1773,7 +1773,7 @@
             
             if (result === 'captured') {
                 // All locations correct - show CAPTURED
-                headerText = 'SUSPECT CAPTURED!';
+                headerText = 'CASE CLOSED';
                 modalContent = `
                     <div class="villain-capture">
                         <img src="${currentCase.villainImageUrl}" alt="${currentCase.villainName}" class="villain-capture-image">
@@ -1784,7 +1784,7 @@
                 `;
             } else {
                 // Suspect escaped
-                headerText = 'SUSPECT ESCAPED';
+                headerText = 'CASE CLOSED';
                 let escapeReason = '';
                 if (result === 'escaped_unsolved') {
                     escapeReason = 'Failed to identify all crime scene locations in time.';
@@ -1793,12 +1793,20 @@
                 }
                 
                 modalContent = `
-                    <div class="villain-capture">
-                        <img src="${currentCase.villainImageUrl}" alt="${currentCase.villainName}" class="villain-capture-image">
+                    <div class="villain-capture escape-layout">
+                        <div class="villain-image-container">
+                            <img src="${currentCase.villainImageUrl}" alt="${currentCase.villainName}" class="villain-capture-image">
+                        </div>
+                        <div class="escape-message">
+                            <h2 class="villain-escape-title">SUSPECT ESCAPES CAPTURE!</h2>
+                            <p class="villain-escape-subtitle">${escapeReason}</p>
+                            <p class="try-again-text">The suspect remains at large. Try again to capture them!</p>
+                        </div>
                     </div>
-                    <h2 class="villain-escape-title">SUSPECT ESCAPED</h2>
-                    <p class="villain-escape-subtitle">${escapeReason}</p>
-                    <p class="try-again-text">The suspect remains at large. Try again to capture them!</p>
+                    <div class="villain-info">
+                        <h3 class="villain-info-title">${currentCase.villainName}</h3>
+                        <p class="villain-info-subtitle">"${currentCase.villainTitle}"</p>
+                    </div>
                 `;
             }
             
@@ -1815,6 +1823,24 @@
                     </div>
                 </div>
             `;
+            
+            // Add sign-in prompt if user is not signed in, or confirmation if signed in
+            if (!currentUser) {
+                modalContent += `
+                    <div class="sign-in-prompt">
+                        <p class="sign-in-message">Sign in to save your score and track your progress!</p>
+                        <button class="action-button sign-in-button" onclick="signIn()">
+                            Sign In
+                        </button>
+                    </div>
+                `;
+            } else {
+                modalContent += `
+                    <div class="score-recorded-prompt">
+                        <p class="score-recorded-message">✓ Score recorded for ${currentUser.username || currentUser.name}</p>
+                    </div>
+                `;
+            }
             
             if (result === 'captured') {
                 const interestingFact = currentCase.finalLocationV2?.interestingFact || currentCase.finalInterestingFact || 'Amazing detective work!';
@@ -1985,6 +2011,41 @@
 
         function closeEndGameModal() {
             document.getElementById('endGameModal').classList.remove('show');
+        }
+
+        function updateEndGameModalSignInStatus() {
+            // Check if the end game modal is currently shown
+            const endGameModal = document.getElementById('endGameModal');
+            if (!endGameModal || !endGameModal.classList.contains('show')) {
+                return; // Modal is not shown, no need to update
+            }
+
+            // Find the sign-in/score-recorded section in the modal
+            const signInPrompt = document.querySelector('.sign-in-prompt');
+            const scoreRecordedPrompt = document.querySelector('.score-recorded-prompt');
+            
+            if (currentUser) {
+                // User is now signed in - replace sign-in prompt with score recorded message
+                if (signInPrompt) {
+                    signInPrompt.outerHTML = `
+                        <div class="score-recorded-prompt">
+                            <p class="score-recorded-message">✓ Score recorded for ${currentUser.username || currentUser.name}</p>
+                        </div>
+                    `;
+                }
+            } else {
+                // User signed out - replace score recorded message with sign-in prompt
+                if (scoreRecordedPrompt) {
+                    scoreRecordedPrompt.outerHTML = `
+                        <div class="sign-in-prompt">
+                            <p class="sign-in-message">Sign in to save your score and track your progress!</p>
+                            <button class="action-button sign-in-button" onclick="signIn()">
+                                Sign In
+                            </button>
+                        </div>
+                    `;
+                }
+            }
         }
 
         function playAgain() {
@@ -2948,6 +3009,9 @@
                 if (menuUserName) {
                     menuUserName.textContent = `Detective ${currentUser.username || currentUser.name || currentUser.fullName}`;
                 }
+                
+                // Update end game modal if it's currently shown
+                updateEndGameModalSignInStatus();
             } else {
                 // Show "Sign In" text
                 userMenuText.textContent = 'Sign In';
