@@ -19,24 +19,29 @@ NODE_ENV=production
 npm install --production
 ```
 
-### 3. Database Migration
-⚠️ **WARNING: This will delete all existing games and player data!**
+### 3. Database Schema Reset
+⚠️ **WARNING: This will completely reset the database schema!**
 
-#### Option A: Full Migration (Recommended)
+#### Option A: Clean Schema Reset (Recommended for production)
 ```bash
-node scripts/production-migration.js --production
+node scripts/reset-production-schema.js --confirm
 ```
 This script will:
-- Create a backup of the current database
-- Delete all existing data
-- Apply schema migrations
-- Verify the new schema works
-- Regenerate Prisma Client
+- Drop all existing tables
+- Apply the latest schema from scratch
+- Regenerate Prisma client
+- Verify the schema works correctly
 
-#### Option B: Quick Reset (If no backup needed)
+#### Option B: Quick Data Reset (If schema is already correct)
 ```bash
 node scripts/reset-production-db.js --confirm
 ```
+
+#### Option C: One-Command Deployment
+```bash
+./deploy-production.sh
+```
+This handles the complete deployment including dependencies and schema reset.
 
 ### 4. Start Application
 ```bash

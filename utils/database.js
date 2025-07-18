@@ -34,21 +34,21 @@ async function updateGenerationProgress(gameId, step, completedSteps) {
 async function getMostUsedCities(limit = 20) {
   try {
     const cityUsage = await prisma.locationV2.groupBy({
-      by: ['city'],
+      by: ['name'],
       _count: {
-        city: true
+        name: true
       },
       orderBy: {
         _count: {
-          city: 'desc'
+          name: 'desc'
         }
       },
       take: limit
     });
 
     return cityUsage.map(item => ({
-      city: item.city,
-      count: item._count.city
+      city: item.name,
+      count: item._count.name
     }));
   } catch (error) {
     console.error('Error getting most used cities:', error);
@@ -79,10 +79,10 @@ async function hasPlayedDifficulty(playerId, targetDifficulty) {
     const completions = await prisma.playerCaseV2.count({
       where: {
         playerId: playerId,
-        game: {
+        gameV2: {
           difficulty: targetDifficulty
         },
-        completed: true
+        solvedFinal: true  // Player completed the case (solved all 4 locations)
       }
     });
     
